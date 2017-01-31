@@ -1,0 +1,8 @@
+project/
+*.class
+target/
+resolution-cache/
+streams/
+.idea/
+idea/
+
