@@ -1,4 +1,4 @@
-package com.nsinha.graph.config
+package com.nsinha.graph.appConfig
 
 import com.typesafe.config.{Config, ConfigFactory}
 
