@@ -1,0 +1,9 @@
+digraph d {
+ A [label="Hello";hlabel="HHHH";]
+ B [label="World"]
+ C [label="Everyone"]
+ D [label="XYZ"]
+
+ A -> { B C }
+ A -> D	
+}

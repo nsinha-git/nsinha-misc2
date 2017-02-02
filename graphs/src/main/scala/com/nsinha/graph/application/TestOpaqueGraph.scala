@@ -17,10 +17,10 @@ object TestOpaqueGraph {
     val graphOps = new GraphOpsTrait[OpaqeClass] {}
 
     graphOps.printGraph(g)
-    //graphOps.createSpaceEmbeddedGnuplotData(g)
+    graphOps.printGraphDot(g, "/tmp/1")
     val tree = graphOps.bfsTree("n0", g)
     tree.toList.map (x => graphOps.printGraph(x) )
-    tree map (x =>graphOps.createSpaceEmbeddedGnuplotData(x))
+    tree map (x => graphOps.printGraphDot(x, "/tmp/2"))
   }
 
 

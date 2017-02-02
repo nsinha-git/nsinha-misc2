@@ -8,10 +8,9 @@ import scala.io.StdIn
 import scala.util.{Failure, Random, Success, Try}
 import scala.util.control.NonFatal
 
-
 /**
-  * Created by nsinha on 1/27/17.
-  */
+ * Created by nsinha on 1/27/17.
+ */
 
 class InputStyle
 object UserInteraction extends InputStyle
@@ -27,9 +26,11 @@ object GraphFactory {
       case Success("random") => RandomGraph
       case Success("complete") => CompleteGraph
       case Success("interactive") => UserInteraction
-      case Success(x) => println(s"Fix the graph.connection. Unknown vale $x")
-          RandomGraph
-      case Failure(ex) => println("Fix the graph.connection. Failure reading value ")
+      case Success(x) =>
+        println(s"Fix the graph.connection. Unknown vale $x")
+        RandomGraph
+      case Failure(ex) =>
+        println("Fix the graph.connection. Failure reading value ")
         RandomGraph
     }
   }
@@ -44,24 +45,21 @@ object GraphFactory {
     }
   }
 
-
-
-
-  def readFromStdin[A](fn: =>A): List[A] = {
+  def readFromStdin[A](fn: => A): List[A] = {
     var l = List[A]()
 
     try {
       val x = fn
-      l = l .+:(x)
+      l = l.+:(x)
       l
     } catch {
-      case e : Exception =>
+      case e: Exception =>
     }
     l
   }
 
   def getConnections(curNode: Int, totalNodes: Int, directed: Boolean): List[Int] = {
-    val l : List[Int] = input match {
+    val l: List[Int] = input match {
       case UserInteraction =>
         try {
           readFromStdin[String](StdIn.readLine).head split ("[ ,]") map (_.toInt) filter (x => if (x <= totalNodes && x != curNode) true else false) toList
@@ -73,13 +71,11 @@ object GraphFactory {
         Range(0, totalNodes).toList.map(_.toInt) filter (x => x != curNode)
 
       case RandomGraph =>
-        Range(0, totalNodes).toList.map(_.toInt) filter (x => x != curNode) filter(x => if (Random.nextDouble() < randomGraphProb) true else false)
-
+        Range(0, totalNodes).toList.map(_.toInt) filter (x => x != curNode) filter (x => if (Random.nextDouble() < randomGraphProb) true else false)
 
     }
     l
   }
-
 
   def createGraphOfOpaquesInteractive(): GraphTrait[OpaqeClass] = {
     println("We are interactively creating a graph of opaque objects")
@@ -88,14 +84,12 @@ object GraphFactory {
 
     val totalNodes = readFromStdin[Int](StdIn.readInt()).head
 
-
     println("Enter if graph is directed: 1 for true or 0 for false")
 
     val directed: Boolean = readFromStdin[Int](StdIn.readInt()) map (x => x match {
       case 0 => false
       case 1 => true
     }) head
-
 
     val nodes = for (i <- Range(0, totalNodes).toList) yield {
       println(s"We are creating node n$i. \n Step 1. Enter the connectivity nodes.")
@@ -106,9 +100,8 @@ object GraphFactory {
       }
       println(s"Step 2.We are skipping the weight step for edges . We will create opaque weights for your covenience")
 
-      new Node[OpaqeClass](s"n$i",Math.cos(Math.PI*2*i/totalNodes), Math.sin(Math.PI*2*i/totalNodes), l map (x => s"n$x"))
+      new Node[OpaqeClass](s"n$i", Math.cos(Math.PI * 2 * i / totalNodes), Math.sin(Math.PI * 2 * i / totalNodes), l map (x => s"n$x"))
     }
-
 
     new Graph[OpaqeClass](_nodes = nodes, _isDirected = directed, (x: (String, String), y: Int) => new Weight[OpaqeClass] {
       override def getWeight = new OpaqeClass("opaqueWeight")
