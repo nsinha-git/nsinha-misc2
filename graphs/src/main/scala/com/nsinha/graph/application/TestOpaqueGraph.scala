@@ -13,16 +13,41 @@ object TestOpaqueGraph {
   }
 
   def main(args: Array[String]): Unit = {
-    val g = GraphFactory.createGraphOfOpaquesInteractive()
-    val graphOps = new GraphOpsTrait[OpaqeClass] {}
+    val _g = GraphFactory.createGraphOfOpaquesInteractive()
+    val graphOps = new GraphOpsTrait[OpaqeClass] {
+      override val g: G = _g
+    }
 
-    graphOps.printGraph(g)
-    graphOps.printGraphDot(g, "/tmp/1")
-    val tree = graphOps.bfsTree("n0", g)
-    tree.toList.map (x => graphOps.printGraph(x) )
-    tree map (x => graphOps.printGraphDot(x, "/tmp/2"))
+    graphOps.printGraph
+    graphOps.printGraphDot("/tmp/1")
+
+    testDfs(graphOps)
+    testBfs(graphOps)
+
   }
 
+  def testDfs[A](g: GraphOpsTrait[A]) = {
+    val tree = g.dfsTree("n0")
 
+    tree.toList.map (x => {
+      val gOps = new GraphOpsTrait[A] {
+        override val g = x
+      }
+      gOps.printGraph
+      gOps.printGraphDot("/tmp/testDfs")
+    })
+  }
+
+  def testBfs[A](g: GraphOpsTrait[A]) = {
+    val tree = g.bfsTree("n0")
+
+    tree.toList.map (x => {
+      val gOps = new GraphOpsTrait[A] {
+        override val g = x
+      }
+      gOps.printGraph
+      gOps.printGraphDot("/tmp/testBfs")
+    })
+  }
 
 }
