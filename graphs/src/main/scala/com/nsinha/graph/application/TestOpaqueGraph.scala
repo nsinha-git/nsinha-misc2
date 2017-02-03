@@ -3,6 +3,7 @@ package com.nsinha.graph.application
 import com.nsinha.graph.appConfig.ApplicationConfig
 import com.nsinha.graph.factories.GraphFactory
 import com.nsinha.graph.interfaces.{Graph, GraphOpsTrait, OpaqeClass}
+import com.nsinha.graph.utils.dot.DotReaderImpl
 
 /**
   * Created by nsinha on 1/28/17.
@@ -23,6 +24,7 @@ object TestOpaqueGraph {
 
     testDfs(graphOps)
     testBfs(graphOps)
+    testDotReader("/tmp/1")
 
   }
 
@@ -48,6 +50,17 @@ object TestOpaqueGraph {
       gOps.printGraph
       gOps.printGraphDot("/tmp/testBfs")
     })
+  }
+
+  def testDotReader(fileName: String) = {
+    val dotReader = new DotReaderImpl[OpaqeClass]
+    val _g = dotReader.readFileIntoGraph(fileName)
+    val graphOps = new GraphOpsTrait[OpaqeClass] {
+      override val g: G = _g
+    }
+
+    graphOps.printGraphDot("/tmp/testReadGraph")
+
   }
 
 }

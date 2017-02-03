@@ -1,0 +1,4 @@
+Next working:
+1. Deserialize from Dot format: Done
+2. Use Monadic Result type so we can represent such things as complexity.
+
