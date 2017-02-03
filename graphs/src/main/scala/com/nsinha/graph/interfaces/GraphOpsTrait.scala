@@ -1,6 +1,7 @@
 package com.nsinha.graph.interfaces
 
 import com.nsinha.graph.utils.ExternalProcess
+import com.nsinha.library.{MonadicResult, MonadicResultImpl}
 
 import scala.collection.mutable
 import scala.reflect.io.File
@@ -18,8 +19,9 @@ trait GraphOpsTrait[A] {
     val node = g.getNode(nodeName)
     val que = new mutable.Queue[NodeTrait[A]]()
     que.enqueue(node)
-    val newNodes = bfsTreeInt(que, mutable.Set())(Nil)
-    val newG = g.deepClone(newNodes)
+    val newNodesMonad = bfsTreeInt(que, mutable.Set())(new MonadicResultImpl[List[NodeTrait[A]], Int](Nil, 0)(() => Nil, () => 0))
+    val newG = g.deepClone(newNodesMonad.getResult)
+    println(s"We spent ${newNodesMonad.getState}  in BFS")
     Option(new Tree[A](node, newG))
   }
 
@@ -114,23 +116,22 @@ trait GraphOpsTrait[A] {
     }
   }
 
-  private def bfsTreeInt(que: mutable.Queue[NodeTrait[A]], visited: mutable.Set[String])(nodes: List[NodeTrait[A]]): List[NodeTrait[A]] = {
+  private def bfsTreeInt(que: mutable.Queue[NodeTrait[A]], visited: mutable.Set[String])(nodesMonads: MonadicResult[List[NodeTrait[A]], Int]): MonadicResult[List[NodeTrait[A]], Int] = {
     if (que.nonEmpty) {
       val curNode = que.dequeue()
       if (visited.contains(curNode.name)) {
-        bfsTreeInt(que, visited)(nodes)
+        bfsTreeInt(que, visited)(nodesMonads)
       } else {
         visited.+=(curNode.name)
         val newNode = curNode.deepClone(curNode.children() filter (x => if (visited.contains(x)) false else true))
-        val newNodes = nodes.+:(newNode)
+        val newNodesMonad = nodesMonads map ((x, y) => (x.:+(newNode), y + 1))
         curNode.children() map (x => g.getNode(x)) foreach (x => que.enqueue(x))
-        newNodes ++ bfsTreeInt(que, visited)(Nil)
+        newNodesMonad flatMap ((x, y) => bfsTreeInt(que, visited)(new MonadicResultImpl[List[NodeTrait[A]], Int](x, y)(() => Nil, () => 0)))
       }
     } else {
-      nodes
+      nodesMonads
     }
   }
-
 }
 
 trait OrderedGraphOps[A <: Ordered[A]] extends GraphOpsTrait[A] {
