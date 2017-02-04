@@ -27,8 +27,9 @@ trait GraphOpsTrait[A] {
 
   def dfsTree(nodeName: String): Option[TreeTrait[A]] = {
     val node = g.getNode(nodeName)
-    val newNodes = dfsTreeInt(node, mutable.Set())(Nil)
-    val newG = g.deepClone(newNodes)
+    val newNodesMonad = dfsTreeInt(node, mutable.Set())(new MonadicResultImpl[List[NodeTrait[A]], Int](Nil, 0)(() => Nil, () => 0))
+    val newG = g.deepClone(newNodesMonad.getResult)
+    println(s"We spent ${newNodesMonad.getState}  in DFS")
     Option(new Tree[A](node, newG))
   }
 
@@ -105,14 +106,17 @@ trait GraphOpsTrait[A] {
     g.edges map { e => print(s"${e.name}") }
   }
 
-  private def dfsTreeInt(node: NodeTrait[A], visited: mutable.Set[String])(nodes: List[NodeTrait[A]]): List[NodeTrait[A]] = {
+  private def dfsTreeInt(node: NodeTrait[A], visited: mutable.Set[String])(nodesMonads: MonadicResult[List[NodeTrait[A]], Int]): MonadicResult[List[NodeTrait[A]], Int] = {
     if (visited.contains(node.name)) {
-      return nodes
+      return nodesMonads
     } else {
       visited.+=(node.name)
       val newNode = node.deepClone(node.children() filter (x => if (visited.contains(x)) false else true))
-      val newNodes = nodes :+ newNode
-      newNodes.++(node.children() flatMap { x => dfsTreeInt(g.getNode(x), visited)(Nil) })
+      val newNodesMonad = nodesMonads map ((x,y) => (x :+ newNode, y + 1))
+      val allChildDfs = node.children() map { child => dfsTreeInt(g.getNode(child), visited)(new MonadicResultImpl[List[NodeTrait[A]], Int](Nil, 0)(() => Nil, () => 0)) }
+      allChildDfs.foldLeft(newNodesMonad) { (z, el) =>
+        z flatMap ((x, y) => new MonadicResultImpl[List[NodeTrait[A]], Int](x ++ el.getResult, y + el.getState)(() => Nil, () => 0))
+      }
     }
   }
 
