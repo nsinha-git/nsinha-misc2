@@ -2,7 +2,7 @@ package com.nsinha.graph.application
 
 import com.nsinha.graph.appConfig.ApplicationConfig
 import com.nsinha.graph.factories.GraphFactory
-import com.nsinha.graph.interfaces.{Graph, GraphOpsTrait, OpaqeClass}
+import com.nsinha.graph.interfaces.{GraphOpsTrait, OpaqeClass}
 import com.nsinha.graph.utils.dot.DotReaderImpl
 
 /** Created by nsinha on 1/28/17.

@@ -17,23 +17,23 @@ case class SccComponent[A](m : List[NodeTrait]) {
   val nodesNameSet = { m map { _.name } }.toSet
 
 }
-class Scc[A](_g : GraphTrait[A]) {
+case class Scc[A](_g : GraphTrait[A]) {
   //key is iteration
-  val iThIteratedSccs : mutable.Map[Int, List[SccComponent[A]]] = mutable.Map()
+  val iThIteratedSccs : mutable.Map[Int, mutable.MutableList[SccComponent[A]]] = mutable.Map()
   //a convenience for maximal Sccs that  a node participates in
   //node> (size,List of maximal scc)
 
-  val nodeToMaximalSccs : Map[String, mutable.Map[Int, List[SccComponent[A]]]] = {
+  val nodeToMaximalSccs : Map[String, mutable.Map[Int, mutable.MutableList[SccComponent[A]]]] = {
     val mp = Map[String, mutable.Map[Int, List[SccComponent[A]]]]()
-    _g.nodes.foldLeft(Map[String, mutable.Map[Int, List[SccComponent[A]]]]()) { (z, node) ⇒
-      z + (node.name → mutable.Map[Int, List[SccComponent[A]]]())
+    _g.nodes.foldLeft(Map[String, mutable.Map[Int, mutable.MutableList[SccComponent[A]]]]()) { (z, node) ⇒
+      z + (node.name → mutable.Map[Int, mutable.MutableList[SccComponent[A]]](1 → mutable.MutableList(SccComponent(List(node)))))
     }
   }
 
   val baseSccs = _g.nodes.foldLeft(List[SccComponent[A]]()) { (z, el) ⇒
     val mp = nodeToMaximalSccs(el.name)
     val sccComp = SccComponent[A](List(el))
-    mp.+(1 → List(sccComp))
+    mp.+(1 → mutable.MutableList(sccComp))
     z :+ sccComp
   }
   val gOps = new GraphOpsTrait[A] { override val g = _g }
@@ -47,39 +47,46 @@ class Scc[A](_g : GraphTrait[A]) {
     mp
   }
 
+  val sccNameExists : mutable.Set[String] = mutable.Set()
+  baseSccs map { x ⇒ sccNameExists += x.name }
+
   def scc() : List[SccComponent[A]] = {
     var iteration = 0
-    iThIteratedSccs += (iteration → baseSccs)
+    iThIteratedSccs += (iteration → baseSccs.foldLeft(mutable.MutableList[SccComponent[A]]()) { (z, el) ⇒ z.+=(el) })
 
     while (iteration < _g.nodes.size) {
-      val ithSccList = iThIteratedSccs(iteration)
-      if (ithSccList.isEmpty) {} else {
-        //get i+1 list by taking ithSccList elements and composing on admissable  elements in NList that may work out?
-        for (curIthScc ← ithSccList) {
-          val nsetK = intesectionSetMap(curIthScc.name).diff(curIthScc.nodesNameSet)
-          for (nsetKelem ← nsetK) {
-            val nodeK = _g.getNode(nsetKelem)
-            if (admissable(nodeK, curIthScc)) {
-              //create a new SccComponent for K+1 stage
-              val newScc = new SccComponent[A](curIthScc.m :+ nodeK)
-              //record the intersection of newScc
-              intesectionSetMap(newScc.name) = intesectionSetMap(curIthScc.name).intersect(intesectionSetMap(nodeK.name))
-              iThIteratedSccs.get(iteration + 1) match {
-                case None    ⇒ iThIteratedSccs += ((iteration + 1) → List(newScc))
-                case Some(l) ⇒ l :+ newScc
-              }
-              //record the newScc against each of their participating nodes. This is maximal for each of nodes.
-              for (node ← newScc.m) {
-                val mp = nodeToMaximalSccs(node.name)
-                mp.get(newScc.m.size) match {
-                  case None    ⇒ mp.+=(newScc.m.size → List(newScc))
-                  case Some(l) ⇒ l.:+(newScc)
+      val ithSccListOpt = iThIteratedSccs.get(iteration)
+      ithSccListOpt match {
+        case Some(ithSccList) ⇒
+          //get i+1 list by taking ithSccList elements and composing on admissable  elements in NList that may work out?
+          for (curIthScc ← ithSccList) {
+            val nsetK = intesectionSetMap(curIthScc.name).diff(curIthScc.nodesNameSet)
+            for (nsetKelem ← nsetK if sccDoesNotExist(curIthScc, nsetKelem)) {
+              val nodeK = _g.getNode(nsetKelem)
+              if (admissable(nodeK, curIthScc)) {
+                //create a new SccComponent for K+1 stage
+                val newScc = new SccComponent[A](curIthScc.m :+ nodeK)
+                //record the intersection of newScc
+                intesectionSetMap(newScc.name) = intesectionSetMap(curIthScc.name).intersect(intesectionSetMap(nodeK.name))
+                iThIteratedSccs.get(iteration + 1) match {
+                  case None    ⇒ iThIteratedSccs += ((iteration + 1) → mutable.MutableList(newScc))
+                  case Some(l) ⇒ l += newScc
                 }
+                //record the newScc against each of their participating nodes. This is maximal for each of nodes.
+                for (node ← newScc.m) {
+                  val mp = nodeToMaximalSccs(node.name)
+                  mp.get(newScc.m.size) match {
+                    case None    ⇒ mp.+=(newScc.m.size → mutable.MutableList(newScc))
+                    case Some(l) ⇒ l.+=(newScc)
+                  }
+                }
+                //record this scc name as already processed
+                sccNameExists += (newScc.name)
               }
+              else {}
             }
-            else {}
           }
-        }
+        case None ⇒
       }
       iteration += 1
     }
@@ -96,7 +103,15 @@ class Scc[A](_g : GraphTrait[A]) {
       y._2.foldLeft(z) { (zz, elel) ⇒
         zz + elel
       }
-    }.toList
+    }.toSet.toList
+  }
+
+  def sccDoesNotExist(curIthScc : SccComponent[A], nsetKelem : String) : Boolean = {
+    val possibleName = (curIthScc.nodesNameSet.toList :+ nsetKelem).sorted.mkString("-")
+    if (sccNameExists.contains(possibleName))
+      false
+    else
+      true
   }
 
   def admissable(node : NodeTrait, curIthScc : SccComponent[A]) : Boolean = {

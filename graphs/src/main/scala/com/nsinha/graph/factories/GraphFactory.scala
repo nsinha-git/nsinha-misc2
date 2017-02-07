@@ -1,12 +1,11 @@
 package com.nsinha.graph.factories
 
-import com.nsinha.graph.interfaces._
-import com.nsinha.graph
 import com.nsinha.graph.appConfig.ApplicationConfig
+import com.nsinha.graph.interfaces._
 
 import scala.io.StdIn
-import scala.util.{Failure, Random, Success, Try}
 import scala.util.control.NonFatal
+import scala.util.{Failure, Random, Success, Try}
 
 /** Created by nsinha on 1/27/17.
   */

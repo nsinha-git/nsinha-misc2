@@ -1,5 +1,6 @@
 package com.nsinha.graph.interfaces
 
+import com.nsinha.graph.algorithms.scc.{Scc, SccComponent}
 import com.nsinha.graph.factories.GraphFactory
 import com.nsinha.graph.utils.ExternalProcess
 import com.nsinha.library.{MonadicResult, MonadicResultImpl}
@@ -53,7 +54,9 @@ trait GraphOpsTrait[A] {
     areNodesConnected.reduce((x, y) ⇒ x & y)
   }
 
-  def getStronglyConnectedComponents : List[GraphTrait[A]] = ???
+  def getStronglyConnectedComponents : List[SccComponent[A]] = {
+    Scc(g).scc()
+  }
 
   def transpose : GraphTrait[A] = {
     val allnodes = {
@@ -62,7 +65,7 @@ trait GraphOpsTrait[A] {
 
     val nodes = for (node ← g.nodes) yield {
       val children = node.children().toSet
-      val transposedChildren = allnodes diff children toList
+      val transposedChildren = allnodes diff (children + node.name) toList
 
       node.deepClone(transposedChildren)
     }
