@@ -8,7 +8,7 @@ object ExternalProcess {
 
   def apply(cmd : Seq[String]) = {
     val run = cmd.!
-    println(s"run: $run")
+    //println(s"run: $run")
   }
 
 }

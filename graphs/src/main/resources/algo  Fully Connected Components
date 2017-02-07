@@ -47,11 +47,10 @@ str(n1 n2 n3 n4) --- (n1,n5,n6) - (n1,n2,n7,n8)
     How can we optmially  do the above steps as naïve implementation would be pretty bad in o(2^k)
     clause 5 shows that all we need to do is check against all the nodes of scc. If all works then go ahead else  dont admit C. o(K)
     6. The other way is transpose graph Gt. Find the NCsetGt and intesect with Scc. Do away if non-empty intersection. o(n)
-11. How to create an intersection of children of a1...ak and ak+1 given we have ChildrenK
+10. How to create an intersection of children of a1...ak and ak+1 given we have ChildrenK
     1. ChildrenK+1 = ChildrenK intersect Child(aK+1)
     2. But hwo to store ChildrenK uniquely for searching given any combination of a1...ak since ai in general are not orderable. In our represenation
     we have used a non-mutable name for each node and we can order them. So even when nodes are not orderable , the way we represent them is.
     We will use this technique to uniquely identify the nodes- group and their children.
     3. O(n) in intersection and then storing ordering ChildrenK+1 requires another o(logn) => overall O(n) stands
 
-10. Can we think of scc's as nodes with 2*K oriented possble edges for a node. K will signify cardinality of that node in primary graph.

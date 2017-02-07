@@ -1,6 +1,6 @@
 package com.nsinha.graph.interfaces
 
-import com.nsinha.graph.algorithms.scc.{Scc, SccComponent}
+import com.nsinha.graph.algorithms.Fcc.{Fcc, ConnectedComponent}
 import com.nsinha.graph.factories.GraphFactory
 import com.nsinha.graph.utils.ExternalProcess
 import com.nsinha.library.{MonadicResult, MonadicResultImpl}
@@ -54,8 +54,8 @@ trait GraphOpsTrait[A] {
     areNodesConnected.reduce((x, y) ⇒ x & y)
   }
 
-  def getStronglyConnectedComponents : List[SccComponent[A]] = {
-    Scc(g).scc()
+  def getFullyConnectedComponents : List[ConnectedComponent[A]] = {
+    Fcc(g).scc()
   }
 
   def transpose : GraphTrait[A] = {

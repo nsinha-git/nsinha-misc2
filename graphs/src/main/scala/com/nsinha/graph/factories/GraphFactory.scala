@@ -57,8 +57,8 @@ object GraphFactory {
     l
   }
 
-  def getConnections(curNode : Int, totalNodes : Int, directed : Boolean) : List[Int] = {
-    val l : List[Int] = input match {
+  def getConnections(curNode : Int, totalNodes : Int, directed : Boolean, style : InputStyle = input, prob : Double = randomGraphProb) : List[Int] = {
+    val l : List[Int] = style match {
       case UserInteraction ⇒
         try {
           readFromStdin[String](StdIn.readLine).head split ("[ ,]") map (_.toInt) filter (x ⇒ if (x <= totalNodes && x != curNode) true else false) toList
@@ -71,7 +71,7 @@ object GraphFactory {
         Range(0, totalNodes).toList.map(_.toInt) filter (x ⇒ x != curNode)
 
       case RandomGraph ⇒
-        Range(0, totalNodes).toList.map(_.toInt) filter (x ⇒ x != curNode) filter (x ⇒ if (Random.nextDouble() < randomGraphProb) true else false)
+        Range(0, totalNodes).toList.map(_.toInt) filter (x ⇒ x != curNode) filter (x ⇒ if (Random.nextDouble() < prob) true else false)
 
     }
     l
@@ -113,6 +113,28 @@ object GraphFactory {
   def createGraphOfOpaques[A](nodes : List[NodeTrait], directed : Boolean = true, generateWeightFn : ((String, String), Int) ⇒ Weight[A]) : GraphTrait[A] = {
     new Graph[A](_nodes = nodes, _isDirected = directed, generateWeightFn)
   }
+
+  def createGraphOfOpaquesRandom(n : Int, edgeProb : Double) : GraphTrait[OpaqeClass] = {
+    val totalNodes = n
+    val directed : Boolean = true
+
+    val nodes = for (i ← Range(0, totalNodes).toList) yield {
+      val l = try {
+        getConnections(i, totalNodes, directed, RandomGraph, edgeProb)
+      }
+      catch {
+        case e : Exception if NonFatal(e) ⇒ List[Int]()
+      }
+
+      new Node(s"n$i", Math.cos(Math.PI * 2 * i / totalNodes), Math.sin(Math.PI * 2 * i / totalNodes), l map (x ⇒ s"n$x"))
+    }
+
+    new Graph[OpaqeClass](_nodes = nodes, _isDirected = directed, (x : (String, String), y : Int) ⇒ new Weight[OpaqeClass] {
+      override def getWeight = new OpaqeClass("opaqueWeight")
+    })
+
+  }
+
   //def createGraphOfStrings(n: List[NodeTrait[String]]): OrderedGraph[String] = ???
   //def createGraphOfDouble(n: List[NodeTrait[Double]]): NumericGraph[Double] = ???
 }

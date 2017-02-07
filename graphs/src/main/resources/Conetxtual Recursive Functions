@@ -1,0 +1,28 @@
+1. We know what are  recursive functions. It can be defined in terms of itself, maybe with a different argument list and base arguments
+won't use recursions.
+
+2. Let's assume a special case of recursive function that gets defined like this:
+    f(x) = g(f(y))  ∀ y in h(x)
+    and f(y) follows with no explicit base cases.
+    what if at some stage we hit upon f(x) again. It will lead to infinite loops.
+
+
+3  In most scenarios , we can have implied base cases here: i.e when evaluating f(x) do as in 2 but when evaluating f(x) in context of
+f(x) evaluate it to a known default value.
+
+4. More clearly now f(x) might look like:
+    f(x,C) = x ∉ C  |g(f(y, add(C,x))) ∀ y in h(x)
+            x ∈ C | Nil
+5 Use cases:
+Think about doing a dfs for all nodes in a graph. We can do a dfs just by visiting every edge once by writing dfs as:
+dfs(ni, C) = ni ∉ C| (k1 + dfs(k1, C + ni)) + (k2 + dfs(k2, C + ni)) + ... ∀ ki's as immediate neighbors.
+           = ni ∈ C|Nil
+
+dfs(Nil, C) = Nil
+
+6 Is visitor pattern for cyclic graphs used in normal bfs, dfs etc a notion of this. Exactly. They are procedural ways of doing what we just considered
+with a more function twist. By they are all the same! So what we added here?
+
+7. The representation is what we added. Now we can symbolically manipulate the notion and uses all sorts of tricks that comes with dealing
+with a fucntion. We can memoize based on C. This can be helpful in dfs case as we can calculate dfs of a graph with every source node in just
+O(n^2). Try it!

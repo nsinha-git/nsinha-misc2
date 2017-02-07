@@ -1,0 +1,13 @@
+1. n1 \sc n1 => n1 \reach n2 ^ n2 \reach n1
+2. 1. Find reachable e of every node.
+   2. Create a graph Gnew with a new node for each corresponding G
+   3. Create an edge between two nodes in Gnew if that node is in reach(node) in G(n^2 see 6)
+   4. Gnew is thus fully defined.
+   5. Find Fully connected components in Gnew.
+   6. Each fully connected component in Gnew coresponds to a strongly connected component in G.
+
+3. if x ↝ y
+
+5. The Scc is slightly harder problem than Fcc. As for fully connected graph the reach is a single level step which is easier than a multi steps that
+might be involved in a generic reach. Shows we can not beat step2 term.
+6. can we improve step1 term from n^3. a reach from every node can be performed in o(n^2) steps using contextual recursive functions.

@@ -1,6 +1,7 @@
 package com.nsinha.graph
 
 import com.nsinha.graph.appConfig.ApplicationConfig
+import com.nsinha.graph.factories.GraphFactory
 import com.nsinha.graph.interfaces.{GraphOpsTrait, OpaqeClass}
 import com.nsinha.graph.utils.dot.DotReaderImpl
 import org.scalatest.{FunSuite, MustMatchers}
@@ -40,7 +41,7 @@ class TestGraph extends FunSuite with MustMatchers{
     val g1 = DotReader("/Users/nsinha/mygithubs/nsinha-misc2/graphs/src/test/resources/dotfile1.dot")
     g1.printGraphDot()
 
-    val sccs = g1.getStronglyConnectedComponents
+    val sccs = g1.getFullyConnectedComponents
     sccs map {scc =>
       println(scc.name)
     }
@@ -51,10 +52,24 @@ class TestGraph extends FunSuite with MustMatchers{
     val g1 = DotReader("/Users/nsinha/mygithubs/nsinha-misc2/graphs/src/test/resources/dotfile2_fc.dot")
     g1.printGraph
 
-    val sccs = g1.getStronglyConnectedComponents
+    val sccs = g1.getFullyConnectedComponents
     sccs map {scc =>
       println(scc.name)
     }
+  }
+
+
+  test("performance test scc on random graph") {
+    for {i <- Range(5, 21)
+         prob <- Range(1, 10)
+         times <- Range(1, 4)
+    } {
+      val _g = GraphFactory.createGraphOfOpaquesRandom(i,prob/10.0)
+      val gOps = new GraphOpsTrait[OpaqeClass] {override val g =_g}
+      gOps.getFullyConnectedComponents
+
+    }
+
   }
 
 
