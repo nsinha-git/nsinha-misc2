@@ -1,0 +1,31 @@
+digraph d {
+n0 [label=n0;]
+n1 [label=n1;]
+n2 [label=n2;]
+n3 [label=n3;]
+n4 [label=n4;]
+n0->n1
+n0->n2
+n0->n3
+n0->n4
+
+n1->n0
+n1->n2
+n1->n3
+n1->n4
+
+n2->n0
+n2->n1
+n2->n3
+n2->n4
+
+n3->n0
+n3->n1
+n3->n2
+n3->n4
+
+n4->n0
+n4->n1
+n4->n2
+n4->n3
+}

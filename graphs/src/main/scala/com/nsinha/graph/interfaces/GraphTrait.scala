@@ -1,51 +1,50 @@
 package com.nsinha.graph.interfaces
 
-
-/**
-  * Created by nsinha on 1/27/17.
+/** Created by nsinha on 1/27/17.
   */
 trait Attribute {
-  def name: String
-  def value: String
+  def name : String
+  def value : String
 }
 
-trait Weight[A]{
-  def getWeight: A
+trait Weight[A] {
+  def getWeight : A
 }
 
-trait NodeTrait[A] {
-  val x: Double = 0
-  val y: Double = 0
-  def children(): List[String]
-  def name: String
-  def attributes: List[Attribute]
-  def setAttribute(attribute: Attribute)
-  def deepClone(): NodeTrait[A]
-  def deepClone(alternateChildren: List[String]): NodeTrait[A]
+trait NodeTrait {
+  val x : Double = 0
+  val y : Double = 0
+  def children() : List[String]
+  def name : String
+  def attributes : List[Attribute]
+  def setAttribute(attribute : Attribute)
+  def deepClone() : NodeTrait
+  def deepClone(alternateChildren : List[String]) : NodeTrait
 }
 
 trait EdgeTrait[A] {
-  val name: (String, String)
-  val isDirected: Boolean
+  val name : (String, String)
+  val isDirected : Boolean
   val weight : Weight[A]
 }
 
-trait  GraphTrait[A] {
-  val nodes: List[NodeTrait[A]]
-  val edges: List[EdgeTrait[A]]
-  def checkConsistency: Boolean
-  def getEdge(n: NodeTrait[A]): List[EdgeTrait[A]]
-  def getEdgeWithSrc(n: String): List[EdgeTrait[A]]
-  def getEdgeWithDest(n: String): List[EdgeTrait[A]]
-  def getNode(n: String): NodeTrait[A]
-  def isDirected: Boolean
+trait GraphTrait[A] {
+  val nodes : List[NodeTrait]
+  val edges : List[EdgeTrait[A]]
+  def checkConsistency : Boolean
+  def getEdge(n : NodeTrait) : List[EdgeTrait[A]]
+  def getEdgeWithSrc(n : String) : List[EdgeTrait[A]]
+  def getEdgeWithDest(n : String) : List[EdgeTrait[A]]
+  def getNode(n : String) : NodeTrait
+  def isDirected : Boolean
+  def getWeightFn : ((String, String), Int) ⇒ Weight[A]
 
-  def deepClone(): GraphTrait[A]
-  def deepClone(n: List[NodeTrait[A]]): GraphTrait[A]
+  def deepClone() : GraphTrait[A]
+  def deepClone(n : List[NodeTrait]) : GraphTrait[A]
 }
 
 trait TreeTrait[A] extends GraphTrait[A] {
-  def rootNode: NodeTrait[A]
+  def rootNode : NodeTrait
 }
 
 trait OrderedTreeTrait[A <: Ordered[A]] extends TreeTrait[A]
@@ -55,13 +54,6 @@ trait NumericTreeTrait[A <: Numeric[A] with Ordered[A]] extends OrderedTreeTrait
 trait NumericGraphTrait[A <: Numeric[A] with Ordered[A]] extends OrderedGraphTrait[A]
 
 trait GraphCreateFn[A] {
-  def apply(g: GraphTrait[A]) : GraphTrait[A]
+  def apply(g : GraphTrait[A]) : GraphTrait[A]
 }
-
-
-
-
-
-
-
 

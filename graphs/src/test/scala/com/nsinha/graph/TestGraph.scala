@@ -4,29 +4,27 @@ import com.nsinha.graph.appConfig.ApplicationConfig
 import com.nsinha.graph.factories.GraphFactory
 import com.nsinha.graph.interfaces.{GraphOpsTrait, OpaqeClass}
 import com.nsinha.graph.utils.dot.DotReaderImpl
-import org.scalatest.FunSuite
+import org.scalatest.{FunSuite, MustMatchers}
 
 /**
   * Created by nsinha on 2/4/17.
   */
-class TestGraph extends FunSuite{
+class TestGraph extends FunSuite with MustMatchers{
   ApplicationConfig
 
-  test("1") {
-    val _g = GraphFactory.createGraphOfOpaquesInteractive()
-    val graphOps = new GraphOpsTrait[OpaqeClass] {
-      override val g: G = _g
-    }
+  test("test dot reader") {
+    val g = DotReader("/Users/nsinha/mygithubs/nsinha-misc2/graphs/src/test/resources/dotfile1.dot")
 
-    graphOps.printGraph
-    graphOps.printGraphDot("/tmp/1")
-
-    testDfs(graphOps)
-    testBfs(graphOps)
-    testDotReader("/tmp/1")
-
+    g.printGraphDot()
   }
 
+  test("test fully connected") {
+    val g1 = DotReader("/Users/nsinha/mygithubs/nsinha-misc2/graphs/src/test/resources/dotfile1.dot")
+    g1.isFullyConnected mustBe false
+
+    val g2 = DotReader("/Users/nsinha/mygithubs/nsinha-misc2/graphs/src/test/resources/dotfile2_fc.dot")
+    g2.isFullyConnected mustBe true
+  }
 
   def testDfs[A](g: GraphOpsTrait[A]) = {
     val tree = g.dfsTree("n0")
@@ -52,14 +50,12 @@ class TestGraph extends FunSuite{
     })
   }
 
-  def testDotReader(fileName: String) = {
+  def DotReader(fileName: String) = {
     val dotReader = new DotReaderImpl[OpaqeClass]
     val _g = dotReader.readFileIntoGraph(fileName)
     val graphOps = new GraphOpsTrait[OpaqeClass] {
       override val g: G = _g
     }
-
-    graphOps.printGraphDot("/tmp/testReadGraph")
-
+    graphOps
   }
 }

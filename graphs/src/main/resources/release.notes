@@ -1,3 +1,3 @@
 Next working on:
-1. Use Monadic Result type so we can represent such things as complexity.
+1. Developing SCC algos
 

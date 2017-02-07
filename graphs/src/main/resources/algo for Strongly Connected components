@@ -1,0 +1,57 @@
+case:
+str(n1 n2 n3 n4) --- (n1,n5,n6) - (n1,n2,n7,n8)
+0. A node can belong to multiple SCCs. So sum(|scci|) >= |n|
+1. n1,n2...,n6 are trivially strongly connected.
+2.  Gi -> Gj => x \E Gi ^ y \E Gj ^ x -> y
+3. Gi -> Gj ^ Gj -> Gi => Gij
+4. If G1 \intersect G2 = G3 or phi.
+5. A node can only associate with its neighbors.
+6.Consider a Kth step when we know all the K-size  or lower sized Scc sets.
+    6a. To go to the K+r size where r < K step we can co-integarte a k-\theta member to a \theta member. Or we can go slowly to integarte a K size
+     to a 1 size and go get K+1.
+    6b. Goto 6 again
+
+    Analysis: This is O(2^n) algo
+
+7 Can we do better?
+    Let's have a Gn graph and Gm graph. Let's Gn,Gm be solved.
+    The only thing that's not provided at this stage is interedges from Gn to Gm
+    To add one node from Gm to Gn solution space we need to find inter connectivity of that node to each solution in Gn that
+    has a fully connected mirror in Gn. If we consider Gn as Kth Step in 6 a single node as Gm  we have kind of isomorphism.
+    So this tells that we have not been able to do better than 6.
+
+
+
+8. 0. all individual nodes are sccs at k =0. call them s1,s2...sn
+   1. at k = k+1 step: look at k -1 and 0 steps if k<n
+   2. take a scc \in {scc[k-1]}. else goto 7
+   3. find nodes which are neighbors of scc. Call it NSet.
+   4. Filter  scc nodes from Nset as we dont need to consider them
+   5. consider next  node from Nset starting from top one.
+   5a. If current Scc can admit the node. proceed to 5c. Admit a node can be optimized as in 9. Step 9 costs us o(n) for each trial.
+   5b. Else drop the node and go to 5.
+   5c call it cNode
+   6. Can we add cNode. if yes add it to {scc[k]}. Else do nothing
+   7. Label. Here we may have no-empty set {scc[k]}. If empty finish.
+   8. else go to 1.
+   9. op result of last sccs
+
+   There are 2^n possible sccs. Each Scc can have at max n neighbors. Ss step 5 can cost n^2 for each of these. So complexity is O(n^2*2^n)
+
+9. Can we optimize 5a.
+    1. Assume a finite scc with elems a1 a2 .. ak
+    2. Let's consider C as potential of admission.
+    3. If a subset S exists of of Scc such that we know that does not admit Scc then we => Scc wont admit C
+    4. S \subset Scc ^ NoAdmit(S,C) <=> NoAdmit(S,Scc,C)
+    5. \exists NoAdmit(S, Scc,C) => (e \member S and Scc) ^ (e \notFullyConnected C)
+    How can we optmially  do the above steps as naïve implementation would be pretty bad in o(2^k)
+    clause 5 shows that all we need to do is check against all the nodes of scc. If all works then go ahead else  dont admit C. o(K)
+    6. The other way is transpose graph Gt. Find the NCsetGt and intesect with Scc. Do away if non-empty intersection. o(n)
+11. How to create an intersection of children of a1...ak and ak+1 given we have ChildrenK
+    1. ChildrenK+1 = ChildrenK intersect Child(aK+1)
+    2. But hwo to store ChildrenK uniquely for searching given any combination of a1...ak since ai in general are not orderable. In our represenation
+    we have used a non-mutable name for each node and we can order them. So even when nodes are not orderable , the way we represent them is.
+    We will use this technique to uniquely identify the nodes- group and their children.
+    3. O(n) in intersection and then storing ordering ChildrenK+1 requires another o(logn) => overall O(n) stands
+
+10. Can we think of scc's as nodes with 2*K oriented possble edges for a node. K will signify cardinality of that node in primary graph.

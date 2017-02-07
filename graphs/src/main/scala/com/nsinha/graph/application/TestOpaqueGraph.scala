@@ -5,18 +5,17 @@ import com.nsinha.graph.factories.GraphFactory
 import com.nsinha.graph.interfaces.{Graph, GraphOpsTrait, OpaqeClass}
 import com.nsinha.graph.utils.dot.DotReaderImpl
 
-/**
-  * Created by nsinha on 1/28/17.
+/** Created by nsinha on 1/28/17.
   */
 object TestOpaqueGraph {
   {
     ApplicationConfig
   }
 
-  def main(args: Array[String]): Unit = {
+  def main(args : Array[String]) : Unit = {
     val _g = GraphFactory.createGraphOfOpaquesInteractive()
     val graphOps = new GraphOpsTrait[OpaqeClass] {
-      override val g: G = _g
+      override val g : G = _g
     }
 
     graphOps.printGraph
@@ -28,10 +27,10 @@ object TestOpaqueGraph {
 
   }
 
-  def testDfs[A](g: GraphOpsTrait[A]) = {
+  def testDfs[A](g : GraphOpsTrait[A]) = {
     val tree = g.dfsTree("n0")
 
-    tree.toList.map (x => {
+    tree.toList.map (x ⇒ {
       val gOps = new GraphOpsTrait[A] {
         override val g = x
       }
@@ -40,10 +39,10 @@ object TestOpaqueGraph {
     })
   }
 
-  def testBfs[A](g: GraphOpsTrait[A]) = {
+  def testBfs[A](g : GraphOpsTrait[A]) = {
     val tree = g.bfsTree("n0")
 
-    tree.toList.map (x => {
+    tree.toList.map (x ⇒ {
       val gOps = new GraphOpsTrait[A] {
         override val g = x
       }
@@ -52,11 +51,11 @@ object TestOpaqueGraph {
     })
   }
 
-  def testDotReader(fileName: String) = {
+  def testDotReader(fileName : String) = {
     val dotReader = new DotReaderImpl[OpaqeClass]
     val _g = dotReader.readFileIntoGraph(fileName)
     val graphOps = new GraphOpsTrait[OpaqeClass] {
-      override val g: G = _g
+      override val g : G = _g
     }
 
     graphOps.printGraphDot("/tmp/testReadGraph")
