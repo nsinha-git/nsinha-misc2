@@ -1,4 +1,4 @@
-package com.nsinha.graph.algorithms.Fcc
+package com.nsinha.graph.algorithms
 
 import com.nsinha.graph.interfaces.NodeTrait
 

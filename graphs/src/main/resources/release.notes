@@ -1,3 +1,9 @@
 Next working on:
-1. Developing SCC algos
+
+1. Bipartite
+
+-----------
+good to have
+0. Bfs All in o(n^2)
+1. Dfs All in o(n^2)
 

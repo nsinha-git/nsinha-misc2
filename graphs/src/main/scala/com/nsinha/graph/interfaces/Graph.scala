@@ -100,4 +100,3 @@ class Graph[A](_nodes : List[NodeTrait], _isDirected : Boolean, generateWeight :
   }
 }
 
-

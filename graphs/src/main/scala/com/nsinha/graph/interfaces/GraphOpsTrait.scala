@@ -1,10 +1,14 @@
 package com.nsinha.graph.interfaces
 
-import com.nsinha.graph.algorithms.Fcc.{Fcc, ConnectedComponent}
+import com.nsinha.graph.algorithms.Bipartite.Bipartite
+import com.nsinha.graph.algorithms.ConnectedComponent
+import com.nsinha.graph.algorithms.Fcc.Fcc
+import com.nsinha.graph.algorithms.Scc.Scc
 import com.nsinha.graph.factories.GraphFactory
 import com.nsinha.graph.utils.ExternalProcess
 import com.nsinha.library.{MonadicResult, MonadicResultImpl}
 
+import scala.collection.immutable.Queue
 import scala.collection.mutable
 import scala.reflect.io.File
 
@@ -26,12 +30,40 @@ trait GraphOpsTrait[A] {
     Option(new Tree[A](node, newG))
   }
 
+  def bfsTreeAll() : List[TreeTrait[A]] = {
+    val allBfs = for (node ← g.nodes) yield {
+      bfsTree(node.name)
+    }
+
+    allBfs.foldLeft(List[TreeTrait[A]]()) {
+      (z, el) ⇒
+        el match {
+          case None    ⇒ z
+          case Some(y) ⇒ z :+ y
+        }
+    }
+  }
+
   def dfsTree(nodeName : String) : Option[TreeTrait[A]] = {
     val node = g.getNode(nodeName)
     val newNodesMonad = dfsTreeInt(node, mutable.Set())(new MonadicResultImpl[List[NodeTrait], Int](Nil, 0)(() ⇒ Nil, () ⇒ 0))
     val newG = g.deepClone(newNodesMonad.getResult)
     println(s"We spent ${newNodesMonad.getState}  in DFS")
     Option(new Tree[A](node, newG))
+  }
+
+  def dfsTreeAll() : List[TreeTrait[A]] = {
+    val allDfs = for (node ← g.nodes) yield {
+      dfsTree(node.name)
+    }
+
+    allDfs.foldLeft(List[TreeTrait[A]]()) {
+      (z, el) ⇒
+        el match {
+          case None    ⇒ z
+          case Some(y) ⇒ z :+ y
+        }
+    }
   }
 
   def addAttribute(name : String, attribute : Attribute, nodeName : String, g : G) = ???
@@ -72,7 +104,13 @@ trait GraphOpsTrait[A] {
     GraphFactory.createGraphOfOpaques(nodes, true, g.getWeightFn)
   }
 
-  def getWeaklyConnectedComponents(g : G) : List[GraphTrait[A]] = ???
+  def getStronglyConnectedComponents() : List[ConnectedComponent[A]] = {
+    Scc(g).scc
+  }
+
+  def bipartite() : (List[String], List[String]) = {
+    { new Bipartite[A](g) }.bipart
+  }
 
   def topologicalSort() : List[TreeTrait[A]] = ???
 
@@ -184,55 +222,5 @@ trait NumericGrapOps[A <: Numeric[A] with Ordered[A]] extends OrderedGraphOps[A]
   def findMaxFlowSrcDest(src : String, dest : String, g : G) : A
 
   def findMaxFlowForEachSrcDest(g : G) : List[(String, String, A)]
-}
-
-trait TreeOpsTrait[A] extends GraphOpsTrait[A] {
-  val tree: TreeTrait[A]
-
-  def createAPreOrderedList: List[NodeTrait] = {
-    //a preordered list
-    val root = tree.rootNode
-
-    createAPreOrderedListInt(root, new mutable.Queue[NodeTrait]())
-
-  }
-
-  def createAPreOrderedListInt(node: NodeTrait, que: mutable.Queue[NodeTrait]) : List[NodeTrait] = {
-    if (!que.contains(node)) {
-      val children = node.children()
-      que.+=(node)
-      children.foldLeft(List(node)) { (z, el) =>
-        if (que.contains(el)) {
-          z
-        } else {
-          z ++ createAPreOrderedListInt(g.getNode(el), que)
-        }
-      }
-    } else {
-      Nil
-    }
-  }
-
-  def createAPostOrderedList: List[NodeTrait] = {
-     //a postordered list
-    val root = tree.rootNode
-    createAPostOrderedListInt(root, new mutable.Queue[NodeTrait]())
-
-  }
-
-   def createAPostOrderedListInt(node: NodeTrait, que: mutable.Queue[NodeTrait]) : List[NodeTrait] = {
-     if (!que.contains(node)) {
-       val children = node.children()
-       que.+=(node)
-       children.foldLeft(List[NodeTrait]()) { (z, el) =>
-         if (que.contains(el)) {
-           z
-         } else {
-           z ++ createAPostOrderedListInt(g.getNode(el), que)
-         }
-       } ++ List(node)
-     }
-     else Nil
-   }
 }
 

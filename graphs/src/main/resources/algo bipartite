@@ -1,0 +1,18 @@
+1.a bi partite is where we have two sets of nodes nonoverallapping. such that no inner edges exist in list1 or list2, Only cross edges are
+allowed from list 1 or list2.
+2. Singletons can be placed in list1 or list2.
+3.
+
+4.if x1-x2-x3-x1:
+l1: x1
+l2: x2
+
+but x3 can not be placed. so impossible. any odd cycle graph is non bipartite
+
+x1-x2-x3-x4-x1
+l1: x1 x3
+l2: x2  x4
+5.
+  1. choose x1 and place in l1.place all nnbrs in l2.nbrs of last stage in l1 ...
+  2. 1 is bfs(x1) where levels are placed in alternate lists.If this breaks down ,grapg is not bi partite
+  3. so find all bfs max(v^3) and assign  levels to a alternating lists. For firts one choose anylist.

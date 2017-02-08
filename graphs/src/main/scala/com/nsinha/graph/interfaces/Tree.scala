@@ -1,7 +1,6 @@
 package com.nsinha.graph.interfaces
 
-/**
-  * Created by nsinha on 2/7/17.
+/** Created by nsinha on 2/7/17.
   */
 class Tree[A](_rootNode : NodeTrait, g : GraphTrait[A]) extends TreeTrait[A] {
   override def rootNode = _rootNode

@@ -36,7 +36,7 @@ class TestGraph extends FunSuite with MustMatchers{
 
   }
 
-  test("test scc on random graph") {
+  test("test fcc on random graph") {
 
     val g1 = DotReader("/Users/nsinha/mygithubs/nsinha-misc2/graphs/src/test/resources/dotfile1.dot")
     g1.printGraphDot()
@@ -47,7 +47,7 @@ class TestGraph extends FunSuite with MustMatchers{
     }
   }
 
-  test("test scc on complete graph") {
+  test("test fcc on complete graph") {
 
     val g1 = DotReader("/Users/nsinha/mygithubs/nsinha-misc2/graphs/src/test/resources/dotfile2_fc.dot")
     g1.printGraph
@@ -59,7 +59,7 @@ class TestGraph extends FunSuite with MustMatchers{
   }
 
 
-  test("performance test scc on random graph") {
+  test("performance test fcc on random graph") {
     for {i <- Range(5, 21)
          prob <- Range(1, 10)
          times <- Range(1, 4)
@@ -89,6 +89,81 @@ class TestGraph extends FunSuite with MustMatchers{
       treeOps.printGraphDot()
     }
   }
+
+
+  test("test scc on random graph") {
+    for {i <- Range(5, 21)
+         prob <- Range(1, 10)
+         times <- Range(1, 4)
+    } {
+      val _g = GraphFactory.createGraphOfOpaquesRandom(i,prob/10.0)
+      val gOps = new GraphOpsTrait[OpaqeClass] {override val g =_g}
+      gOps.printGraphDot(s"/tmp/gfile${i}${prob}${times}")
+      val scc = gOps.getStronglyConnectedComponents()
+      scc map { sccelem =>
+        println(sccelem.name)
+      }
+      println("\n\n")
+    }
+  }
+
+  test("test bipartite on test graph") {
+
+    {
+      val gOps = DotReader("/Users/nsinha/mygithubs/nsinha-misc2/graphs/src/test/resources/dotfile1.dot")
+      gOps.printGraphDot()
+      val (l1, l2) = gOps.bipartite()
+      l1 map (x => print(x))
+      println("")
+      l2 map (x => print(x))
+      println("\n\n")
+    }
+    {
+      val gOps = DotReader("/Users/nsinha/mygithubs/nsinha-misc2/graphs/src/test/resources/testGraphBipartite.dot")
+      gOps.printGraphDot()
+      val (l1, l2) = gOps.bipartite()
+      l1 map (x => print(x))
+      println("")
+      l2 map (x => print(x))
+      println("\n\n")
+    }
+  }
+
+
+   test("test bipartite on random graph") {
+    for {i <- Range(5, 21)
+         prob <- Range(1, 10)
+         times <- Range(1, 4)
+    } {
+      val _g = GraphFactory.createGraphOfOpaquesRandom(i,prob/10.0)
+      val gOps = new GraphOpsTrait[OpaqeClass] {override val g =_g}
+      gOps.printGraphDot(s"/tmp/gfile${i}${prob}${times}")
+      val (l1,l2) = gOps.bipartite()
+
+      l1 map (x =>print(x))
+      println("")
+      l2 map (x => print(x))
+      println("/n/n")
+
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
   def testDfs[A](g: GraphOpsTrait[A]) = {

@@ -1,5 +1,5 @@
 1. n1 \sc n1 => n1 \reach n2 ^ n2 \reach n1
-2. 1. Find reachable e of every node.
+2. 1. Find reachable e of every node.(dfs or bfs)
    2. Create a graph Gnew with a new node for each corresponding G
    3. Create an edge between two nodes in Gnew if that node is in reach(node) in G(n^2 see 6)
    4. Gnew is thus fully defined.

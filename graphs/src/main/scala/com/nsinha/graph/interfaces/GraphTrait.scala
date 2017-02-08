@@ -45,7 +45,7 @@ trait GraphTrait[A] {
 
 trait TreeTrait[A] extends GraphTrait[A] {
   def rootNode : NodeTrait
-  def graph: GraphTrait[A]
+  def graph : GraphTrait[A]
 }
 
 trait OrderedTreeTrait[A <: Ordered[A]] extends TreeTrait[A]
