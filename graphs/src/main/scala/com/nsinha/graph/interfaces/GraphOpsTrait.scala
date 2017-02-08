@@ -187,9 +187,52 @@ trait NumericGrapOps[A <: Numeric[A] with Ordered[A]] extends OrderedGraphOps[A]
 }
 
 trait TreeOpsTrait[A] extends GraphOpsTrait[A] {
-  def preOrderList : List[NodeTrait]
+  val tree: TreeTrait[A]
 
-  def inOrderList : List[NodeTrait]
+  def createAPreOrderedList: List[NodeTrait] = {
+    //a preordered list
+    val root = tree.rootNode
 
-  def postOrderList : List[NodeTrait]
+    createAPreOrderedListInt(root, new mutable.Queue[NodeTrait]())
+
+  }
+
+  def createAPreOrderedListInt(node: NodeTrait, que: mutable.Queue[NodeTrait]) : List[NodeTrait] = {
+    if (!que.contains(node)) {
+      val children = node.children()
+      que.+=(node)
+      children.foldLeft(List(node)) { (z, el) =>
+        if (que.contains(el)) {
+          z
+        } else {
+          z ++ createAPreOrderedListInt(g.getNode(el), que)
+        }
+      }
+    } else {
+      Nil
+    }
+  }
+
+  def createAPostOrderedList: List[NodeTrait] = {
+     //a postordered list
+    val root = tree.rootNode
+    createAPostOrderedListInt(root, new mutable.Queue[NodeTrait]())
+
+  }
+
+   def createAPostOrderedListInt(node: NodeTrait, que: mutable.Queue[NodeTrait]) : List[NodeTrait] = {
+     if (!que.contains(node)) {
+       val children = node.children()
+       que.+=(node)
+       children.foldLeft(List[NodeTrait]()) { (z, el) =>
+         if (que.contains(el)) {
+           z
+         } else {
+           z ++ createAPostOrderedListInt(g.getNode(el), que)
+         }
+       } ++ List(node)
+     }
+     else Nil
+   }
 }
+

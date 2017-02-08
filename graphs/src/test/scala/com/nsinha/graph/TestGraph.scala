@@ -2,7 +2,7 @@ package com.nsinha.graph
 
 import com.nsinha.graph.appConfig.ApplicationConfig
 import com.nsinha.graph.factories.GraphFactory
-import com.nsinha.graph.interfaces.{GraphOpsTrait, OpaqeClass}
+import com.nsinha.graph.interfaces.{GraphOpsTrait, OpaqeClass, TreeOpsTrait}
 import com.nsinha.graph.utils.dot.DotReaderImpl
 import org.scalatest.{FunSuite, MustMatchers}
 
@@ -70,6 +70,24 @@ class TestGraph extends FunSuite with MustMatchers{
 
     }
 
+  }
+
+  test ("dfs and tree traversal list") {
+    val _g = GraphFactory.createGraphOfOpaquesRandom(6,.5)
+
+    val gOps = new GraphOpsTrait[OpaqeClass] {override val g =_g}
+
+    val treeDfsOpt = gOps.dfsTree("n0")
+    treeDfsOpt map { _tree =>
+      val treeOps = new TreeOpsTrait[OpaqeClass] {
+        override val tree = _tree
+        override val g = _tree.graph
+      }
+      treeOps.createAPreOrderedList map (x => print(x.name))
+      println()
+      treeOps.createAPostOrderedList map (x => print(x.name))
+      treeOps.printGraphDot()
+    }
   }
 
 
