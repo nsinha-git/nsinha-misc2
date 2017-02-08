@@ -6,10 +6,9 @@ import com.nsinha.graph.interfaces.{GraphOpsTrait, OpaqeClass, TreeOpsTrait}
 import com.nsinha.graph.utils.dot.DotReaderImpl
 import org.scalatest.{FunSuite, MustMatchers}
 
-/**
-  * Created by nsinha on 2/4/17.
+/** Created by nsinha on 2/4/17.
   */
-class TestGraph extends FunSuite with MustMatchers{
+class TestGraph extends FunSuite with MustMatchers {
   ApplicationConfig
 
   test("test dot reader") {
@@ -29,7 +28,7 @@ class TestGraph extends FunSuite with MustMatchers{
   test("test transpose") {
     val g1 = DotReader("/Users/nsinha/mygithubs/nsinha-misc2/graphs/src/test/resources/dotfile2_fc.dot")
     val g1T = new GraphOpsTrait[OpaqeClass] {
-      override val g: G = g1.transpose
+      override val g : G = g1.transpose
     }
     g1.printGraphDot("/tmp/graph.dot")
     g1T.printGraphDot("/tmp/graphT.dot")
@@ -42,7 +41,7 @@ class TestGraph extends FunSuite with MustMatchers{
     g1.printGraphDot()
 
     val sccs = g1.getFullyConnectedComponents
-    sccs map {scc =>
+    sccs map { scc ⇒
       println(scc.name)
     }
   }
@@ -53,19 +52,19 @@ class TestGraph extends FunSuite with MustMatchers{
     g1.printGraph
 
     val sccs = g1.getFullyConnectedComponents
-    sccs map {scc =>
+    sccs map { scc ⇒
       println(scc.name)
     }
   }
 
-
   test("performance test fcc on random graph") {
-    for {i <- Range(5, 21)
-         prob <- Range(1, 10)
-         times <- Range(1, 4)
+    for {
+      i ← Range(5, 21)
+      prob ← Range(1, 10)
+      times ← Range(1, 4)
     } {
-      val _g = GraphFactory.createGraphOfOpaquesRandom(i,prob/10.0)
-      val gOps = new GraphOpsTrait[OpaqeClass] {override val g =_g}
+      val _g = GraphFactory.createGraphOfOpaquesRandom(i, prob / 10.0)
+      val gOps = new GraphOpsTrait[OpaqeClass] { override val g = _g }
       gOps.getFullyConnectedComponents
 
     }
@@ -73,34 +72,34 @@ class TestGraph extends FunSuite with MustMatchers{
   }
 
   test ("dfs and tree traversal list") {
-    val _g = GraphFactory.createGraphOfOpaquesRandom(6,.5)
+    val _g = GraphFactory.createGraphOfOpaquesRandom(6, .5)
 
-    val gOps = new GraphOpsTrait[OpaqeClass] {override val g =_g}
+    val gOps = new GraphOpsTrait[OpaqeClass] { override val g = _g }
 
     val treeDfsOpt = gOps.dfsTree("n0")
-    treeDfsOpt map { _tree =>
+    treeDfsOpt map { _tree ⇒
       val treeOps = new TreeOpsTrait[OpaqeClass] {
         override val tree = _tree
         override val g = _tree.graph
       }
-      treeOps.createAPreOrderedList map (x => print(x.name))
+      treeOps.createAPreOrderedList map (x ⇒ print(x.name))
       println()
-      treeOps.createAPostOrderedList map (x => print(x.name))
+      treeOps.createAPostOrderedList map (x ⇒ print(x.name))
       treeOps.printGraphDot()
     }
   }
 
-
   test("test scc on random graph") {
-    for {i <- Range(5, 21)
-         prob <- Range(1, 10)
-         times <- Range(1, 4)
+    for {
+      i ← Range(5, 21)
+      prob ← Range(1, 10)
+      times ← Range(1, 4)
     } {
-      val _g = GraphFactory.createGraphOfOpaquesRandom(i,prob/10.0)
-      val gOps = new GraphOpsTrait[OpaqeClass] {override val g =_g}
+      val _g = GraphFactory.createGraphOfOpaquesRandom(i, prob / 10.0)
+      val gOps = new GraphOpsTrait[OpaqeClass] { override val g = _g }
       gOps.printGraphDot(s"/tmp/gfile${i}${prob}${times}")
       val scc = gOps.getStronglyConnectedComponents()
-      scc map { sccelem =>
+      scc map { sccelem ⇒
         println(sccelem.name)
       }
       println("\n\n")
@@ -113,63 +112,45 @@ class TestGraph extends FunSuite with MustMatchers{
       val gOps = DotReader("/Users/nsinha/mygithubs/nsinha-misc2/graphs/src/test/resources/dotfile1.dot")
       gOps.printGraphDot()
       val (l1, l2) = gOps.bipartite()
-      l1 map (x => print(x))
+      l1 map (x ⇒ print(x))
       println("")
-      l2 map (x => print(x))
+      l2 map (x ⇒ print(x))
       println("\n\n")
     }
     {
       val gOps = DotReader("/Users/nsinha/mygithubs/nsinha-misc2/graphs/src/test/resources/testGraphBipartite.dot")
       gOps.printGraphDot()
       val (l1, l2) = gOps.bipartite()
-      l1 map (x => print(x))
+      l1 map (x ⇒ print(x))
       println("")
-      l2 map (x => print(x))
+      l2 map (x ⇒ print(x))
       println("\n\n")
     }
   }
 
-
-   test("test bipartite on random graph") {
-    for {i <- Range(5, 21)
-         prob <- Range(1, 10)
-         times <- Range(1, 4)
+  test("test bipartite on random graph") {
+    for {
+      i ← Range(5, 21)
+      prob ← Range(1, 10)
+      times ← Range(1, 4)
     } {
-      val _g = GraphFactory.createGraphOfOpaquesRandom(i,prob/10.0)
-      val gOps = new GraphOpsTrait[OpaqeClass] {override val g =_g}
+      val _g = GraphFactory.createGraphOfOpaquesRandom(i, prob / 10.0)
+      val gOps = new GraphOpsTrait[OpaqeClass] { override val g = _g }
       gOps.printGraphDot(s"/tmp/gfile${i}${prob}${times}")
-      val (l1,l2) = gOps.bipartite()
+      val (l1, l2) = gOps.bipartite()
 
-      l1 map (x =>print(x))
+      l1 map (x ⇒ print(x))
       println("")
-      l2 map (x => print(x))
+      l2 map (x ⇒ print(x))
       println("/n/n")
 
     }
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  def testDfs[A](g: GraphOpsTrait[A]) = {
+  def testDfs[A](g : GraphOpsTrait[A]) = {
     val tree = g.dfsTree("n0")
 
-    tree.toList.map (x => {
+    tree.toList.map (x ⇒ {
       val gOps = new GraphOpsTrait[A] {
         override val g = x
       }
@@ -178,10 +159,10 @@ class TestGraph extends FunSuite with MustMatchers{
     })
   }
 
-  def testBfs[A](g: GraphOpsTrait[A]) = {
+  def testBfs[A](g : GraphOpsTrait[A]) = {
     val tree = g.bfsTree("n0")
 
-    tree.toList.map (x => {
+    tree.toList.map (x ⇒ {
       val gOps = new GraphOpsTrait[A] {
         override val g = x
       }
@@ -190,11 +171,11 @@ class TestGraph extends FunSuite with MustMatchers{
     })
   }
 
-  def DotReader(fileName: String) = {
+  def DotReader(fileName : String) = {
     val dotReader = new DotReaderImpl[OpaqeClass]
     val _g = dotReader.readFileIntoGraph(fileName)
     val graphOps = new GraphOpsTrait[OpaqeClass] {
-      override val g: G = _g
+      override val g : G = _g
     }
     graphOps
   }
