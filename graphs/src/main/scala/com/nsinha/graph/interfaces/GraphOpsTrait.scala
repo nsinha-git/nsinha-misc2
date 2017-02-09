@@ -4,6 +4,7 @@ import com.nsinha.graph.algorithms.Bipartite.Bipartite
 import com.nsinha.graph.algorithms.ConnectedComponent
 import com.nsinha.graph.algorithms.Fcc.Fcc
 import com.nsinha.graph.algorithms.Scc.Scc
+import com.nsinha.graph.algorithms.ToplogicalOrdering.TopologicalOrdering
 import com.nsinha.graph.factories.GraphFactory
 import com.nsinha.graph.utils.ExternalProcess
 import com.nsinha.library.{MonadicResult, MonadicResultImpl}
@@ -24,10 +25,18 @@ trait GraphOpsTrait[A] {
     val node = g.getNode(nodeName)
     val que = new mutable.Queue[NodeTrait]()
     que.enqueue(node)
-    val newNodesMonad = bfsTreeInt(que, mutable.Set())(new MonadicResultImpl[List[NodeTrait], Int](Nil, 0)(() ⇒ Nil, () ⇒ 0))
-    val newG = g.deepClone(newNodesMonad.getResult)
-    println(s"We spent ${newNodesMonad.getState}  in BFS")
+    val newNodesMonad = bfsTreeInt(que, mutable.Set(), nodeName)(new MonadicResultImpl[List[NodeTrait], Int](Nil, 0)(() ⇒ Nil, () ⇒ 0))(false)
+    val newG = g.deepClone(newNodesMonad._1.getResult)
+    println(s"We spent ${newNodesMonad._1.getState}  in BFS")
     Option(new Tree[A](node, newG))
+  }
+
+  def bfsTreeCycle(nodeName : String) : Boolean = {
+    val node = g.getNode(nodeName)
+    val que = new mutable.Queue[NodeTrait]()
+    que.enqueue(node)
+    val newNodesMonad = bfsTreeInt(que, mutable.Set(), nodeName)(new MonadicResultImpl[List[NodeTrait], Int](Nil, 0)(() ⇒ Nil, () ⇒ 0))(false)
+    newNodesMonad._2
   }
 
   def bfsTreeAll() : List[TreeTrait[A]] = {
@@ -112,7 +121,18 @@ trait GraphOpsTrait[A] {
     { new Bipartite[A](g) }.bipart
   }
 
-  def topologicalSort() : List[TreeTrait[A]] = ???
+  def doesHaveCycles() : Boolean = {
+    var cycles = false
+    for (node ← g.nodes) {
+      cycles = cycles | bfsTreeCycle(node.name)
+    }
+    cycles
+  }
+
+  def topologicalSort() : List[String] = {
+    val newTopo = new TopologicalOrdering[A](g)
+    newTopo.topoOrder()
+  }
 
   def createNewGraph(fn : GraphCreateFn[A]) : GraphTrait[A] = ???
 
@@ -190,22 +210,31 @@ trait GraphOpsTrait[A] {
     }
   }
 
-  private def bfsTreeInt(que : mutable.Queue[NodeTrait], visited : mutable.Set[String])(nodesMonads : MonadicResult[List[NodeTrait], Int]) : MonadicResult[List[NodeTrait], Int] = {
+  private def bfsTreeInt(que : mutable.Queue[NodeTrait], visited : mutable.Set[String], contextNode : String)(nodesMonads : MonadicResult[List[NodeTrait], Int])(cyclesPresent : Boolean) : (MonadicResult[List[NodeTrait], Int], Boolean) = {
     if (que.nonEmpty) {
       val curNode = que.dequeue()
       if (visited.contains(curNode.name)) {
-        bfsTreeInt(que, visited)(nodesMonads)
+        if (contextNode == curNode.name)
+          bfsTreeInt(que, visited, contextNode)(nodesMonads)(true)
+        else
+          bfsTreeInt(que, visited, contextNode)(nodesMonads)(cyclesPresent)
       }
       else {
         visited.+=(curNode.name)
         val newNode = curNode.deepClone(curNode.children() filter (x ⇒ if (visited.contains(x)) false else true))
         val newNodesMonad = nodesMonads map ((x, y) ⇒ (x.:+(newNode), y + 1))
         curNode.children() map (x ⇒ g.getNode(x)) foreach (x ⇒ que.enqueue(x))
-        newNodesMonad flatMap ((x, y) ⇒ bfsTreeInt(que, visited)(new MonadicResultImpl[List[NodeTrait], Int](x, y)(() ⇒ Nil, () ⇒ 0)))
+        var cyclesNew = false
+        val y = newNodesMonad flatMap { (x, y) ⇒
+          val z = bfsTreeInt(que, visited, contextNode)(new MonadicResultImpl[List[NodeTrait], Int](x, y)(() ⇒ Nil, () ⇒ 0))(cyclesPresent)
+          cyclesNew = cyclesNew | z._2
+          z._1
+        }
+        (y, cyclesNew | cyclesPresent)
       }
     }
     else {
-      nodesMonads
+      (nodesMonads, cyclesPresent)
     }
   }
 }

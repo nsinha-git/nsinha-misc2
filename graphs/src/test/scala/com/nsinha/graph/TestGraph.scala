@@ -147,11 +147,63 @@ class TestGraph extends FunSuite with MustMatchers {
     }
   }
 
+  test("test topo ordering on random graph") {
+
+    val gOps = DotReader("/Users/nsinha/mygithubs/nsinha-misc2/graphs/src/test/resources/testGraphBipartite.dot")
+    gOps.printGraphDot()
+
+    gOps.topologicalSort() map {
+      print(_)
+    }
+    println("\n\n")
+  }
+
+  test("test topo ordering on many random graph") {
+    for {
+      i ← Range(5, 21)
+      prob ← Range(1, 10)
+      times ← Range(1, 4)
+    } {
+      val _g = GraphFactory.createGraphOfOpaquesRandom(i, prob / 10.0)
+      val gOps = new GraphOpsTrait[OpaqeClass] {
+        override val g = _g
+      }
+      gOps.printGraphDot()
+
+      gOps.topologicalSort() map {
+        print(_)
+      }
+      println("\n\n")
+      println("\n\n")
+
+    }
+  }
+
+  test("test for cycles on many random graph") {
+    for {
+      i ← Range(5, 21)
+      prob ← Range(1, 10)
+      times ← Range(1, 4)
+    } {
+      val _g = GraphFactory.createGraphOfOpaquesRandom(i, prob / 10.0)
+      val gOps = new GraphOpsTrait[OpaqeClass] {
+        override val g = _g
+      }
+      gOps.printGraphDot()
+
+      println(gOps.doesHaveCycles())
+      println("\n\n")
+      println("\n\n")
+
+    }
+  }
+
   def testDfs[A](g : GraphOpsTrait[A]) = {
     val tree = g.dfsTree("n0")
 
     tree.toList.map (x ⇒ {
       val gOps = new GraphOpsTrait[A] {
+
         override val g = x
       }
       gOps.printGraph

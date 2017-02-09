@@ -1,0 +1,23 @@
+Postulates:
+    1. If n1 ↝ n2 then n1 < n2
+        1. if n2 ↝ n1 also true then topology is impossible.
+    2. If n1 ↮ n2   => n1 > n2 ,n2 < n1
+    3. if n1 and n2 are different then either n1 > n2 or n2 > n1
+    4 Topo provides a total ordering on set.
+    5. Example of local ordering that is constant for a constant  implementation.
+
+
+1. 1. Find the root nodes. This is doable in E
+   2. do a dfs on successive root nodes. This o(E) and print the result.
+   3. This is o(2E)
+
+2. Let do better than 1.
+   Do we need to find root nodes. nope
+   1. Pick any node in G and do a dfs.
+   2. Once finished, find uncovered sunncessive node and go to 1. else 3
+   3. Done
+   4. complexity: O(E + V)
+
+
+
+
