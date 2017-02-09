@@ -1,6 +1,6 @@
 package com.nsinha.graph.algorithms.Bipartite
 
-import com.nsinha.graph.interfaces.{GraphOpsTrait, GraphTrait, NodeTrait, TreeOpsTrait}
+import com.nsinha.graph.interfaces.{GraphOpsTrait, GraphTrait, TreeOpsTrait}
 
 import scala.collection.mutable
 

@@ -9,7 +9,6 @@ import com.nsinha.graph.factories.GraphFactory
 import com.nsinha.graph.utils.ExternalProcess
 import com.nsinha.library.{MonadicResult, MonadicResultImpl}
 
-import scala.collection.immutable.Queue
 import scala.collection.mutable
 import scala.reflect.io.File
 

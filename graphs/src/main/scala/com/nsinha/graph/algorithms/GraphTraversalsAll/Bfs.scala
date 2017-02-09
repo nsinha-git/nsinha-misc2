@@ -1,8 +1,6 @@
 package com.nsinha.graph.algorithms.GraphTraversalsAll
 
-import com.nsinha.graph.interfaces.{GraphTrait, NodeTrait, TreeTrait}
-
-import scala.collection.mutable
+import com.nsinha.graph.interfaces.NodeTrait
 
 /** x1
   * x2     x3
