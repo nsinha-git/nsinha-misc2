@@ -2,7 +2,7 @@ package com.nsinha.graph
 
 import com.nsinha.graph.appConfig.ApplicationConfig
 import com.nsinha.graph.factories.GraphFactory
-import com.nsinha.graph.interfaces.{GraphOpsTrait, OpaqeClass, TreeOpsTrait}
+import com.nsinha.graph.interfaces.{GraphOpsTrait, OpaqueClass, TreeOpsTrait}
 import com.nsinha.graph.utils.dot.DotReaderImpl
 import org.scalatest.{FunSuite, MustMatchers}
 
@@ -27,7 +27,7 @@ class TestGraph extends FunSuite with MustMatchers {
 
   test("test transpose") {
     val g1 = DotReader("/Users/nsinha/mygithubs/nsinha-misc2/graphs/src/test/resources/dotfile2_fc.dot")
-    val g1T = new GraphOpsTrait[OpaqeClass] {
+    val g1T = new GraphOpsTrait[OpaqueClass] {
       override val g : G = g1.transpose
     }
     g1.printGraphDot("/tmp/graph.dot")
@@ -64,7 +64,7 @@ class TestGraph extends FunSuite with MustMatchers {
       times ← Range(1, 4)
     } {
       val _g = GraphFactory.createGraphOfOpaquesRandom(i, prob / 10.0)
-      val gOps = new GraphOpsTrait[OpaqeClass] { override val g = _g }
+      val gOps = new GraphOpsTrait[OpaqueClass] { override val g = _g }
       gOps.getFullyConnectedComponents
 
     }
@@ -74,11 +74,11 @@ class TestGraph extends FunSuite with MustMatchers {
   test ("dfs and tree traversal list") {
     val _g = GraphFactory.createGraphOfOpaquesRandom(6, .5)
 
-    val gOps = new GraphOpsTrait[OpaqeClass] { override val g = _g }
+    val gOps = new GraphOpsTrait[OpaqueClass] { override val g = _g }
 
     val treeDfsOpt = gOps.dfsTree("n0")
     treeDfsOpt map { _tree ⇒
-      val treeOps = new TreeOpsTrait[OpaqeClass] {
+      val treeOps = new TreeOpsTrait[OpaqueClass] {
         override val tree = _tree
         override val g = _tree.graph
       }
@@ -96,7 +96,7 @@ class TestGraph extends FunSuite with MustMatchers {
       times ← Range(1, 4)
     } {
       val _g = GraphFactory.createGraphOfOpaquesRandom(i, prob / 10.0)
-      val gOps = new GraphOpsTrait[OpaqeClass] { override val g = _g }
+      val gOps = new GraphOpsTrait[OpaqueClass] { override val g = _g }
       gOps.printGraphDot(s"/tmp/gfile${i}${prob}${times}")
       val scc = gOps.getStronglyConnectedComponents()
       scc map { sccelem ⇒
@@ -135,7 +135,7 @@ class TestGraph extends FunSuite with MustMatchers {
       times ← Range(1, 4)
     } {
       val _g = GraphFactory.createGraphOfOpaquesRandom(i, prob / 10.0)
-      val gOps = new GraphOpsTrait[OpaqeClass] { override val g = _g }
+      val gOps = new GraphOpsTrait[OpaqueClass] { override val g = _g }
       gOps.printGraphDot(s"/tmp/gfile${i}${prob}${times}")
       val (l1, l2) = gOps.bipartite()
 
@@ -165,7 +165,7 @@ class TestGraph extends FunSuite with MustMatchers {
       times ← Range(1, 4)
     } {
       val _g = GraphFactory.createGraphOfOpaquesRandom(i, prob / 10.0)
-      val gOps = new GraphOpsTrait[OpaqeClass] {
+      val gOps = new GraphOpsTrait[OpaqueClass] {
         override val g = _g
       }
       gOps.printGraphDot()
@@ -186,7 +186,7 @@ class TestGraph extends FunSuite with MustMatchers {
       times ← Range(1, 4)
     } {
       val _g = GraphFactory.createGraphOfOpaquesRandom(i, prob / 10.0)
-      val gOps = new GraphOpsTrait[OpaqeClass] {
+      val gOps = new GraphOpsTrait[OpaqueClass] {
         override val g = _g
       }
       gOps.printGraphDot()
@@ -224,9 +224,9 @@ class TestGraph extends FunSuite with MustMatchers {
   }
 
   def DotReader(fileName : String) = {
-    val dotReader = new DotReaderImpl[OpaqeClass]
+    val dotReader = new DotReaderImpl[OpaqueClass]
     val _g = dotReader.readFileIntoGraph(fileName)
-    val graphOps = new GraphOpsTrait[OpaqeClass] {
+    val graphOps = new GraphOpsTrait[OpaqueClass] {
       override val g : G = _g
     }
     graphOps

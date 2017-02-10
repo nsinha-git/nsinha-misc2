@@ -2,7 +2,7 @@ package com.nsinha.graph.application
 
 import com.nsinha.graph.appConfig.ApplicationConfig
 import com.nsinha.graph.factories.GraphFactory
-import com.nsinha.graph.interfaces.{GraphOpsTrait, OpaqeClass}
+import com.nsinha.graph.interfaces.{GraphOpsTrait, OpaqueClass}
 import com.nsinha.graph.utils.dot.DotReaderImpl
 
 /** Created by nsinha on 1/28/17.
@@ -14,7 +14,7 @@ object TestOpaqueGraph {
 
   def main(args : Array[String]) : Unit = {
     val _g = GraphFactory.createGraphOfOpaquesInteractive()
-    val graphOps = new GraphOpsTrait[OpaqeClass] {
+    val graphOps = new GraphOpsTrait[OpaqueClass] {
       override val g : G = _g
     }
 
@@ -52,9 +52,9 @@ object TestOpaqueGraph {
   }
 
   def testDotReader(fileName : String) = {
-    val dotReader = new DotReaderImpl[OpaqeClass]
+    val dotReader = new DotReaderImpl[OpaqueClass]
     val _g = dotReader.readFileIntoGraph(fileName)
-    val graphOps = new GraphOpsTrait[OpaqeClass] {
+    val graphOps = new GraphOpsTrait[OpaqueClass] {
       override val g : G = _g
     }
 

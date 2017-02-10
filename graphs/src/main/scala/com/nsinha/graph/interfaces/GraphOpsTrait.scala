@@ -8,7 +8,6 @@ import com.nsinha.graph.algorithms.ToplogicalOrdering.TopologicalOrdering
 import com.nsinha.graph.factories.GraphFactory
 import com.nsinha.graph.utils.ExternalProcess
 import com.nsinha.library.{MonadicResult, MonadicResultImpl}
-
 import scala.collection.mutable
 import scala.reflect.io.File
 
@@ -236,19 +235,5 @@ trait GraphOpsTrait[A] {
       (nodesMonads, cyclesPresent)
     }
   }
-}
-
-trait OrderedGraphOps[A <: Ordered[A]] extends GraphOpsTrait[A] {
-  def minSpanningTree(g : G) : OrderedTreeTrait[A] = ???
-}
-
-trait NumericGrapOps[A <: Numeric[A] with Ordered[A]] extends OrderedGraphOps[A] {
-  def findMinDistSrcDest(src : String, dest : String, g : G) : Option[A]
-
-  def findMinDistForEachSrcDest(g : G) : List[(String, String, Option[A])]
-
-  def findMaxFlowSrcDest(src : String, dest : String, g : G) : A
-
-  def findMaxFlowForEachSrcDest(g : G) : List[(String, String, A)]
 }
 

@@ -1,0 +1,49 @@
+1.
+    1. The algo picks repetedly one edge of E such that two disjoint graphs becomes joined. The step finishes when no more
+disjoint graphs remain.
+    2. The least edge of remaining is always picked.
+    3. The assumption is graph is  connected.
+
+2. 1. The complexity comes from  sorting E (n^2logn) for first time into sorted queue.
+   2. Then removing inapplicable edges.
+   3. Then picking top of queue of what remains.
+
+3. Let's use a 2 ques to implement the 2.
+   It means go through the 1st queue and add it to 2nd queue only if the edges are not filtered by 3.2.
+   This is o(E) for each edge picked.
+   Total cost  becomes:O(2*E^2logE + E*n)≈ O(4n^2log(n)+ n^3)
+
+   can we do better than n^3 in second term.
+
+4. Can we maintain a n queues one for each node in sorted state. We pick the least of given ques at any stage. When we
+remove a node by adding to a iterative result graph we can simply remove edges to that node from all ques whose node are
+in abuilding graph. This is no better than 3 as we have to visit order of all ques and and do the removal.
+
+5. I did analysis somewhere else so using deux ex machina i will say:
+    0. If we use a max/min tree to represent the  queue of edges, we can do better: lets see:
+    1. We start with an empty in-making Gm and create a max tree of all the edges.The queue is E elements so heap is height logE by balanced property of a heap.
+    2. If cardinality of Gm < m , we choose the top edge of heap.
+    3. We update the weight of edge to limit that will be o(logE) in cost.
+    4. We update the weight of all the edges that comes to the newly added node (by property that the additional edge
+     That was just added brings in a new node) from the in-making graph. The in  comimg edges is kept as
+      part of augmented node. This is o(n) as there can be at max n -edges to a node.
+    5. For each of these edges the weight is updated to limit to remove them from consideration.
+    6. We get nlogn from 5.
+    7. Total us (n+1)logn.
+    8. We go back to 2 till we done
+    9. Total spent O(n^2+n)logn
+    So we did improve second term from n^3 to n^2logn getting O(5n^2logn)
+
+6. Can we do better or prove otherwise. Using Heap on heap e can reduce the second term to nlogn. so overall we can end up
+O(4n^2*logn + nlogn) ≈ O(4n^2*logn) an improvement over o(5n^2logn)
+
+
+
+
+
+
+
+
+
+
+

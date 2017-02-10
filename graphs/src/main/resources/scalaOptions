@@ -1,0 +1,1 @@
+  -deprecation  -explaintypes -feature    -g:source -language:_ -opt:_ -opt-warnings:_ -unchecked    -verbose     -Xcheckinit  -Xdev     -Xfatal-warnings  -Xfuture         -Xlint:_ -Xlog-implicit-conversions -Xlog-implicits    -Xlog-reflective-calls -Xprint:_ -Xshow-phases  -Xstrict-inference
