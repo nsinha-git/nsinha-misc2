@@ -57,7 +57,7 @@ class DotReaderImpl[A] extends DotReaderToGraphTrait[A] {
     } toList
 
     new Graph[A](_nodes = nodes, _isDirected = true, (x : (String, String), y : Int) ⇒ new Weight[A] {
-      override def getWeight : A = ???
+      override val getWeight : A = ???
     })
   }
 }

@@ -8,7 +8,7 @@ trait Attribute {
 }
 
 trait Weight[A] {
-  def getWeight : A
+  val getWeight : A
 }
 
 trait NodeTrait {
@@ -22,10 +22,11 @@ trait NodeTrait {
   def deepClone(alternateChildren : List[String]) : NodeTrait
 }
 
-trait EdgeTrait[A] {
+trait EdgeTrait[A] extends Ordered[EdgeTrait[A]] {
   val name : (String, String)
   val isDirected : Boolean
   val weight : Weight[A]
+  def compare(that : EdgeTrait[A]) : Int = ???
 }
 
 trait GraphTrait[A] {

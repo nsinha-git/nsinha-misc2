@@ -20,9 +20,13 @@ object OrderedGraphFactory extends GraphFactoryCommon {
       new Node(s"n$i", Math.cos(Math.PI * 2 * i / totalNodes), Math.sin(Math.PI * 2 * i / totalNodes), l map (x ⇒ s"n$x"))
     }
 
-    new Graph[OrderedOpaqueClass](_nodes = nodes, _isDirected = directed, (x : (String, String), y : Int) ⇒ new Weight[OrderedOpaqueClass] {
-      override def getWeight = new OrderedOpaqueClass(math.random().toString)
+    new GraphOrdered[OrderedOpaqueClass](_nodes = nodes, _isDirected = directed, (x : (String, String), y : Int) ⇒ new Weight[OrderedOpaqueClass] {
+      override val getWeight = new OrderedOpaqueClass(math.random().toString)
     })
+  }
+
+  def createGraphFromEdgesAndNodes[A <: Ordered[A]](_nodesNames : List[String], _edges : List[EdgeTrait[A]], _isDirected : Boolean, generateWeight : ((String, String), Int) ⇒ Weight[A]) : GraphOrdered[A] = {
+    GraphOrdered.createAGraph[A](_nodesNames, _edges, _isDirected, generateWeight)
   }
 
 }

@@ -1,9 +1,14 @@
 package com.nsinha.graph.interfaces
 
+import com.nsinha.graph.interfaces
+
+import scala.collection.mutable
+
 /** Created by nsinha on 2/1/17.
   */
 
 class Graph[A](_nodes : List[NodeTrait], _isDirected : Boolean, generateWeight : ((String, String), Int) ⇒ Weight[A]) extends GraphTrait[A] {
+
   val _edges = generateEdgesFromNodes(_nodes)
   val nameToNodes : Map[String, NodeTrait] = createNodesMap()
   val (srcDestToEdges : Map[(String, String), EdgeTrait[A]], srcToEdges : Map[String, List[EdgeTrait[A]]], destToEdges : Map[String, List[EdgeTrait[A]]]) = createEdgesMap()
@@ -41,7 +46,7 @@ class Graph[A](_nodes : List[NodeTrait], _isDirected : Boolean, generateWeight :
     nameToNodes(n)
   }
 
-  private def generateEdgesFromNodes(nodes : List[NodeTrait]) : List[EdgeTrait[A]] = {
+  protected def generateEdgesFromNodes(nodes : List[NodeTrait]) : List[EdgeTrait[A]] = {
     val x = (nodes zip Range(0, nodes.length)) flatMap {
       elem ⇒
         val subList : List[EdgeTrait[A]] = elem match {
@@ -98,5 +103,22 @@ class Graph[A](_nodes : List[NodeTrait], _isDirected : Boolean, generateWeight :
       }
     )
   }
+
 }
 
+object Graph {
+  def createAGraph[A](_nodesNames : List[String], _edges : List[EdgeTrait[A]], _isDirected : Boolean, generateWeight : ((String, String), Int) ⇒ Weight[A]) : Graph[A] = {
+    new Graph(getNodesFromEdges(_nodesNames, _edges), _isDirected, generateWeight)
+  }
+
+  def getNodesFromEdges[A](nodesNames : List[String], _edges : List[EdgeTrait[A]]) : List[NodeTrait] = {
+    val nodeMap = nodesNames.foldLeft(mutable.Map[String, List[String]]()) { (z, el) ⇒ z += (el → Nil) }
+    val nodes = _edges.foldLeft(nodeMap.toMap) { (z, el) ⇒
+      val src = el.name._1
+      val dest = el.name._2
+      val l = z(src) :+ (dest)
+      z + (src → l)
+    }
+    nodes map { el ⇒ new Node(el._1, 0, 0, el._2.toSet.toList) } toList
+  }
+}

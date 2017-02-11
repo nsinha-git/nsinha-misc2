@@ -45,7 +45,7 @@ object GraphFactory extends GraphFactoryCommon {
     }
 
     new Graph[OpaqueClass](_nodes = nodes, _isDirected = directed, (x : (String, String), y : Int) ⇒ new Weight[OpaqueClass] {
-      override def getWeight = new OpaqueClass("opaqueWeight")
+      override val getWeight = new OpaqueClass("opaqueWeight")
     })
   }
 
@@ -69,7 +69,7 @@ object GraphFactory extends GraphFactoryCommon {
     }
 
     new Graph[OpaqueClass](_nodes = nodes, _isDirected = directed, (x : (String, String), y : Int) ⇒ new Weight[OpaqueClass] {
-      override def getWeight = new OpaqueClass("opaqueWeight")
+      override val getWeight = new OpaqueClass("opaqueWeight")
     })
   }
 
