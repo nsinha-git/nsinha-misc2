@@ -38,6 +38,39 @@ in abuilding graph. This is no better than 3 as we have to visit order of all qu
 O(4n^2*logn + nlogn) ≈ O(4n^2*logn) an improvement over o(5n^2logn)
 
 
+7.
+  1. The above algorithm clearly does not protect against the disconnected graphs even though the underlying graph is connected.
+  2. There can be cycles.
+  Let's prove these:
+  P1: Cycles may result:
+    1. Consider the   resulting intermediate graph after kth stepz which is not last step and graph has no cycles.
+    2. There is always a node that has no incoming edges. This is proved by simple counting argument. At any step before
+    the last step there are k-1 edges and k nodes as as by 1 we dont have cycles.
+    3. If The least edge added at the current step does not add any node then we add a cycle.
+    4.QED
+  P2: Only one cycle may exist in single connected component.
+    1. Use P1 with the argument that, after a cycle is drawn in a connected component, all incoming edges to that
+    connecting comment has been exhausted.
+  P3. There may exist disconnected componenets.
+    1. Let's we have choosen n-2 edges adn graph  still remains disconnected into two components.
+    2. The next step results in cycle in c1. The last step results in cycle in c2.
+    3. We are done.
+  P4. A disconnected graph will always have two cycles distributed in atleast two components.
+
+
+
+8. 1. To solve the symptomatic cases of 7, we need to ensure no cycles ever result.
+   2. At every iteration we need to make sure that the edge we add does not result in cycles.
+   3. When removing an edge and the edge group, we need to first test edge for creating a cycle and remove it from
+    the edge group if that happens. The test assuming is π, the removing the edge from group in a heap is o(logn). Reading
+    the group back to heap is o(logn). We at worst case do it n times. so total is n(π + 2* o(logn)). We can always perform a cycle check
+    for common ancestor src and dest. so π turns out to be 2*o(logn) for gathering the ancestors and set intersection wihich is another o(logn)
+   4. The total complexity of second step now becomes o(β*n^2logn).  β is constant >= 5
+
+   5. Total complexity is o(5n^2logn)
+
+
+
 
 
 

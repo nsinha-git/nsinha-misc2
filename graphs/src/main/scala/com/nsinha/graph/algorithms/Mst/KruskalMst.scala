@@ -1,5 +1,6 @@
 package com.nsinha.graph.algorithms.Mst
 
+import com.nsinha.graph.algorithms.CommonAncestor.CommonAncestor
 import com.nsinha.graph.interfaces._
 
 import scala.collection.mutable
@@ -21,8 +22,8 @@ class KruskalMst[A <: Ordered[A]](g : GraphTrait[A]) {
     //O(E)
     val incomingSetsWithMin = createSetsOfIncomingEdgesEquivalenceClassGroupedByDest() map { x ⇒ x._1 → (x._2, x._2.min) }
 
-    implicit val ord = new Ordering[(String, EdgeTrait[A])] {
-      override def compare(x : (String, EdgeTrait[A]), y : (String, EdgeTrait[A])) : Int = {
+    implicit val ord = new Ordering[(String, EdgeTrait[A], Set[EdgeTrait[A]])] {
+      override def compare(x : (String, EdgeTrait[A], Set[EdgeTrait[A]]), y : (String, EdgeTrait[A], Set[EdgeTrait[A]])) : Int = {
         if (x._2.weight.getWeight == y._2.weight.getWeight) {
           y._1.compare(x._1)
         }
@@ -32,20 +33,28 @@ class KruskalMst[A <: Ordered[A]](g : GraphTrait[A]) {
       }
 
     }
-    val pQue = new mutable.PriorityQueue[(String, EdgeTrait[A])]()
+    val pQue = new mutable.PriorityQueue[(String, EdgeTrait[A], Set[EdgeTrait[A]])]()
 
     //o(n)
-    incomingSetsWithMin foreach { x ⇒ pQue.enqueue((x._1 → x._2._2)) }
+    incomingSetsWithMin foreach { x ⇒
+      pQue.enqueue((x._1, x._2._2, x._2._1))
+    }
 
     //we need to repeat till the que is empty
     var listNodes : mutable.MutableList[String] = mutable.MutableList()
     var edges : mutable.MutableList[EdgeTrait[A]] = mutable.MutableList()
-    var i = 0
-    while (pQue.nonEmpty & i < (g.nodes.size - 1)) { //every loop costs o(logn) . every node adds one loop, so nlogn
-      val x = pQue.dequeue()
-      listNodes += (x._2.name._1, x._2.name._2)
-      edges += (x._2)
-      i = i + 1
+    val commonAncestor = new CommonAncestor
+    while (pQue.nonEmpty) {
+      val x = pQue.dequeue
+      if (commonAncestor.checkCycleOK(x._2.name._1, x._2.name._2)) {
+        listNodes += (x._2.name._1, x._2.name._2)
+        edges += (x._2)
+      }
+      else {
+        val set = x._3 diff (Set(x._2))
+        val key = x._1
+        if (set.nonEmpty) pQue.enqueue((key, set.min, set))
+      }
     }
 
     //total is just o(E +nlogn). This beats cormen -rivest bound if this works.

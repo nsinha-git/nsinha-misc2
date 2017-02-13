@@ -11,7 +11,7 @@ import org.scalatest.{FunSuite, MustMatchers}
 class TestOrderedGraph extends FunSuite with MustMatchers {
 
   test("test mst kruskal on test graph") {
-    val _g = OrderedGraphFactory.createGraphOfOpaquesRandom(10, 1)
+    val _g = OrderedGraphFactory.createGraphOfOpaquesRandom(20, 1)
     val gOps = new OrderedGraphOps[OrderedOpaqueClass] {
       override val g = _g
     }
@@ -27,12 +27,4 @@ class TestOrderedGraph extends FunSuite with MustMatchers {
 
   }
 
-  def DotReader(fileName : String) = {
-    val dotReader = new DotReaderImpl[OpaqueClass]
-    val _g = dotReader.readFileIntoGraph(fileName)
-    val graphOps = new GraphOpsTrait[OpaqueClass] {
-      override val g : G = _g
-    }
-    graphOps
-  }
 }
