@@ -17,7 +17,7 @@ import com.nsinha.graph.interfaces.NodeTrait
   * = bfs(que(x1 x2 x5),[x1 x2 x3 x4],[x1 x2x3x4]) = bfs(q(x2 x5), [x1 x2 x3 x4),[x1 x2 x3 x4])=
   * =bfs(q(x5) ,[x1 x2 x3 x4],[x1 x2 x3 x4]) = ...
   * bfs(xn, context) = x \in Context | phi
-  *              else |que + x1 x2
+  *             else |que + x1 x2
   * 1.bfs(xn,context) => bfs(x,[]) ^^ bfstree(x) \dontintesect context
   * 2.bfs(xn,context) => bfs(x,[]) == bfs(xn,context) ++ bfs(m,[]) \foreach m in context ^^ bfs(x,[]) ^^ bfstree(x) \intersect context
   * once done with a node:

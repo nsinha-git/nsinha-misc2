@@ -9,11 +9,11 @@ object KruskalMinSpanningTree extends MinSpanningTree
 object PrimsMinSpanningTree extends MinSpanningTree
 trait OrderedGraphOps[A <: Ordered[A]] extends GraphOpsTrait[A] {
 
-  def minSpanningTree(style: String = "kruskal") : Option[OrderedGraphTrait[A]] = {
+  def minSpanningTree(style : String = "kruskal") : Option[OrderedGraphTrait[A]] = {
     style.toLowerCase() match {
-      case "kruskal" =>
+      case "kruskal" ⇒
         { new KruskalMst[A](g) }.doMst
-      case "prim" =>
+      case "prim" ⇒
         { new PrimsMst[A](g) }.doMst
     }
   }

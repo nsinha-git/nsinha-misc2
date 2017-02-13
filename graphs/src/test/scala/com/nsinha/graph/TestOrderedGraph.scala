@@ -27,7 +27,6 @@ class TestOrderedGraph extends FunSuite with MustMatchers {
 
   }
 
-
   test("test mst prim on test graph") {
     val _g = OrderedGraphFactory.createGraphOfOpaquesRandom(10, 1)
     val gOps = new OrderedGraphOps[OrderedOpaqueClass] {
