@@ -1,12 +1,13 @@
+A note: Both Kruskal and Prim are greedy algorithms that work on certain properties of particular graphs. They cant
+be used to find MST on a general graph. As an argument, the first step of kruskal starts with a random edge (lowest
+cost) and that itself can fragment a graph in unconnected components.Similar with a Prims case where a random node is
+choosen and  edges incidnt or precedent with that nodes are considered. But selecting that random edge can have
+implications as we saw! But the algo works as axiomated when the graph is fully connected.
+
 0. ni =n1
 1. Add ni to Q
-2. Find all outgoing edges from ni not connecting to Q. O(n) in finding those edges. Add it to outgoing edges to OEQ .
-3. Find the least of outgoing edge from OEQ. This is o(nlogE). The edge thus found gurantees to bring in a new node
+2. Find all outgoing/incoming edges from ni not connecting to Q. O(n) in finding those edges. Add it to  edges to OEQ.
+     o(nlogE).
+3. Find the least of  edge from OEQ. This is o(1). The edge thus found gurantees to bring in a new node
 4. ni = newly added node.goto 1
 5. The loop runs n times. Each loop costs o(n) + n *logE = n^2logE + n^2 ≈ n^2logn.
-
-
-
-
-
-
