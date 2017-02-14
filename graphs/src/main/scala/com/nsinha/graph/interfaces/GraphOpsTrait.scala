@@ -150,11 +150,9 @@ trait GraphOpsTrait[A] {
       writer.append(n1.x+" "+n1.y+" "+color(x.name, g)+" "+n1.name+"\n")
       writer.append(n2.x+" "+n2.y+" "+color(x.name, g)+" "+n2.name+"\n\n")
     }
-
     writer.close()
     //call a gnuplot process
     ExternalProcess(Seq("/usr/local/bin/gnuplot", "-c", "/Users/nsinha/mygithubs/nsinha-misc2/graphs/src/main/resources/run.gnuplot"))
-
     ExternalProcess(Seq("/usr/bin/open", "/tmp/graphOp.ps"))
   }
 
@@ -179,7 +177,6 @@ trait GraphOpsTrait[A] {
     writer.close()
     //call a gnuplot process
     ExternalProcess(Seq("/usr/local/bin/dot", "-Tpng", "-O", fileName))
-
     ExternalProcess(Seq("/usr/bin/open", s"${fileName}.png"))
   }
 

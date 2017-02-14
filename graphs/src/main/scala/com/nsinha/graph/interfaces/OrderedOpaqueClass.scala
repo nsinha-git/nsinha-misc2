@@ -5,3 +5,9 @@ package com.nsinha.graph.interfaces
 case class OrderedOpaqueClass(name : String) extends Ordered[OrderedOpaqueClass] {
   override def compare(that : OrderedOpaqueClass) : Int = name.compare(that.name)
 }
+
+
+
+
+
+
