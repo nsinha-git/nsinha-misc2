@@ -1,4 +1,6 @@
-package com.nsinha.graph.interfaces
+package com.nsinha.graph.interfaces.Graph
+
+import com.nsinha.graph.interfaces.Common.Weight
 
 /** Created by nsinha on 2/9/17.
   */
@@ -44,7 +46,7 @@ class GraphOrdered[A <: Ordered[A]](_nodes : List[NodeTrait], _isDirected : Bool
 
 }
 object GraphOrdered {
-  import Graph._
+  import com.nsinha.graph.interfaces.Graph.Graph._
   def createAGraph[A <: Ordered[A]](_nodesNames : List[String], _edges : List[EdgeTrait[A]], _isDirected : Boolean, generateWeight : ((String, String), Int) ⇒ Weight[A]) : GraphOrdered[A] = {
     new GraphOrdered[A](getNodesFromEdges(_nodesNames, _edges), _isDirected, generateWeight)
   }

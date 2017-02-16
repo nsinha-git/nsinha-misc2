@@ -1,5 +1,7 @@
 package com.nsinha.graph.algorithms.ToplogicalOrdering
 
+import com.nsinha.graph.interfaces.Graph.GraphTrait
+import com.nsinha.graph.interfaces.Ops.{GraphOpsTrait, TreeOpsTrait}
 import com.nsinha.graph.interfaces._
 
 import scala.collection.mutable

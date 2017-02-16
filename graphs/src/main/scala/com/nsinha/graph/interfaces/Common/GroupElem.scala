@@ -1,8 +1,9 @@
-package com.nsinha.graph.interfaces
+package com.nsinha.graph.interfaces.Common
 
 /**
   * Created by nsinha on 2/13/17.
   */
+
 trait GroupElem[A] {
   def `+`(that: A): A
   def `0`: A
@@ -24,7 +25,6 @@ case class AssociativeGroupElem(name: String) extends Ordered[AssociativeGroupEl
   override def `+`(that: AssociativeGroupElem) = AssociativeGroupElem((this.name.toDouble + that.name.toDouble).toString)
   override def `0` = AssociativeGroupElem("0")
 }
-
 
 case class UnAssociativeNonDistributiveRingElem(name: String) extends Ordered[UnAssociativeNonDistributiveRingElem] with RingElem[UnAssociativeNonDistributiveRingElem] {
   override def compare(that : UnAssociativeNonDistributiveRingElem) : Int = name.compare(that.name)

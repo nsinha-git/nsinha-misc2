@@ -1,8 +1,9 @@
 package com.nsinha.graph.application
 
 import com.nsinha.graph.appConfig.ApplicationConfig
+import com.nsinha.graph.edgeTypes.OpaqueClass
 import com.nsinha.graph.factories.GraphFactory
-import com.nsinha.graph.interfaces.{GraphOpsTrait, OpaqueClass}
+import com.nsinha.graph.interfaces.Ops.GraphOpsTrait
 import com.nsinha.graph.utils.dot.DotReaderImpl
 
 /** Created by nsinha on 1/28/17.

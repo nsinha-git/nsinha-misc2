@@ -1,4 +1,4 @@
-package com.nsinha.graph.interfaces
+package com.nsinha.graph.interfaces.Ops
 
 /** Created by nsinha on 2/8/17.
   */

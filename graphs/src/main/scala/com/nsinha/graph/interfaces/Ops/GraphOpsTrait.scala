@@ -1,13 +1,17 @@
-package com.nsinha.graph.interfaces
+package com.nsinha.graph.interfaces.Ops
 
 import com.nsinha.graph.algorithms.Bipartite.Bipartite
 import com.nsinha.graph.algorithms.ConnectedComponent
-import com.nsinha.graph.algorithms.Fcc.Fcc
-import com.nsinha.graph.algorithms.Scc.Scc
+import com.nsinha.graph.algorithms.FullyConnectedComponent.Fcc
+import com.nsinha.graph.algorithms.StronglyConnectedComponent.Scc
 import com.nsinha.graph.algorithms.ToplogicalOrdering.TopologicalOrdering
 import com.nsinha.graph.factories.GraphFactory
+import com.nsinha.graph.interfaces.Common.Attribute
+import com.nsinha.graph.interfaces.Graph._
+import com.nsinha.graph.interfaces._
 import com.nsinha.graph.utils.ExternalProcess
 import com.nsinha.library.{MonadicResult, MonadicResultImpl}
+
 import scala.collection.mutable
 import scala.reflect.io.File
 

@@ -1,6 +1,7 @@
 package com.nsinha.graph.algorithms.Mst
 
 import com.nsinha.graph.algorithms.CommonAncestor.CommonAncestor
+import com.nsinha.graph.interfaces.Graph.{EdgeTrait, GraphOrdered, GraphTrait}
 import com.nsinha.graph.interfaces._
 
 import scala.collection.mutable

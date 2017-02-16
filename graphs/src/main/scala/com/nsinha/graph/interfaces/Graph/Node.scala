@@ -1,4 +1,6 @@
-package com.nsinha.graph.interfaces
+package com.nsinha.graph.interfaces.Graph
+
+import com.nsinha.graph.interfaces.Common.Attribute
 
 /** Created by nsinha on 2/1/17.
   */

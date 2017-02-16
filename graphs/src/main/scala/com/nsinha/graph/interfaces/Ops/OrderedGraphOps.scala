@@ -1,6 +1,7 @@
-package com.nsinha.graph.interfaces
+package com.nsinha.graph.interfaces.Ops
 
 import com.nsinha.graph.algorithms.Mst.{KruskalMst, PrimsMst}
+import com.nsinha.graph.interfaces.Graph.OrderedGraphTrait
 
 /** Created by nsinha on 2/8/17.
   */

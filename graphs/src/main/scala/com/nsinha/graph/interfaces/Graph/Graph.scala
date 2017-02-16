@@ -1,6 +1,7 @@
-package com.nsinha.graph.interfaces
+package com.nsinha.graph.interfaces.Graph
 
-import com.nsinha.graph.interfaces
+import com.nsinha.graph.interfaces.Common.Weight
+import com.nsinha.graph.interfaces._
 
 import scala.collection.mutable
 

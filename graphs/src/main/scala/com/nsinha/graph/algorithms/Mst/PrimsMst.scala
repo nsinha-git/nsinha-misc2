@@ -1,6 +1,6 @@
 package com.nsinha.graph.algorithms.Mst
 
-import com.nsinha.graph.interfaces.{EdgeTrait, GraphOrdered, GraphTrait, NodeTrait}
+import com.nsinha.graph.interfaces.Graph.{EdgeTrait, GraphOrdered, GraphTrait}
 
 import scala.collection.mutable
 

@@ -1,33 +1,6 @@
-package com.nsinha.graph.interfaces
+package com.nsinha.graph.interfaces.Graph
 
-/** Created by nsinha on 1/27/17.
-  */
-trait Attribute {
-  def name : String
-  def value : String
-}
-
-trait Weight[A] {
-  val getWeight : A
-}
-
-trait NodeTrait {
-  val x : Double = 0
-  val y : Double = 0
-  def children() : List[String]
-  def name : String
-  def attributes : List[Attribute]
-  def setAttribute(attribute : Attribute)
-  def deepClone() : NodeTrait
-  def deepClone(alternateChildren : List[String]) : NodeTrait
-}
-
-trait EdgeTrait[A] extends Ordered[EdgeTrait[A]] {
-  val name : (String, String)
-  val isDirected : Boolean
-  val weight : Weight[A]
-  def compare(that : EdgeTrait[A]) : Int = ???
-}
+import com.nsinha.graph.interfaces.Common.Weight
 
 trait GraphTrait[A] {
   val nodes : List[NodeTrait]

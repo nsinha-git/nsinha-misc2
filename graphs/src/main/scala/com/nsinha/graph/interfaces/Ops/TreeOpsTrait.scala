@@ -1,4 +1,6 @@
-package com.nsinha.graph.interfaces
+package com.nsinha.graph.interfaces.Ops
+
+import com.nsinha.graph.interfaces.Graph.{NodeTrait, TreeTrait}
 
 import scala.collection.mutable
 

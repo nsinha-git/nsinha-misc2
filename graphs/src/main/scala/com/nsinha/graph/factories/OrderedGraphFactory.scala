@@ -1,5 +1,8 @@
 package com.nsinha.graph.factories
 
+import com.nsinha.graph.edgeTypes.OrderedOpaqueClass
+import com.nsinha.graph.interfaces.Common.Weight
+import com.nsinha.graph.interfaces.Graph._
 import com.nsinha.graph.interfaces._
 
 import scala.util.control.NonFatal

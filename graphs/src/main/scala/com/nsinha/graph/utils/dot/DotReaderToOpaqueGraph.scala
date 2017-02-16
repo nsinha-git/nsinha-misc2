@@ -1,5 +1,7 @@
 package com.nsinha.graph.utils.dot
 
+import com.nsinha.graph.interfaces.Common.Weight
+import com.nsinha.graph.interfaces.Graph.{Graph, GraphTrait, Node}
 import com.nsinha.graph.interfaces._
 
 import scala.collection.mutable

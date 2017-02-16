@@ -1,11 +1,11 @@
 package com.nsinha.graph.factories
 
-import com.nsinha.graph.appConfig.ApplicationConfig
-import com.nsinha.graph.interfaces._
+import com.nsinha.graph.edgeTypes.OpaqueClass
+import com.nsinha.graph.interfaces.Common.Weight
+import com.nsinha.graph.interfaces.Graph.{Graph, GraphTrait, Node, NodeTrait}
 
 import scala.io.StdIn
 import scala.util.control.NonFatal
-import scala.util.{Failure, Random, Success, Try}
 
 /** Created by nsinha on 1/27/17.
   */

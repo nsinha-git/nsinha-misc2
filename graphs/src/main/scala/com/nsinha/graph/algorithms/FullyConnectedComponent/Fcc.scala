@@ -1,7 +1,8 @@
-package com.nsinha.graph.algorithms.Fcc
+package com.nsinha.graph.algorithms.FullyConnectedComponent
 
 import com.nsinha.graph.algorithms.ConnectedComponent
-import com.nsinha.graph.interfaces.{GraphOpsTrait, GraphTrait, NodeTrait}
+import com.nsinha.graph.interfaces.Graph.{GraphTrait, NodeTrait}
+import com.nsinha.graph.interfaces.Ops.GraphOpsTrait
 
 import scala.collection.mutable
 

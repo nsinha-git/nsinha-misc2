@@ -1,8 +1,9 @@
 package com.nsinha.graph
 
 import com.nsinha.graph.appConfig.ApplicationConfig
+import com.nsinha.graph.edgeTypes.OpaqueClass
 import com.nsinha.graph.factories.GraphFactory
-import com.nsinha.graph.interfaces.{GraphOpsTrait, OpaqueClass, TreeOpsTrait}
+import com.nsinha.graph.interfaces.Ops.{GraphOpsTrait, TreeOpsTrait}
 import com.nsinha.graph.utils.dot.DotReaderImpl
 import org.scalatest.{FunSuite, MustMatchers}
 

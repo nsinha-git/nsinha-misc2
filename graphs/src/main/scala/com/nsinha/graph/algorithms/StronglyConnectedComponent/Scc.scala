@@ -1,7 +1,8 @@
-package com.nsinha.graph.algorithms.Scc
+package com.nsinha.graph.algorithms.StronglyConnectedComponent
 
 import com.nsinha.graph.algorithms.ConnectedComponent
-import com.nsinha.graph.interfaces.{GraphOpsTrait, GraphTrait, TreeOpsTrait}
+import com.nsinha.graph.interfaces.Graph.GraphTrait
+import com.nsinha.graph.interfaces.Ops.{GraphOpsTrait, TreeOpsTrait}
 
 /** Created by nsinha on 2/7/17.
   */

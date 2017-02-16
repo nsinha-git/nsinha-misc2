@@ -1,6 +1,6 @@
 package com.nsinha.graph.algorithms.GraphTraversalsAll
 
-import com.nsinha.graph.interfaces.NodeTrait
+import com.nsinha.graph.interfaces.Graph.NodeTrait
 
 /** x1
   * x2     x3

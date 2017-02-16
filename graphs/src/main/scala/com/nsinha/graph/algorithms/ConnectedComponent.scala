@@ -1,6 +1,6 @@
 package com.nsinha.graph.algorithms
 
-import com.nsinha.graph.interfaces.NodeTrait
+import com.nsinha.graph.interfaces.Graph.NodeTrait
 
 /** Created by nsinha on 2/4/17.
   */

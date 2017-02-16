@@ -1,4 +1,4 @@
-package com.nsinha.graph.interfaces
+package com.nsinha.graph.edgeTypes
 
 /** Created by nsinha on 1/27/17.
   */
