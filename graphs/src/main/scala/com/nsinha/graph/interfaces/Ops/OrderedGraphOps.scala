@@ -17,5 +17,3 @@ trait OrderedGraphOps[A <: Ordered[A]] extends GraphOpsTrait[A] {
   }
 }
 
-
-

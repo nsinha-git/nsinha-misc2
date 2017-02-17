@@ -1,7 +1,7 @@
 package com.nsinha.graph.algorithms.Mst
 
 import com.nsinha.graph.algorithms.CommonAncestor.CommonAncestor
-import com.nsinha.graph.interfaces.Graph.{EdgeTrait, GraphOrdered, GraphTrait}
+import com.nsinha.graph.interfaces.Graph.{OrderedEdgeTrait, GraphOrdered, GraphTrait}
 import com.nsinha.graph.interfaces._
 
 import scala.collection.mutable
@@ -12,8 +12,8 @@ import scala.collection.mutable
 //sort by edges
 class KruskalMst[A <: Ordered[A]](g : GraphTrait[A]) {
 
-  def createSetsOfIncomingEdgesEquivalenceClassGroupedByDest() : Map[String, Set[EdgeTrait[A]]] = {
-    val mp = mutable.Map[String, List[EdgeTrait[A]]]()
+  def createSetsOfIncomingEdgesEquivalenceClassGroupedByDest() : Map[String, Set[OrderedEdgeTrait[A]]] = {
+    val mp = mutable.Map[String, List[OrderedEdgeTrait[A]]]()
     //o(E)
     g.nodes foreach { el ⇒ mp.+=(el.name → g.getEdgeWithDest(el.name)) }
     mp map (x ⇒ x._1 → x._2.toSet) toMap
@@ -23,8 +23,8 @@ class KruskalMst[A <: Ordered[A]](g : GraphTrait[A]) {
     //O(E)
     val incomingSetsWithMin = createSetsOfIncomingEdgesEquivalenceClassGroupedByDest() map { x ⇒ x._1 → (x._2, x._2.min) }
 
-    implicit val ord = new Ordering[(String, EdgeTrait[A], Set[EdgeTrait[A]])] {
-      override def compare(x : (String, EdgeTrait[A], Set[EdgeTrait[A]]), y : (String, EdgeTrait[A], Set[EdgeTrait[A]])) : Int = {
+    implicit val ord = new Ordering[(String, OrderedEdgeTrait[A], Set[OrderedEdgeTrait[A]])] {
+      override def compare(x : (String, OrderedEdgeTrait[A], Set[OrderedEdgeTrait[A]]), y : (String, OrderedEdgeTrait[A], Set[OrderedEdgeTrait[A]])) : Int = {
         if (x._2.weight.getWeight == y._2.weight.getWeight) {
           y._1.compare(x._1)
         }
@@ -34,7 +34,7 @@ class KruskalMst[A <: Ordered[A]](g : GraphTrait[A]) {
       }
 
     }
-    val pQue = new mutable.PriorityQueue[(String, EdgeTrait[A], Set[EdgeTrait[A]])]()
+    val pQue = new mutable.PriorityQueue[(String, OrderedEdgeTrait[A], Set[OrderedEdgeTrait[A]])]()
 
     //o(n)
     incomingSetsWithMin foreach { x ⇒
@@ -43,7 +43,7 @@ class KruskalMst[A <: Ordered[A]](g : GraphTrait[A]) {
 
     //we need to repeat till the que is empty
     var listNodes : mutable.MutableList[String] = mutable.MutableList()
-    var edges : mutable.MutableList[EdgeTrait[A]] = mutable.MutableList()
+    var edges : mutable.MutableList[OrderedEdgeTrait[A]] = mutable.MutableList()
     val commonAncestor = new CommonAncestor
     while (pQue.nonEmpty) {
       val x = pQue.dequeue

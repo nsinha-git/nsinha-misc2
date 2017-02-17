@@ -1,14 +1,14 @@
 package com.nsinha.graph.interfaces.Graph
 
-import com.nsinha.graph.interfaces.Common.Weight
+import com.nsinha.graph.interfaces.Common.{RingElem, Weight}
 
 trait GraphTrait[A] {
   val nodes : List[NodeTrait]
-  val edges : List[EdgeTrait[A]]
+  val edges : List[OrderedEdgeTrait[A]]
   def checkConsistency : Boolean
-  def getEdge(n : NodeTrait) : List[EdgeTrait[A]]
-  def getEdgeWithSrc(n : String) : List[EdgeTrait[A]]
-  def getEdgeWithDest(n : String) : List[EdgeTrait[A]]
+  def getEdge(n : NodeTrait) : List[OrderedEdgeTrait[A]]
+  def getEdgeWithSrc(n : String) : List[OrderedEdgeTrait[A]]
+  def getEdgeWithDest(n : String) : List[OrderedEdgeTrait[A]]
   def getNode(n : String) : NodeTrait
   def isDirected : Boolean
   def getWeightFn : ((String, String), Int) ⇒ Weight[A]
@@ -24,6 +24,9 @@ trait TreeTrait[A] extends GraphTrait[A] {
 
 trait OrderedTreeTrait[A <: Ordered[A]] extends TreeTrait[A]
 trait OrderedGraphTrait[A <: Ordered[A]] extends GraphTrait[A]
+
+trait AssociativeNonDistributiveGraphTrait[A <: RingElem[A]] extends GraphTrait[A]
+trait AssociativeDistributiveGraphTrait[A <: RingElem[A]] extends GraphTrait[A]
 
 trait NumericTreeTrait[A <: Numeric[A] with Ordered[A]] extends OrderedTreeTrait[A]
 trait NumericGraphTrait[A <: Numeric[A] with Ordered[A]] extends OrderedGraphTrait[A]

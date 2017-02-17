@@ -2,8 +2,7 @@ package com.nsinha.graph.interfaces.Graph
 
 import com.nsinha.graph.interfaces.Common.Attribute
 
-/**
-  * Created by nsinha on 2/16/17.
+/** Created by nsinha on 2/16/17.
   */
 trait NodeTrait {
   val x : Double = 0

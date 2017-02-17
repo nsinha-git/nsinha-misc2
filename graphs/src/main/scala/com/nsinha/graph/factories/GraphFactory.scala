@@ -1,7 +1,6 @@
 package com.nsinha.graph.factories
 
-import com.nsinha.graph.edgeTypes.OpaqueClass
-import com.nsinha.graph.interfaces.Common.Weight
+import com.nsinha.graph.interfaces.Common.{OpaqueClass, Weight}
 import com.nsinha.graph.interfaces.Graph.{Graph, GraphTrait, Node, NodeTrait}
 
 import scala.io.StdIn

@@ -1,10 +1,10 @@
 package com.nsinha.graph.interfaces.Graph
 
-import com.nsinha.graph.interfaces.Common.Weight
+import com.nsinha.graph.interfaces.Common.{RingElem, Weight}
 
-/** Created by nsinha on 2/9/17.
+/** Created by nsinha on 2/16/17.
   */
-class GraphOrdered[A <: Ordered[A]](_nodes : List[NodeTrait], _isDirected : Boolean, generateWeight : ((String, String), Int) ⇒ Weight[A]) extends Graph[A](_nodes, _isDirected, generateWeight) with OrderedGraphTrait[A] {
+class GraphAssociativeNonDistributive[A <: RingElem[A]](_nodes : List[NodeTrait], _isDirected : Boolean, generateWeight : ((String, String), Int) ⇒ Weight[A]) extends Graph[A](_nodes, _isDirected, generateWeight) with AssociativeNonDistributiveGraphTrait[A] {
 
   override protected def generateEdgesFromNodes(nodes : List[NodeTrait]) : List[OrderedEdgeTrait[A]] = {
     val x = (nodes zip Range(0, nodes.length)) flatMap {
@@ -42,12 +42,5 @@ class GraphOrdered[A <: Ordered[A]](_nodes : List[NodeTrait], _isDirected : Bool
       z.toSet.toList
     }
     else y
-  }
-
-}
-object GraphOrdered {
-  import com.nsinha.graph.interfaces.Graph.Graph._
-  def createAGraph[A <: Ordered[A]](_nodesNames : List[String], _edges : List[OrderedEdgeTrait[A]], _isDirected : Boolean, generateWeight : ((String, String), Int) ⇒ Weight[A]) : GraphOrdered[A] = {
-    new GraphOrdered[A](getNodesFromEdges(_nodesNames, _edges), _isDirected, generateWeight)
   }
 }

@@ -1,13 +1,13 @@
 package com.nsinha.graph.algorithms.Mst
 
-import com.nsinha.graph.interfaces.Graph.{EdgeTrait, GraphOrdered, GraphTrait}
+import com.nsinha.graph.interfaces.Graph.{OrderedEdgeTrait, GraphOrdered, GraphTrait}
 
 import scala.collection.mutable
 
 /** Created by nsinha on 2/13/17.
   */
 class PrimsMst[A <: Ordered[A]](g : GraphTrait[A]) {
-  type PqueType = EdgeTrait[A]
+  type PqueType = OrderedEdgeTrait[A]
   implicit val ord = new Ordering[PqueType] {
     override def compare(x : PqueType, y : PqueType) : Int = {
       y.weight.getWeight.compare(x.weight.getWeight)
@@ -17,7 +17,7 @@ class PrimsMst[A <: Ordered[A]](g : GraphTrait[A]) {
 
   def doMst : Option[GraphOrdered[A]] = {
     val processedQ = new mutable.Queue[String]()
-    val edgesTaken = new mutable.MutableList[EdgeTrait[A]]()
+    val edgesTaken = new mutable.MutableList[OrderedEdgeTrait[A]]()
     var ni = g.nodes.head
     var break = false
     while (!break) {
@@ -39,10 +39,10 @@ class PrimsMst[A <: Ordered[A]](g : GraphTrait[A]) {
     Option(GraphOrdered.createAGraph[A](processedQ.toSet.toList, edgesTaken.toList, g.isDirected, g.getWeightFn))
   }
 
-  def checkIfDestInQ(e : EdgeTrait[A], q : mutable.Queue[String]) : Boolean = {
+  def checkIfDestInQ(e : OrderedEdgeTrait[A], q : mutable.Queue[String]) : Boolean = {
     q.contains(e.name._2)
   }
-  def checkIfSrcInQ(e : EdgeTrait[A], q : mutable.Queue[String]) : Boolean = {
+  def checkIfSrcInQ(e : OrderedEdgeTrait[A], q : mutable.Queue[String]) : Boolean = {
     q.contains(e.name._1)
   }
 

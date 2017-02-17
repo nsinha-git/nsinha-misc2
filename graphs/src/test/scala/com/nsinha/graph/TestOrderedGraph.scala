@@ -1,8 +1,8 @@
 package com.nsinha.graph
 
 import com.nsinha.graph.appConfig.ApplicationConfig
-import com.nsinha.graph.edgeTypes.OrderedOpaqueClass
 import com.nsinha.graph.factories.{GraphFactory, OrderedGraphFactory}
+import com.nsinha.graph.interfaces.Common.OrderedOpaqueClass
 import com.nsinha.graph.interfaces.Ops.OrderedGraphOps
 import com.nsinha.graph.interfaces._
 import com.nsinha.graph.utils.dot.DotReaderImpl
