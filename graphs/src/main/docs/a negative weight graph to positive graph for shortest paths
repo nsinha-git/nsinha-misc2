@@ -1,0 +1,43 @@
+1. Kind of how jhonson works
+
+2. So if a ↝ b is negative with -2 b ↝c is 4 c↝a is 5 we want a Ω that should convert such that b~c =0 and the shortest path still finds
+the correct routes.
+
+3. so s(a,b)=a-b s(a,c)=a-b-c
+    s(b,a) = b-a s(b,c)=b-c
+    s(c,a) =c-b-a s(c,b) = c-b
+  should still be true in the graphs
+
+4. so in a transformed grap if we some how maintain snew(a,b) = s(a,b) + F. then the graph should always be okay for shortest path. F is
+    a constant
+
+5 If we chose K that's min of the all negative weights and add it to every edge, we will change the sp as links with longer length
+ will get penalized.
+
+6. if we increase any edge, then we we affect any SP if it goes through that edge. If we decrement  it we may not.
+
+7. There is a slack between min and next path that can be choosen.
+
+8. A link may be constrained under many such slacks in graph. The min(slack) is kind of range the link may move w/o affecting paths.
+
+9. So looks like we can not change the links just by itself as they affect paths going along it.
+A  def of path is f(n, {wi})  where n is number of links and wi is array of weights.
+
+10. Let's change few things w/o  affecting  that path.
+
+     3       -1
+a  ------ b ------ c
+
+
+
+
+
+
+
+
+
+
+
+
+
+
