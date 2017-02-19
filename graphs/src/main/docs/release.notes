@@ -1,6 +1,6 @@
 Next working on:
 
-1. Working on Ordered graphs and related algos.MST -kruskal; and prims
+1. Working on max flow
 -----------
 good to have
 0. Bfs All in o(n^2)
