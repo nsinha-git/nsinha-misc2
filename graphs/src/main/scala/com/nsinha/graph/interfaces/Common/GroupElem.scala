@@ -20,7 +20,7 @@ case class UnAssociativeGroupElem(name : String) extends Ordered[UnAssociativeGr
   override def compare(that : UnAssociativeGroupElem) : Int = name.toDouble.compare(that.name.toDouble)
   override def `+`(that : UnAssociativeGroupElem) = UnAssociativeGroupElem((this.name.toDouble - that.name.toDouble).toString)
   override def `0` = UnAssociativeGroupElem("0")
-  override def toString: String =  name
+  override def toString : String = name
 }
 //hard to imagine any shortest path concept in this group
 case class UnAssociativeNonDistributiveRingElem(name : String) extends Ordered[UnAssociativeNonDistributiveRingElem] with RingElem[UnAssociativeNonDistributiveRingElem] {
@@ -29,7 +29,7 @@ case class UnAssociativeNonDistributiveRingElem(name : String) extends Ordered[U
   override def `0` = UnAssociativeNonDistributiveRingElem("0")
   override def `*`(that : UnAssociativeNonDistributiveRingElem) = UnAssociativeNonDistributiveRingElem((this.name.toDouble / that.name.toDouble).toString)
   override def `1` = UnAssociativeNonDistributiveRingElem("1")
-  override def toString: String =  name
+  override def toString : String = name
 }
 
 /*
@@ -42,7 +42,7 @@ case class AssociativeGroupElem(name : String) extends Ordered[AssociativeGroupE
   override def `+`(that : AssociativeGroupElem) = AssociativeGroupElem((this.name.toDouble + that.name.toDouble).toString)
   override def `-`(that : AssociativeGroupElem) = AssociativeGroupElem((this.name.toDouble - that.name.toDouble).toString)
   override def `0` = AssociativeGroupElem("0")
-  override def toString: String =  name
+  override def toString : String = name
 }
 
 case class AssociativeNonDistributiveRingElem(name : String) extends RingElem[AssociativeNonDistributiveRingElem] {
@@ -52,7 +52,7 @@ case class AssociativeNonDistributiveRingElem(name : String) extends RingElem[As
   override def `0` = AssociativeNonDistributiveRingElem("0")
   override def `*`(that : AssociativeNonDistributiveRingElem) = AssociativeNonDistributiveRingElem((this.name.toDouble / that.name.toDouble).toString)
   override def `1` = AssociativeNonDistributiveRingElem("1")
-  override def toString: String =  name
+  override def toString : String = name
 }
 
 //the best field as far as optimization of algorithms matter.
@@ -63,6 +63,6 @@ case class AssociativeDistributiveRingElem(name : String) extends RingElem[Assoc
   override def `0` = AssociativeDistributiveRingElem("0")
   override def `*`(that : AssociativeDistributiveRingElem) = AssociativeDistributiveRingElem((this.name.toDouble * that.name.toDouble).toString)
   override def `1` = AssociativeDistributiveRingElem("1")
-  override def toString: String =  name
+  override def toString : String = name
 }
 

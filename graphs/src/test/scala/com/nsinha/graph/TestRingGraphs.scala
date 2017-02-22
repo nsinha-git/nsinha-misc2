@@ -4,7 +4,7 @@ import com.nsinha.graph.factories.{AssociativeNonDistributiveGraphFactory, Graph
 import com.nsinha.graph.interfaces.Common.{AssociativeNonDistributiveRingElem, OrderedOpaqueClass}
 import com.nsinha.graph.interfaces.Ops.{AssociativeNonDistributiveGraphOps, OrderedGraphOps}
 import com.nsinha.graph.interfaces._
-import com.nsinha.graph.utils.dot.DotReaderImpl
+import com.nsinha.graph.utils.dot.{DotReaderImpl, DotReaderImplForAssociativeNonDistributiveRingGraphs}
 import org.scalatest.{FunSuite, MustMatchers}
 
 /** Created by nsinha on 2/17/17.
@@ -48,17 +48,27 @@ class TestRingGraphs extends FunSuite {
     gOps.printGraphDot("/tmp/1")
     val flowOpt = gOps.findMaxFlowSrcDest("n0", "n3")
     flowOpt match {
-      case Some(flow) =>
+      case Some(flow) ⇒
         println(s"maxFlow = ${flow._1}")
-        flow._2 foreach { x =>
+        flow._2 foreach { x ⇒
           println(s"${x._1}")
           println(x._2.mkString("-"))
         }
-      case None =>
+      case None ⇒
         println("No flow")
 
     }
+  }
 
+  test("read a dot file") {
+    val dotReader = new DotReaderImplForAssociativeNonDistributiveRingGraphs
+    val _g = dotReader.readFileIntoGraph("/tmp/1")
 
+    val gOps = new AssociativeNonDistributiveGraphOps[AssociativeNonDistributiveRingElem] {
+      override val g = _g
+      override val Zero = AssociativeNonDistributiveRingElem("0")
+    }
+
+    gOps.printGraphDot("/tmp/2")
   }
 }

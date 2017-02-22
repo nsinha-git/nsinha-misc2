@@ -19,11 +19,10 @@ trait AssociativeNonDistributiveGraphOps[A <: RingElem[A]] extends OrderedGraphO
   }
 
   def findMaxFlowSrcDest(src : String, dest : String) : Option[(A, List[(A, List[String])])] = {
-    { new MaxFlow[A](g)}.getMaxFlow(src,dest)
+    { new MaxFlow[A](g) }.getMaxFlow(src, dest)
   }
 
   def findMaxFlowForEachSrcDest : List[(String, String, A)] = ???
-
 
   override def printGraphDot(fileName : String = "/tmp/graph.dot") = {
     val f = new File(new java.io.File(fileName))
@@ -40,7 +39,7 @@ trait AssociativeNonDistributiveGraphOps[A <: RingElem[A]] extends OrderedGraphO
       val n1 = g.getNode(x.name._1)
       val n2 = g.getNode(x.name._2)
 
-      writer.append(n1.name+"->"+n2.name+s"[label=${x.weight.getWeight}]" + "\n")
+      writer.append(n1.name+"->"+n2.name + s"[label=${x.weight.getWeight}]"+"\n")
     }
 
     writer.append("}\n")
