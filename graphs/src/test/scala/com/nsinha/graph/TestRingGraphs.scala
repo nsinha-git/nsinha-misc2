@@ -38,4 +38,27 @@ class TestRingGraphs extends FunSuite {
       }
     }
   }
+
+  test("a max flow problem") {
+    val _g = AssociativeNonDistributiveGraphFactory.createRandomGraph(4, 1)
+    val gOps = new AssociativeNonDistributiveGraphOps[AssociativeNonDistributiveRingElem] {
+      override val g = _g
+      override val Zero = AssociativeNonDistributiveRingElem("0")
+    }
+    gOps.printGraphDot("/tmp/1")
+    val flowOpt = gOps.findMaxFlowSrcDest("n0", "n3")
+    flowOpt match {
+      case Some(flow) =>
+        println(s"maxFlow = ${flow._1}")
+        flow._2 foreach { x =>
+          println(s"${x._1}")
+          println(x._2.mkString("-"))
+        }
+      case None =>
+        println("No flow")
+
+    }
+
+
+  }
 }

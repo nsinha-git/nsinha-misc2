@@ -56,9 +56,9 @@ class Graph[A](_nodes : List[NodeTrait], _isDirected : Boolean, generateWeight :
             node.children() map {
               x ⇒
                 new OrderedEdgeTrait[A] {
-                  val name = (src, x)
-                  val isDirected = _isDirected
-                  val weight = generateWeight(name, cnt)
+                  var name = (src, x)
+                  var isDirected = _isDirected
+                  var weight = generateWeight(name, cnt)
                 }
             }
           case _ ⇒ Nil
@@ -73,9 +73,9 @@ class Graph[A](_nodes : List[NodeTrait], _isDirected : Boolean, generateWeight :
       val z = y flatMap {
         el ⇒
           List(el, new OrderedEdgeTrait[A] {
-            val name = (el.name._2, el.name._1)
-            val isDirected = _isDirected
-            val weight = el.weight
+            var name = (el.name._2, el.name._1)
+            var isDirected = _isDirected
+            var weight = el.weight
           })
       }
       z.toSet.toList

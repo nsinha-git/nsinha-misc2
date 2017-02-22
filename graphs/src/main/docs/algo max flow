@@ -12,7 +12,8 @@ A unproved but conjectured to be correct algorithm
 1. given src,dest, undirected graph where edge weights means flow volume
 2. at any time find all routes from src,dest  and for the each route find the max sustainable
 flow which is min of the edge link in that route!If no routes exist escape to 5.
-3. Choose the min path and mark(decrement) the links used in the path to the usage levels by this path.
+3. Choose the min path and mark(decrement) the links used in the path to the usage levels by this path.If there are multiple
+min paths branch for each min and choose the one that results in max flow.
 4. Delete the edges that are full. Get a new Gcur and goto 2.
 5. The accumulated paths sum decide the max flow.
 ==============
