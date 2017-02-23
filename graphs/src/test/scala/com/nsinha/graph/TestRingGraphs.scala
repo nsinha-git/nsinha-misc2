@@ -71,4 +71,27 @@ class TestRingGraphs extends FunSuite {
 
     gOps.printGraphDot("/tmp/2")
   }
+
+  test ("read a graph from clrs and check if the max flow works") {
+    val dotReader = new DotReaderImplForAssociativeNonDistributiveRingGraphs
+    val _g = dotReader.readFileIntoGraph("/Users/nsinha/mygithubs/nsinha-misc2/graphs/src/test/resources/clrsFlowGraph.dot")
+
+    val gOps = new AssociativeNonDistributiveGraphOps[AssociativeNonDistributiveRingElem] {
+      override val g = _g
+      override val Zero = AssociativeNonDistributiveRingElem("0")
+    }
+
+    gOps.printGraphDot("/tmp/1")
+    val flowOpt = gOps.findMaxFlowSrcDest("Vancouver", "Winnipeg")
+    flowOpt match {
+      case Some(flow) ⇒
+        println(s"maxFlow = ${flow._1}")
+        flow._2 foreach { x ⇒
+          println(s"${x._1}")
+          println(x._2.mkString("-"))
+        }
+      case None ⇒
+        println("No flow")
+    }
+  }
 }

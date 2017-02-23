@@ -1,0 +1,17 @@
+digraph d {
+Vancouver [label=Vancouver;]
+Edmonton [label=Edmonton;]
+Saskatoon [label=Saskatoon;]
+Calgary [label=Calgary;]
+Regina [label=Regina;]
+Winnipeg [label=Winnipeg;]
+Vancouver->Edmonton[label=16]
+Vancouver->Calgary[label=13]
+Edmonton->Saskatoon[label=12]
+Calgary->Edmonton[label=4]
+Calgary->Regina[label=14]
+Regina->Winnipeg[label=4]
+Regina->Saskatoon[label=7]
+Saskatoon->Calgary[label=9]
+Saskatoon->Winnipeg[label=20]
+}
