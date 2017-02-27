@@ -1,0 +1,17 @@
+0. Think of a new graph with these criteria.
+1. An earlier  node is related to later nodes if they are ordered.
+2. We reduce egress edges coming out of a node to just one: next higher element. (Edge reduction transformation called ET)
+3. Assume we have such G with filtered edges after 2.
+4. G can be written as pairs too. every node with it's next node.(isomorphism)
+5. Let's have solnSpace S for m<n. Exit to exit: when m =n.
+    1. Let's look at m+1 th pair in G. Alias pm+1
+    2. pm+1 can increase length of all seq. that have their end less that left of pm+1.Let there be S survivors.
+    3. Increase len of all survivors  of S that benefit from pm+1. repalce old with new!
+    In light of 4. each survivor family has unique (len, right-end suffix) attribute. We can work on only required
+    subsets of survivor in o(logh) where h is min-end suffix that fits to pm+1.All h are candidates for pm+1.
+    But again by 4 only the longest one would survive, so eliminate all keeping the longest one.
+    4. Let's say we have more than 1 survivor for any pm+1. We know locally about a global path. The one with
+    lower right will always form a proper susper set for rest of survivors in the group. So we can choose just
+    the longest length right survivor.Among same longest len survivors, choose any(can be shown will have a unique choice anyways).
+  exit:
+    The longest survivor is best. Quote it.
