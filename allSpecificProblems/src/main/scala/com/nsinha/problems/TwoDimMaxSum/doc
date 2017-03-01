@@ -1,0 +1,19 @@
+1. The matrix consists of integers (pos and negative).
+2.
+++++++-+++
+---++++--+
++++++++++-
+++-++-++--
+
+3. 1.Given a left top and right bottom of a matrix, generate all sub matricies for the matrix.
+   2.The sub matricies are found by noting (a,b) and (c,d) and generating all pairs of (x,y) and (p,q)
+    where x,p is in a,c inclusive and y,q in b,d.  After visiting every submatrices, generate two sub-matrices
+     by dividing at first col, and summing  the sum of these sub matrices.
+   3. Keep a DP table for each of these calculated components.
+4. While doing 3 also update tag the max of all values found.
+
+5. output the max value with the corresponding submatrice
+
+
+
+

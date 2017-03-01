@@ -1,0 +1,16 @@
+1. It's a variant of set-cover probelem with sprinlklers representing a subset.
+2. We need to find the min of such subsets to cover the graph
+3. Can we not visit any of the subsets. No, as the not visted one can be maximum per se and belong to maximal solns.
+4. so o(n) atleast
+5. C1. Can we pick the largest subset  and reduce to a subproblem with correct deletions of nodes.(note in general graph
+picking the largest does not order the graph)
+6. Let's prove the incorrectness of C1 for a general graph.
+    0.Denot max subset M and best choice that global would habe chosen as Gx.
+    1.If there is another good subset in the optimal path, that good subset can only remove less elements compared to our choice.
+     This will lead to a sub problem that is only bigger than what our choice could have choosen,so subproblem(M) > subproblem(Gx)
+    2. The remaining subsets get transformed to x' = x - M or x -Gx.
+    3. Let subspace Gx has a direct next susbet N as sol so Gx + N = G
+        in case we chose M, we can show N' , and Gx' still cover the remaining graph. but only N' still may not. proving that choosing max
+        greedily is not optimal.
+
+7. is C1 good enough for this graph:No never. Same argument will exactly hold. So we got to test all paths. No greedy exists.
