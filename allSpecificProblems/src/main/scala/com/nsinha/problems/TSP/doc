@@ -1,0 +1,4 @@
+0.TSP is finiding a tour that visits every vertex once and only once with least cost edge.
+1.choose any vertex and ind all paths
+2.The paths naturally follow a suffix grouping.
+3. So DP makes sense.

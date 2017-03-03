@@ -1,0 +1,23 @@
+1. A choclate with atomic pieces are laid out in rectangular grid mxn
+2. K pieces {k1,k2, ...kn} needs to be satisfied by only axial cuts and one piece only
+3. Note that if sum .K >  mxn: there exists  no cuts to satisfy the requirement.
+4. We can store DP state(row,col, satisfiedK} as DP keys.
+5. But in certain cases the 4 may be too large.
+6. can we optimize 4
+7. Let;s try storing just (row,satisfiedK). We need to notice that there exists a minimum col for which (row,satisfiedK) may get satisfied.
+   Anything more than min col does not change the cut. So we can have implied min col as implied parameter stored in a Map.
+
+
+How to implement using 7:
+
+We will take it slow. We will implement dp state as (h,w, candidates in) and once that;s done we will normalize tables into two with 7!
+
+
+phase 2:
+
+1. Our DP is based on (Size,Candidates)
+2. Can we optimize 1.
+3. Given (H,Cand) , can say for Wmin we do have a solution say with n cuts:
+    can we say something about H,Cand,Wmin+r
+    to get to H,Can,Wmin we need a single cut.
+    so that becomes n+1

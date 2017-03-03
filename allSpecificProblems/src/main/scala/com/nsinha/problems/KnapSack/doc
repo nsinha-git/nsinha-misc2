@@ -1,0 +1,6 @@
+1. A knapsack has n elements with eight and value.There is a bag that has max weight carrying capacity. We have to maximize the value.
+2. A 2^n search should find the solution.
+3. Is there a good time solution
+4. A dp technique can be applied using the (remaining capacity, remaining values) should be sufficient to not make us not
+retraverse the same subgraph again.
+5. Can there be a greedy solution. I dont think so.

@@ -1,0 +1,5 @@
+1. A Dijstra for minimum path on one metric with a constarint on another metric.
+2. One can think of this problem of SSSP with path weights that can vary with context of arrival path.
+3. A full search may be required.
+4. A DP table may help.
+5. A
