@@ -17,7 +17,14 @@ phase 2:
 
 1. Our DP is based on (Size,Candidates)
 2. Can we optimize 1.
-3. Given (H,Cand) , can say for Wmin we do have a solution say with n cuts:
+3. Given (H,Cand) , lets say for Wmin we do have a solution say with n cuts:
     can we say something about H,Cand,Wmin+r
     to get to H,Can,Wmin we need a single cut.
-    so that becomes n+1
+    so that becomes n+1.
+4. One good thing is that H,Cand,Wmin+r is DAG dependent on H,Cand,Wmin so we will always have a DP entry for later before we hit former!
+5. We can safely add 1 to 4 and go ahead with calculation
+
+6. To afford that we need to store (H,Cand)-> (Wmin,Some(steps))
+   At query time given H,Cand and W , if (H,Cand) does not exist we keep on finding the sol. If W < Wmin the solution will not exist. To reduce
+   recompute we can have one different representation  (H,Cand)->(Whighest,None) which means that till Whighest no solution could be found.
+   Wmin will always have steps != None.
