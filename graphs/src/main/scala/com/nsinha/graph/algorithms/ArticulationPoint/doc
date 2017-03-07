@@ -1,0 +1,51 @@
+
+0. An AP is a point that can disconnect graph in 2 detached components on its removal
+1. A simple algorithm is run DFS(or BFS) run from a random node after removing each candidate nodes. This may take o(VE).
+2. Can we do it in o(E).
+3.Consider all paths to leaves. There can be at most E such paths.
+4. If there is a cycle in leaf path, keep the link of cycle as colored L;
+5.In case there is no L: We can take any path of >= 3 elements and remove a intermediate node to get AP
+6. Let every Path has a L node from root to leaf.If  L node is also an intermediate node, we can remove L node as L node is AP.
+This is because removing L node disconnects the lower list from higher list. We can also think as a cyclic list as unbreakable atom.
+So in a way, if we got a list of unbreakable atoms: we can use 5 to find AP.
+
+6.Can a list be unbreakable in every way: a complete graph is an example.
+7. What if a leaf has more than two distinct paths. 5 will fail. But this can be seen as a case where root and a common link
+must make a cycle. 5 can be only applied through 6.
+
+
+algo:
+
+P1.
+
+
+
+1. Do dfs from a random node. Create a P and K lists for each node.O(E). Also keep on carrying partial paths for step 2.
+2. When a cycle is found, store the sequence as they occur is DFS in a separate hash and create o(k^2) pairs of node pairs for each
+of the (X,Y) where X occurs before Y against the value of full cycle. so e,g. bcdeb cycle should be stored as bc ->, bd->, be -> cd, eb->.
+These can not be more than o(V^2) in hash memory.In any tree there can be only o(V^2) cycles.
+
+
+3. For each node in Graph consider this test:
+    1. if node has no parent and more than 2 kids , emit node as AP
+    2. else, make pairs of children with this node and also with parents. o(2V)
+        1. for each child pair: find a hash of cycle from table in 2. If there exists such a cycle then test all grandparent-parent pairs for cycles.
+        If any of it matches: this node will not be a AP. Else it is.
+       Total O(V^2) for all nodes using dynamic table.
+    Thus total is O(E+V^2*V)
+
+ Not Good enough
+
+
+
+Algo2:
+Tarjan;s algo:
+
+1. Do Dfs.
+2. Store time as earliest time and latest time when first visit.Then for every child visit transition keep on updating the latest time.
+3. After leaving for parent of node, the latest time for that node is updated.
+4.
+
+
+
+

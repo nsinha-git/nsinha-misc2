@@ -1,0 +1,19 @@
+1. Arrange the points along the x axis. Find the pivot which is one having largest x. If many, choose one. o(N)
+2. Proof that a unique pivot is always on convex hull: The pivot should be in boundary of hull.
+    if boundary short covers the pivot, we cant have a hull
+    if over covers it, we have  a slack.
+    In both cases a Delata should should be increased or reduced.
+3. Proof that many unique pivots are all in the hull. These pivots are collinear in a line parallel to Y axis.
+   We will choose 1 and show how the method described ends up ,choosing all the relevant points
+
+
+Method when pivot is known:
+0. Call ap = (p0:pivot)
+1. find angles for all points from pivot. o(n)
+2. for o(N) angles arrange points in increasing X.(NlogN)
+3. choose points in order of highest Angle first, with highest x.
+4. choose the next point; add to the front of ap
+5. new ap becomes (curPoint,p-1,p-2,...)
+6. check if curPoint,p-1,p-2 is an acute angle. If not, we proceed. if Yes, drop p-1 and  check further.
+Aggregate analysis  based on 1 cost for adding a point and 1 cost for deleting the point bounds this to max 2n.
+7. Exhaustion on points is stopping criteria.
