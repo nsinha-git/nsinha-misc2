@@ -1,0 +1,55 @@
+Algo of Tartan's algorithm of latest and earliest visit times:
+1. Pick any node as root of a dfs search
+2. Every node has two timestamps. earliest visit and latest visit and they are set to a default uninitialized value.
+3. A time step increments at every function call to dfs.
+4. When visiting a node for first time, the t1 and t2 are set to current timestamp.
+5. When coming back from a visit to child only t2 is set to current time.
+6. When finished with node and going back to parent, the t2 is updated as in 5 with either last child or no child(in case zero child)
+7. If revisiting a already visited node, no further visitation or update happens.
+8. Finish this run of DFS.
+
+9. We do dfs once more. This time we may stop anytime we find the correct node. The AP node is determined iff:
+    1. The value of its children are pairwise disjoint (Check P1)
+   This is O(V*V) in total as there are only O(V^2) pair nodes and they will be compared only once.
+10. The total complexitity is E+V*V = o(E)
+
+
+
+P1. If all children are not pairwise disjoint, the node must be not AP
+
+   Let node be No. If children is not Pairwise disjoint then they one must be occuring in dfs tree of other. (P2)
+   Let n2 occurs as dfs child of n1.
+
+   As No joins N1 and N2 it  shows a cycle.
+
+   So No can not be AP.
+P2. Not Disjoint children must fully overlap in one direction.
+We Showed that by P3.
+
+
+
+P3. If two nodes are not disjoint then one must be child of other in dfs order. Use
+    Let Nodes are N1(t1,t2) and N2(t3, t4).
+
+    case: t3 ∉ (t1,t2) => t3 < (t1,t2) As otherwise they would be disjoint since t4>=t3.
+        => t4 ∈ (t1,t2) ^ t4 > t1 because t1 = t4 is not possible
+        => We started N2 first went to N1 came back to N2 w/o finishing N1 and went to visit other child of N2 before finishing.
+        => Impossoble bt DFS
+    case: t3 ∈ (t1,t2)=> t4 ∈ (t1,t2) by similar argument as in case 1.
+
+
+    Thus one must be fully contained in other if not disjoint
+
+
+
+P4. A node with all disjoint children must be AP.
+By P1 we showed when any pair is not disjoint it must be not AP.
+
+
+Let all children are disjoint. Then removing the root should make two children unconnected. Because if they were connected then they could not
+be disjoint by P5.
+QED.
+
+P5. A Connected nodes are contained in each other.
+ By property of DFS, we have a ordering on which node gets visited first. The other node must finish before we finish with first node.
+ Thus other node must be fully contained in the first one. QED.
