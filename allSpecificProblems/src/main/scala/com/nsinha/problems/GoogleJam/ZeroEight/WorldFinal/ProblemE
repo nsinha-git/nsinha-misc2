@@ -1,0 +1,13 @@
+1. The problem can be thought of sending flow from source s connected via each of the edges of each block to t. Sources can send
+flow in increment of 4.
+2. When a block is marked untouched and no neighbors are marked then the edges are connected to t with capacity of 1. When such  a block is marked
+it uses up capacity of its edges by 1 and also those edges now connect to t`.
+
+3. In arbitrary block where neighbors are marked or else, when the clock gets marked , its t edges send flow to T and t` edges send to t`.
+
+4. The flow of network is total flow to T minus flow to t`.
+
+5. We can have another cycle on t` where we group a single block flows to t` (atleast if 3 edges are found) and mark the block zero.
+This will reduce fklow to t` by 4 or 3. We also add 4-exact redcution to flow of T.
+
+6. After 5 we get max flow.
