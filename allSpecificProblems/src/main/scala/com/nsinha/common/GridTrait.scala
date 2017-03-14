@@ -115,6 +115,7 @@ trait GridTrait {
   def getAllSurroundingBlocksForGridPoint(gp : GridPoint) : Set[Block]
   def getAllSurroundingGridPointsForBlock(blk : Block) : Set[GridPoint]
   def getAllSurroundingBlocksForEdge(edge : Edge) : Set[Block]
+  def getAllSurroundingEdgesForBlock(block : Block) : Set[Edge]
   def getAllBlocksForRow(r : Int) : Set[Block]
   def getAllBlocksForCol(r : Int) : Set[Block]
 }
@@ -132,6 +133,7 @@ class Grid(rows : Int, cols : Int) extends GridTrait {
   override def getAllSurroundingBlocksForGridPoint(gp : GridPoint) : Set[Block] = gridPointsToBlock(gp).toSet
   override def getAllSurroundingGridPointsForBlock(blk : Block) : Set[GridPoint] = blockToGridPoints(blk).toSet
   override def getAllSurroundingBlocksForEdge(edge : Edge) : Set[Block] = edgesToBlock(edge).toSet
+  override def getAllSurroundingEdgesForBlock(block : Block) : Set[Edge] = blockToEdges(block).toSet
   override def getAllBlocksForRow(r : Int) : Set[Block] = rowToBlocks(r).toSet
   override def getAllBlocksForCol(r : Int) : Set[Block] = colToBlocks(r).toSet
 
