@@ -1,0 +1,39 @@
+ProblemD. A simpler description:
+
+Lets call the top left forest F0. We can label lands as Li and Forests as Fi with distint i's.
+We need to find the minimum cost to build bridges.cost of a bridge on a node is number of bridges from its nearest forest.
+
+Some proofs:
+
+P1. Assuming no other forest, a simple bfs and counting sepatartion from F0 should set the costs of all the Li's
+Proof: Simple observation as any land can be connected back to F0 only through a sequence of brdiges.The least steps is cost when they can be
+reached is earliest. A bfs does that!
+
+P2.Every edge of graph is visited on a BFS 2 times once on each direction of parent-child and reverse.
+
+P3. If a child comes before its nearest forest, it will participate to fix the value of forest while forest is inside the queue.
+When we reach the visit point of forest we will visit the child once more thsi time fixing the value of that child. Thus the child will get
+the minimum  value.
+
+P4. What happens to other kids of child in P3. They remain orphaned as we are not traversing the kids of this node again.
+
+
+p5. Using modified -bfs should do the trick. It inserts the already visited node in bfs q again but only when the weight gets reduced.
+p6. Kids of kids. Once inserted again kid of kids gets traversed once more.If they change they get reinserted.
+p7. A node can only change 2 times. Any node directly connected to a nearest forest will get changed in first bfs itself w/o revisiting again.
+So 2 appears sufficient for them. For nodes not directly connected, they can change only when teir immediate parents would change. This will happen
+in second time for 1 off child from nearest parent. This proves for d=2. for d=3, a one more vsist from d=2 level should do it and so on by
+induction.
+
+Analysis:
+(2E+2V) i.e 2 bfs is sufficient.
+
+
+
+
+
+
+
+
+
+

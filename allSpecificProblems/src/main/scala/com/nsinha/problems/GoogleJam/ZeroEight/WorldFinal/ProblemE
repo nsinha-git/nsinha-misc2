@@ -20,3 +20,143 @@ A edge under such grouping can at most participate in 2 paths to s. We only coni
 would decrease the actual flow to t or leave it unchanged.
 
 This is max flow problem from t` to s.
+
+
+A hardcore proof:
+
+Consider flow from s and t`
+
+1. We can think of three level of non-intesecting bfs nodes lying between s and t` with s at level 0 and t` at level 3.
+2. Let's consider each (changing and full)block making up direct links to t' forming level 1.
+3. The edges of these blocks make up the level 2 nodes.
+4. Level 2 edges have direct drain on S.
+5. The level 1 share level 2 drain to S when they connect to same level 2 edges.
+
+P1: cuts in level1 one are one-to-one mapped to cuts in level2.
+i.e every cut1 in level has a unique mapping cut in level2. easy to show as each level 1 cut uniquely determines the drain of level 2 thats
+get used.
+
+P2:There can not be arbitrary cuts in level2. Only those cuts which are in range as anticipated by P1 are okay.
+proof: Any arbirary cut will draw partial flows from level 1. Not allowed as level 1 can have only discrete levels drain.
+
+P3. We need only consider cuts in level 1 and altogether forget level2 cuts. Follows by P1 and P2
+
+p4. Block with equal neighbors help flow equally. Trivial to show
+
+Some Observations: One relationship clearly stands out: The maximal flow should use maximum of these block edges.
+Lets consider a greedy approach: choose the block with least neighbors that can increase the flow.
+If there are more than two choices choose any as By P5 two block with equal neighbors aid to flow equally.
+Exhaust till we have no more of flow addition. As at every step  we chose the least disturbing block, we have good chances of using most edges
+to add to the flow.
+The only way it may not work is if we lock out edges which in optimal cases might have been used up.
+
+We can consider the boundries, balnk ones as bounding boxes that can be ignored  from edge considerations. The decided ones take part
+in edge consideration.
+
+This leads to a bias in selecting boundry boxes first.Once they get picked up we have new boundry boxes. and we move in.
+Can we show this is optimal in greedy sense.
+
+Let's say we did not include one of this block when had a chance. At end of the further end of this arbittrary path, let's assume we could
+not still add this block. This means that the neighbors of this node must be filled other wise we could have still increased the flow.
+
+Let;s say our greedy approach can leave more shared edges free but they might not be mintable in blocks. The unknown optimal approach
+may have left equal or less shared edges but those which are easily mintable into blocks, i.e we could add flows.
+But we just said that optimal approach was done so more flows could not be added so we can say less or equal edges and no flow. greedy approach
+has more shared edges left but again no flow.
+In greedy approach more shared edges are left away from boundry. This might not be true in other approaches. So we exclude more boundry edges in
+other approach. But probabilistically this should reduce chances of using up blocks from inside the leftover system. so greedy approach
+appears right from outset.
+
+
+Rigorous Proof of greedy approach of choosing blocks with higher potential weight:
+M1 :A Effectiveweight for a block is based on tuple (numSpaces, numFilled) for the block
+The effectiveWeight =  (4 -2* numFilled, spaces). We use 2 to show that if this block were added it will be able to add (4- numFilled) to FLow
+and at same time will deduct 1 from each of its neighbors.
+If we fill the block, then the potential that flow will improve is by 4- 2*numfilled. If two blocks have same potential one with more spaces
+score better. esle we choose randomly.
+
+
+Proof:
+P5.if two blocks are differentiated by M1 then choosing one with lower weight is always suboptimal
+Choosing one with suboptimal can in general always block the one with better weight if it's neighbor.
+Let's assume they are not nearest neighbors.
+Let's create a graph of only changeable blocks connected by NN criteria.
+Changing to fill directly affects  each of NN which may now never be choosen as their potential flows have gone down.
+Assuming the NN was in optimal collection this will be wrong.Proof by example of
+fAf
+-C-
+B--
+Choosing A will ineffectuate C
+
+P6. max flow Matrix(n1,m) >=  max flow SD(n2,m) where n1>=n2 and o boundries are added to n1
+
+
+P7. if two blocks are same weight with same spaces then choosing any of them is optimal.
+Let;s take a 1d matrix.
+In infinite row chosing xyx.. or yxy.. are both optimal.
+
+P8. Adding spaces to a connected componenet does not change the flow of CC of chageable nodes.
+P9.
+Create Connected graphs of changeable nodes with NN criteria. This will be in general a forest.
+
+Let's take one of connected component(CC).P8 is obvious.
+
+
+p10. For 1d matrix:
+Let's the CC is even and bounded by spaces.choosing the one next to space or one after that, both are optimal.
+
+p11.1d matrix
+Lets CC is odd and bounded by spaces. Chooiing first is good because of its affinity to space and more potential fills. The effective weight of both are same.
+
+p12. 1d Matrix
+Lets CC be even and both sides are bounded by filled. Any choice is same because of symmetery
+
+P13. 1d Matrix
+Lets CC be even/odd and one side is bounded by filled and other by space. Only one choice exists the one by space because of M1
+
+P14. 2D matrix
+If two optimal solutions exist one by filling more and one by filling less then , filling less is better.
+We can alter the max flow dwfn by(max flow, fills) with usual ordering.
+
+P15:Let's assume there is only one handicap, then we can show that in other side it has 2 blocks up and down in Y-axis unfilled.
+
+P16. 2D Matrix
+Consider a CC.
+We can think of every block having each edge as anchor(if connecetde to known value). In 1d the end blocks have 3 anchors and intermediate as 2 anchors.
+In 2D, in genela this can change and boundry nodes can have less than 3 anchors and intermediate have less than 2.
+
+We can look from left to right and break a single row or col in series of atoms anchored at its ends.
+The problem is again reduced to 1D. with these atoms.
+
+Looking at any  end of a CC in a row of length > 1,it can have (0,1,2,3) filled as the right one is in CC so unfilled.
+For intermediate ones it can have (0,1,2) filled.So a CC of len len in a row can have 4*4*pow(3, len-2) configurations.
+
+CC is odd: W/o any handicap choosing 1 and alternate after that should lead to highest flow.
+But with even one on both sides choosing 2 becomes better.
+Let's assume there is only one handicap on one side,use P16. We should fill the other side the get to the 2 sided handicap case. This is again
+chosing the space affine solution.
+
+
+
+
+Using P16 we can show that M1 is indeed a greedy solution! I need to make it much cleaner i suppose!
+
+
+
+
+
+
+
+
+
+
+The only problem in this analysis is when a row may pick a subotimal value and global flow may still increase.
+
+
+
+
+
+
+
+
+

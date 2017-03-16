@@ -1,44 +1,60 @@
 package com.nsinha.problems.GoogleJam.ZeroEight.WorldFinal
 
 import com.nsinha.common.{Block, Coordinate, Edge, Grid}
+import com.sun.deploy.util.SyncFileAccess.RandomAccessFileLock
 import org.scalatest.FunSuite
 
 import scala.collection.mutable
+import scala.util.Random
 
 /** Created by nsinha on 3/10/17.
   */
 
-sealed trait GridValue
+trait GridValue
 object Filled extends GridValue
 object Blank extends GridValue
 object CanChange extends GridValue
 
+case class EffectiveWeight(weightSpaces : Int, weightPotential : Int)
 object Implicts {
-  implicit val orderingOnIntBlock : Ordering[(Int, Block)] = {
-    new Ordering[(Int, Block)] {
-      override def compare(x : (Int, Block), y : (Int, Block)) : Int = {
-        val res = implicitly[Ordering[Int]].compare(x._1, y._1)
-        -res
+  implicit val orderingOnIntBlock : Ordering[(EffectiveWeight, Block)] = {
+    new Ordering[(EffectiveWeight, Block)] {
+      override def compare(x : (EffectiveWeight, Block), y : (EffectiveWeight, Block)) : Int = {
+        val res = implicitly[Ordering[Int]].compare(x._1.weightPotential, y._1.weightPotential)
+        if (res != 0) {
+          -res
+        }
+        else {
+          val res1 = implicitly[Ordering[Int]].compare(x._1.weightSpaces, y._1.weightSpaces)
+          if (res1 != 0) {
+            -res1
+          }
+          else {
+            implicitly[Ordering[Int]].compare(x._2.hashCode(), y._2.hashCode())
+          }
+        }
       }
     }
   }
 }
 
-class ProblemE(rows : Int, cols : Int, inputs : String) {
+case class ProblemE(rows : Int, cols : Int, inputs : String) {
   import Implicts._
   val grid = new Grid(rows, cols)
   val gridValues = mutable.Map[Block, GridValue]()
   val allEdgesMap = grid.edges
   val canChangeBlocks = mutable.MutableList[Block]()
+  val theCandidateFilledBlocks = mutable.HashSet[Block]()
   val edgeToFlow = mutable.Map[Edge, Int] ()
   var zeroEdges = mutable.Map[Edge, Int] ()
-  val flowBlockToTDashSet = mutable.TreeSet[(Int, Block)] ()
-  val blockToFlowToTDashMap : mutable.Map[Block, Int] = mutable.HashMap[Block, Int]()
+  val numSharedNeighborsToBlockMap = mutable.TreeSet[(EffectiveWeight, Block)] ()
+  case class SharedWeights(withBlanks : Int, withFilled : Int)
+  val blockToSharedNeighborsMap : mutable.Map[Block, SharedWeights] = mutable.HashMap[Block, SharedWeights]()
   var flow = 0
   processInput
 
   def findMaxFlow : Int = {
-    findFlowAssumingEveryCanChangeBlockIsFilled
+    findFlowAssumingEveryCanChangeBlockIsNotFilled
     findMaxFlowtoTDash
     flow
   }
@@ -72,9 +88,9 @@ class ProblemE(rows : Int, cols : Int, inputs : String) {
   /* also  create connections to t` from any double crossed edge as encountered
 
    */
-  private def findFlowAssumingEveryCanChangeBlockIsFilled : Int = {
+  private def findFlowAssumingEveryCanChangeBlockIsNotFilled : Int = {
     for ((blk, gridValue) ← gridValues) {
-      if (gridValue == Filled || gridValue == CanChange) {
+      if (gridValue == Filled) {
         val allEdgesForBlk = grid.getAllSurroundingEdgesForBlock(blk)
         allEdgesForBlk foreach { edge ⇒
           if (edgeToFlow.contains(edge)) {
@@ -92,62 +108,110 @@ class ProblemE(rows : Int, cols : Int, inputs : String) {
     flow
   }
 
-  private def convertZeroEdgesToBlocks(edgeMap : Map[Edge, Int]) : mutable.Map[Block, Int] = {
-    for ((edge, value) ← edgeMap) {
-      val blocksForEdge = grid.getAllSurroundingBlocksForEdge(edge) //at max 2
-      blocksForEdge foreach { blk ⇒
-        if (gridValues(blk) == CanChange) {
-          if (blockToFlowToTDashMap.contains(blk)) {
-            blockToFlowToTDashMap += blk → (blockToFlowToTDashMap(blk) + 1)
-          }
-          else {
-            blockToFlowToTDashMap += blk → 1
-          }
+  private def convertUnChangedBlocksToBlocksAndNumNeighborsPair : mutable.Map[Block, SharedWeights] = {
+    for (canChangeBlock ← canChangeBlocks) {
+      val edgesForThisBlock = grid.getAllSurroundingEdgesForBlock(canChangeBlock)
+      //at max 2
+      var sharedEdgesWithBlanks = 0
+      var sharedEdgesWithFilled = 0
+      edgesForThisBlock foreach { edge ⇒
+        val surroundingBlockSet = grid.getAllSurroundingBlocksForEdge(edge).diff(Set(canChangeBlock))
+        if (surroundingBlockSet.nonEmpty) {
+          val surroundingBlock = surroundingBlockSet.head
+          if (gridValues(surroundingBlock) == Filled) sharedEdgesWithFilled = sharedEdgesWithFilled + 1
+          if (gridValues(surroundingBlock) == Blank) sharedEdgesWithBlanks = sharedEdgesWithBlanks + 1
+        }
+        else {
+          //this edge is at grid boundary
+          sharedEdgesWithBlanks = sharedEdgesWithBlanks + 1
         }
       }
+      blockToSharedNeighborsMap += canChangeBlock → SharedWeights(sharedEdgesWithBlanks, sharedEdgesWithFilled)
     }
+    blockToSharedNeighborsMap foreach { x ⇒ numSharedNeighborsToBlockMap += (getEffectiveWeight(x._2) → x._1) }
+    blockToSharedNeighborsMap
+  }
 
-    blockToFlowToTDashMap foreach {
-      x ⇒
-        flowBlockToTDashSet += (x._2 → x._1)
+  private def getEffectiveWeight(s : SharedWeights) : EffectiveWeight = {
+    val unknownEdgesAttributionCnt = 4 - s.withBlanks - s.withFilled
+    val effectiveWeight = 4 - 2 * s.withFilled // 2 is used to display loss to it;s own potential and loss to previously put filled states in there
+    EffectiveWeight(s.withBlanks, effectiveWeight)
+  }
+
+  def updateSharedNeighborsInfo(curBlkWithEffectiveWeight : (EffectiveWeight, Block), nBlk : Block) = {
+    if (blockToSharedNeighborsMap.contains(nBlk)) {
+      val sharedWeights = blockToSharedNeighborsMap(nBlk)
+      val newSharedWeights = SharedWeights(sharedWeights.withBlanks, sharedWeights.withFilled + 1)
+      blockToSharedNeighborsMap.remove(nBlk)
+      blockToSharedNeighborsMap += nBlk → newSharedWeights
+
+      numSharedNeighborsToBlockMap.remove((getEffectiveWeight(sharedWeights), nBlk))
+      numSharedNeighborsToBlockMap += getEffectiveWeight(newSharedWeights) → nBlk
     }
+  }
 
-    blockToFlowToTDashMap
-
+  def printTheGrid : String = {
+    //use blockToFlowToTDashMap and gridValues todo all printing
+    //blockToFlowToTDashMap block means that the block will be turned on
+    val strBuilder : StringBuilder = new StringBuilder
+    for {
+      curRow ← Range(0, rows)
+    } {
+      for { curCol ← Range(0, cols) } {
+        val curBlk = grid.blocks(Coordinate(curRow, curCol))
+        gridValues(curBlk) match {
+          case Filled ⇒ strBuilder += ('4')
+          case CanChange ⇒ if (blockToSharedNeighborsMap.contains(curBlk)) {
+            strBuilder += ('¢')
+          }
+          else {
+            strBuilder += ('$')
+          }
+          case Blank ⇒ strBuilder.+=('•')
+        }
+      }
+      strBuilder += '\n'
+    }
+    strBuilder.toString()
   }
 
   private def findMaxFlowtoTDash = {
-    convertZeroEdgesToBlocks(zeroEdges.toMap)
+    convertUnChangedBlocksToBlocksAndNumNeighborsPair
 
     //we  need to keep digging blockToFlowToTDashSet  and find blcoks that are more than equal to  >=3
     //we can stop then. The proof is shown in doc
     var cond = true
-    while (cond & flowBlockToTDashSet.nonEmpty) {
-      val badBlock = flowBlockToTDashSet.head
-
-      if (badBlock._1 < 3) {
-        cond = false
-      }
-      else {
-        flowBlockToTDashSet.remove(badBlock)
-        blockToFlowToTDashMap.remove(badBlock._2)
-        val allEdges = grid.getAllSurroundingEdgesForBlock(badBlock._2)
-        val neighboringBlocks = allEdges.foldLeft(List[Block]()) {
-          (Z, el) ⇒
-            Z ++ { grid.getAllSurroundingBlocksForEdge(el) }.toSet.diff(Set[Block](badBlock._2)).toList
+    while (cond & numSharedNeighborsToBlockMap.nonEmpty) {
+      val candidateBlockOpt = numSharedNeighborsToBlockMap.headOption
+      candidateBlockOpt match {
+        case None ⇒ cond = false
+        case Some(candidateBlock) ⇒ if (candidateBlock._1.weightPotential < 0) {
+          cond = false
         }
-        neighboringBlocks foreach { nBlk ⇒
-          flow = flow + 1
-          if (blockToFlowToTDashMap.contains(nBlk)) {
-            val oldFlow = blockToFlowToTDashMap(nBlk)
-            flowBlockToTDashSet.remove((oldFlow, nBlk))
-            blockToFlowToTDashMap.remove(nBlk)
-            val newFlow = oldFlow - 1
-            if (newFlow > 0) {
-              blockToFlowToTDashMap += nBlk → newFlow
-              flowBlockToTDashSet += (newFlow → nBlk)
-            }
+        else {
+          print(candidateBlock._2 + s" is being added previous flow = $flow ")
+          theCandidateFilledBlocks += candidateBlock._2
+          val allEdges = grid.getAllSurroundingEdgesForBlock(candidateBlock._2)
+          val neighboringBlocks = allEdges.foldLeft(List[Block]()) {
+            (Z, el) ⇒
+              Z ++ {
+                grid.getAllSurroundingBlocksForEdge(el)
+              }.toSet.diff(Set[Block](candidateBlock._2)).toList
           }
+          flow = flow + (4 - neighboringBlocks.size)
+          neighboringBlocks foreach { nBlk ⇒
+            if (gridValues(nBlk) == Filled || theCandidateFilledBlocks.contains(nBlk)) {
+              flow = flow - 1
+            }
+            else {
+              flow = flow + 1
+            }
+            updateSharedNeighborsInfo(candidateBlock, nBlk)
+          }
+
+          blockToSharedNeighborsMap.remove(candidateBlock._2)
+          numSharedNeighborsToBlockMap.remove(candidateBlock)
+          println(candidateBlock._2 + s" is now added cur flow = $flow ")
         }
       }
     }
@@ -157,14 +221,14 @@ class ProblemE(rows : Int, cols : Int, inputs : String) {
 class Testing extends FunSuite {
 
   test("a") {
-    val prob = new ProblemE(3, 3,
+    val prob = ProblemE(3, 3,
       """.?.
         |.?.
         |.#.""".stripMargin)
     println(s"flow: ${prob.findMaxFlow}")
   }
   test("b") {
-    val prob = new ProblemE(5, 8,
+    val prob = ProblemE(5, 8,
       """.#...##.
         |.##..?..
         |.###.#.#
@@ -174,7 +238,7 @@ class Testing extends FunSuite {
   }
 
   test("c") {
-    val prob = new ProblemE(50, 50,
+    val prob = ProblemE(50, 50,
       """#?#?#?#?#?#?#?#?#?#?#?#?#?#?#?#?#?#?#?#?#?#?#?#?#?
         |#?.#??????.#.???????????????.#.????????#.?????????
         |????.#????????.#?????????????????????#.??????????#
@@ -230,7 +294,7 @@ class Testing extends FunSuite {
   }
 
   test("d") {
-    val prob = new ProblemE(49, 49,
+    val prob = ProblemE(49, 49,
       """.......?.??..?.?.....#??.?.??.....??...?#....?...
         |......#.??....??.?#?.#?...##..?.....?....?.?..?..
         |?..?...?...........?.#..........??...?.?.....#.?#
@@ -281,6 +345,66 @@ class Testing extends FunSuite {
         |...?...??.?.....##.#.#.#.......?#??..#.#.........
         |....?.......?..?....?.?.....#.#.?????.##.........""".stripMargin)
 
+    println(s"flow: ${prob.findMaxFlow}")
+  }
+
+  test("e") {
+    val prob = ProblemE(6, 6,
+      """#?????
+      |????.?
+      |?.????
+      |???#??
+      |#?????
+      |??.??#""".stripMargin)
+    println(s"flow: ${prob.findMaxFlow}")
+  }
+
+  test("f") {
+    val prob = ProblemE(16, 50, """????????????#?????????????????.???#?????#??.#???#?
+ |???????????????.???????????????????????????#??????
+ |????????????????????????????.????????.#???????????
+ |????????????????????#????#????????????????????????
+ |????????#..???????????????????????????????????????
+ |?.????????????????????#?????????????????##???#????
+ |??????????????????????????????????????????????.???
+ |?????????????????#?????????#.?????????????????????
+ |???????????????????????????#??????????????????#???
+ |???????????????????????????????????.????#????????#
+ |???????#???#??????????????????????????????????????
+ |??????????????????????????????????????????????????
+ |??????????????.?#????????????????#??????????#??#??
+ |?????????#????????????????????????????????.???????
+ |???????????????.????????????????????????????????#?
+ |??????????????????????????????????????????????????""".stripMargin)
+    println(s"flow: ${prob.findMaxFlow}")
+  }
+
+  test("g") {
+    val prob = ProblemE(5, 5,
+      """#??.?
+        |?.??#
+        |?.???
+        |??#.?
+        |??.#?""".stripMargin)
+    println(s"flow: ${prob.findMaxFlow}")
+    //println(s"placementInitial:\n${prob.inputs}")
+    //println(s"placementFinal:\n${prob.printTheGrid}")
+  }
+
+  test("h") {
+    val prob = ProblemE(3, 3,
+      """???
+        |???
+        |???""".stripMargin)
+    println(s"flow: ${prob.findMaxFlow}")
+    //println(s"placementInitial:\n${prob.inputs}")
+    //println(s"placementFinal:\n${prob.printTheGrid}")
+    //println(s"placedBlocks:\n${prob.blockToSharedNeighborsMap}")
+  }
+
+  test("i") {
+    val prob = ProblemE(1, 4,
+      """#???""".stripMargin)
     println(s"flow: ${prob.findMaxFlow}")
   }
 }
