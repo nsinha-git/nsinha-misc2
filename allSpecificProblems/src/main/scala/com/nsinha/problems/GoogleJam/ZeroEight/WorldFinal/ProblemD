@@ -1,36 +1,29 @@
 ProblemD. A simpler description:
 
 Lets call the top left forest F0. We can label lands as Li and Forests as Fi with distint i's.
-We need to find the minimum cost to build bridges.cost of a bridge on a node is number of bridges from its nearest forest.
+We need to find the minimum cost to build bridges.cost of a bridge on a node is number of bridges from its nearest for
 
-Some proofs:
-
-P1. Assuming no other forest, a simple bfs and counting sepatartion from F0 should set the costs of all the Li's
-Proof: Simple observation as any land can be connected back to F0 only through a sequence of brdiges.The least steps is cost when they can be
-reached is earliest. A bfs does that!
-
-P2.Every edge of graph is visited on a BFS 2 times once on each direction of parent-child and reverse.
-
-P3. If a child comes before its nearest forest, it will participate to fix the value of forest while forest is inside the queue.
-When we reach the visit point of forest we will visit the child once more thsi time fixing the value of that child. Thus the child will get
-the minimum  value.
-
-P4. What happens to other kids of child in P3. They remain orphaned as we are not traversing the kids of this node again.
+1. A simple bfs with two tags node inserted and visiyed.
+2. A visited node is one which has been extarcted from que and fully exploded.
+3. An inserted node is one which is just put into Queue but not exploded.
+4.M1.in the bfs we sort by forest to island. M2In islands we sort by least weight first.
+5.After a forest (s) has entered the bfs que, the remaing nodes in q must be checked if they are near to forest or not. This is made possible
+by M1. Also id some node is visitable by low weight island, the cost would be less . So every node in que and subsequent should be tackled
+ from least node angle first provided by M2.
+6. What about already visited nodes? A forest can only follow a already visited node by M1 so that means in topological ordering there is
+no way that forest could have come before any of visited nodes. What about the low weight nodes. M2 would have ensured that toplogical ordering
+must have made visited nodes a strict predecessor of cureent in-q islands. thus it follows.
 
 
-p5. Using modified -bfs should do the trick. It inserts the already visited node in bfs q again but only when the weight gets reduced.
-p6. Kids of kids. Once inserted again kid of kids gets traversed once more.If they change they get reinserted.
-p7. A node can only change 2 times. Any node directly connected to a nearest forest will get changed in first bfs itself w/o revisiting again.
-So 2 appears sufficient for them. For nodes not directly connected, they can change only when teir immediate parents would change. This will happen
-in second time for 1 off child from nearest parent. This proves for d=2. for d=3, a one more vsist from d=2 level should do it and so on by
-induction.
 
-Analysis:
-(2E+2V) i.e 2 bfs is sufficient.
+-------------
+Can we do a bfs on nodes with rep (a1,a2,a3) with a  ordering defined by ranges on a1 a2 a3. that are symmetric and transitive.Is transitive
+even required.Transitive must be required otherwise que will be undefined!
+
+Q. Can ordered nodes have emegent values. i.e a value based on sequence of its predecoors. yes We can define an aritrary function on immediate
+last k predecessors. This can define as much complexity as you want with complexity directly proportional to past k predecessors.
 
 
-Better proof A s
-1.
 
 
 

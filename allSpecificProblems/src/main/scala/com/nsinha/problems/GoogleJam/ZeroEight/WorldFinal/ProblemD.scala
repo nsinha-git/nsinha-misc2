@@ -20,16 +20,13 @@ case class Weight(g : GridValue, w : Int) extends Ordered[Weight] {
     -1
   }
 }
-class Time(t : Int)
-case class EntryTime(t : Int) extends Time(t)
-case class VisitTime(t : Int) extends Time(t)
 
 case class ProblemD(rows : Int, cols : Int, input : String) {
-  implicit object QueueOrdering extends Ordering[(Block, Weight, EntryTime)] {
-    override def compare(x : (Block, Weight, EntryTime), y : (Block, Weight, EntryTime)) : Int = {
+  implicit object QueueOrdering extends Ordering[(Block, Weight)] {
+    override def compare(x : (Block, Weight), y : (Block, Weight)) : Int = {
       val t1 = x._2.compare(y._2)
       if (t1 != 0) return t1
-      -implicitly[Ordering[Int]].compare(x._3.t, y._3.t)
+      0
     }
   }
 
@@ -42,7 +39,7 @@ case class ProblemD(rows : Int, cols : Int, input : String) {
   val gridValues = mutable.Map[Block, Weight]()
   val visited = mutable.Set[Block]()
   val entered = mutable.Set[Block]()
-  var que = mutable.PriorityQueue[(Block, Weight, EntryTime)]()
+  var que = mutable.PriorityQueue[(Block, Weight)]()
   var curTime = 0
 
   processInput
@@ -88,7 +85,7 @@ case class ProblemD(rows : Int, cols : Int, input : String) {
     que.clear()
     val blk = grid.blocks(Coordinate(0, 0))
     val newWeight = Weight(Forest, 0)
-    que += ((blk, newWeight, EntryTime(0)))
+    que += ((blk, newWeight))
     entered += blk
     gridValues(grid.blocks(Coordinate(0, 0))) = newWeight
 
@@ -122,13 +119,13 @@ case class ProblemD(rows : Int, cols : Int, input : String) {
           gridValues(nBlk) = Weight(gridValues(nBlk).g, childWt)
           //is bBlk guranteed to be in que. no if it's seen for first time
           if (!entered.contains(nBlk)) {
-            que += ((nBlk, gridValues(nBlk), EntryTime(curTime)))
+            que += ((nBlk, gridValues(nBlk)))
             entered += nBlk
           }
           else { //nBlk is already in Que but now it's weight changed. We need to remove the element.Priority Que seems unsuitable for
             //this op. A direct Heap or fibonnacci heap may be better. But let's note this down and move.
             que = que filter (x ⇒ x._1 != nBlk)
-            que += ((nBlk, gridValues(nBlk), EntryTime(curTime)))
+            que += ((nBlk, gridValues(nBlk)))
           }
         }
       }
