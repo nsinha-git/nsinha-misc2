@@ -10,13 +10,40 @@ import scala.collection.mutable
 object Forest extends GridValue
 object Island extends GridValue
 object Water extends GridValue
-case class Weight(g : GridValue, w : Int)
+case class Weight(g : GridValue, w : Int) extends Ordered[Weight] {
+  override def compare(y : Weight) : Int = {
+    val x = this
+    if (x.g == Forest && y.g != Forest) return 1
+    if (x.g != Forest && y.g == Forest) return -1
+    if (x.w < y.w) return 1
+    if (x.w == y.w) return 0
+    -1
+  }
+}
+class Time(t : Int)
+case class EntryTime(t : Int) extends Time(t)
+case class VisitTime(t : Int) extends Time(t)
 
 case class ProblemD(rows : Int, cols : Int, input : String) {
+  implicit object QueueOrdering extends Ordering[(Block, Weight, EntryTime)] {
+    override def compare(x : (Block, Weight, EntryTime), y : (Block, Weight, EntryTime)) : Int = {
+      val t1 = x._2.compare(y._2)
+      if (t1 != 0) return t1
+      -implicitly[Ordering[Int]].compare(x._3.t, y._3.t)
+    }
+  }
 
   val grid = new Grid(rows, cols)
+  //gridvalues carry the EntryTime which depicts the eariest time the node got visited by a normal node or latest time from a Forest
+  // VisitTime when the node egresses the que
+  //Should forest change value for nodes that have egressed the que?
+  //Que that contains entered but unvisisted nodes should be arranged order of forest and then their initiation time.
+  // Note the difference when in bfs ques are only arranged as per initiation times.
   val gridValues = mutable.Map[Block, Weight]()
   val visited = mutable.Set[Block]()
+  val entered = mutable.Set[Block]()
+  var que = mutable.PriorityQueue[(Block, Weight, EntryTime)]()
+  var curTime = 0
 
   processInput
 
@@ -29,7 +56,7 @@ case class ProblemD(rows : Int, cols : Int, input : String) {
           curCol ⇒
             val gridValue = getGridValue(str(curCol))
             val curBlock = grid.blocks(Coordinate(curRow, curCol))
-            gridValues += (curBlock → gridValue)
+            gridValues += (curBlock → (gridValue))
         }
         curRow = curRow + 1
     }
@@ -45,29 +72,36 @@ case class ProblemD(rows : Int, cols : Int, input : String) {
 
   def findCost : Int = {
     doBfs
-    doBfs
     aggregate
   }
 
   private def aggregate = {
     gridValues.foldLeft(0){ (Z, el) ⇒
-      if (el._2.g != Water) el._2.w + Z else Z
+      val ell = el._2
+      if (ell.g != Water) ell.w + Z else Z
     }
   }
 
   private def doBfs = {
-    val que = mutable.Queue[Block]()
     visited.clear()
-    que += (grid.blocks(Coordinate(0, 0)))
-    gridValues(grid.blocks(Coordinate(0, 0))) = Weight(Forest, 0)
+    entered.clear()
+    que.clear()
+    val blk = grid.blocks(Coordinate(0, 0))
+    val newWeight = Weight(Forest, 0)
+    que += ((blk, newWeight, EntryTime(0)))
+    entered += blk
+    gridValues(grid.blocks(Coordinate(0, 0))) = newWeight
 
-    doBfsInt(que)
+    doBfsInt
   }
 
-  private def doBfsInt(que : mutable.Queue[Block]) : Unit = {
+  private def doBfsInt : Unit = {
+    curTime = curTime + 1
     if (que.isEmpty) return
 
-    val curBlock = que.dequeue()
+    val curQueElem = que.dequeue()
+
+    val curBlock = curQueElem._1
 
     visited += curBlock
 
@@ -82,12 +116,24 @@ case class ProblemD(rows : Int, cols : Int, input : String) {
     var curWeight = if (gridValues(curBlock).g == Forest) 0 else gridValues(curBlock).w
     val childWt = curWeight + 1
     nBlksNoWater foreach { nBlk ⇒
-      if (gridValues(nBlk).w > childWt) {
-        gridValues(nBlk) = Weight(gridValues(nBlk).g, childWt)
+      if (!visited.contains(nBlk)) {
+        val prevWeight = gridValues(nBlk).w
+        if (prevWeight > childWt) {
+          gridValues(nBlk) = Weight(gridValues(nBlk).g, childWt)
+          //is bBlk guranteed to be in que. no if it's seen for first time
+          if (!entered.contains(nBlk)) {
+            que += ((nBlk, gridValues(nBlk), EntryTime(curTime)))
+            entered += nBlk
+          }
+          else { //nBlk is already in Que but now it's weight changed. We need to remove the element.Priority Que seems unsuitable for
+            //this op. A direct Heap or fibonnacci heap may be better. But let's note this down and move.
+            que = que filter (x ⇒ x._1 != nBlk)
+            que += ((nBlk, gridValues(nBlk), EntryTime(curTime)))
+          }
+        }
       }
-      if (!visited.contains(nBlk)) que += nBlk
     }
-    doBfsInt(que)
+    doBfsInt
   }
 }
 
