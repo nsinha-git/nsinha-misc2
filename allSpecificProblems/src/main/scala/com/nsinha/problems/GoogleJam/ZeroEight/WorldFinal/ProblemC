@@ -1,0 +1,51 @@
+1. We can represent the sum of each rows as rSum1 , rSum2 , ... rSumN
+2. Let's assume r1 ,r2 .. depict actual mines in those rows.
+3. For every row we can write a constaint based on row that comes before and after it:
+    so for row k:
+        2*rowk + 3*rowk-1 3*rowk+1 >= rSumK
+        also 2*rowk <= rsumK
+            3*rowk-1 <= rsumK
+            3*rowk +1 <= rsumK
+    So we have 3*N such constraints.
+
+4. We can start from that rowi which is most bound. See P1.
+
+We can try each combination and split the problem like this:
+            rowi
+       (op1)                    (op2) (op3) ...
+     [Config1, config2,....]    [..]   [...]
+
+Let's say config = config1, when we are config we have fully populated rowi.
+
+We can now change the values of blocks in each of blocks given Config  in only one way.
+
+We will have two rows affected the i-1 and i+1
+
+We can constrain i-2,i-1,i+1,i+2 further.
+
+We can repeat 4 with that new contsraint greedily.
+We also note that given rowk config the problem is now two independent subproblems:
+rowi to up and rowi to Down.
+We can now solve these independently and if both subproblems can be solved we have a solution.
+
+
+Note: We can use one  bias. In first turn we should only use middle row and not most constarined row since we want to maximize that flow and
+go down one value each time.
+
+We can use dynamic programming to optimize:
+we can represent a subproblem key as (num row + string Rep of "neighborFills" + ordered list of (row no,colno) for each mine already discovered
+
+That's it!
+Analysis: Exponential.
+
+
+
+
+P1. A row would be bounded in a continous integral interval closed on both sides. Initially they all start as [0, Inf]
+
+
+
+P2. Can we suggest a better than exponential:
+
+  What about a max flow interpretation.
+
