@@ -118,9 +118,10 @@ trait GridTrait {
   def getAllSurroundingEdgesForBlock(block : Block) : Set[Edge]
   def getAllBlocksForRow(r : Int) : Set[Block]
   def getAllBlocksForCol(r : Int) : Set[Block]
+  def getTheBlockNumbered(n : Int) : Block
 }
 
-class Grid(rows : Int, cols : Int) extends GridTrait {
+case class Grid(rows : Int, cols : Int) extends GridTrait {
   var gridPointsToBlock = Map[GridPoint, mutable.HashSet[Block]]()
   var blockToGridPoints = Map[Block, mutable.HashSet[GridPoint]]()
   var edgesToBlock = Map[Edge, mutable.HashSet[Block]] ()
@@ -222,6 +223,19 @@ class Grid(rows : Int, cols : Int) extends GridTrait {
       colToBlocks += (col → mutable.HashSet[Block]())
     }
     colToBlocks(col) += b
+  }
+
+  override def getTheBlockNumbered(n : Int) : Block = {
+    val row : Int = n / cols
+
+    val col : Int = n - row * cols
+
+    if (row < rows && col < cols) {
+      blocks(Coordinate(row, col))
+    }
+    else {
+      null
+    }
   }
 }
 

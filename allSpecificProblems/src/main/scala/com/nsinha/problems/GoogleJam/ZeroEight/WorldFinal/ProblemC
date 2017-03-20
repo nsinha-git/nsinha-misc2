@@ -47,5 +47,15 @@ P1. A row would be bounded in a continous integral interval closed on both sides
 
 P2. Can we suggest a better than exponential:
 
-  What about a max flow interpretation.
+What about a max flow interpretation. Let's think a moment on that.
+
+1. Create 9 Surrounding shells around each block. For each block the stch can inject flow in quantum of 9 units.
+2. The surrounding shells have a path to one similar type shell from neighboring blocks.
+3. In case of boundary shells we can assume to be having a  infinite sink, that always satisfies the flow(more later)
+4. There is a destination node per block on which each of these shells belong to block and associated shells from nieghbors drain, each with a
+ flow of 1.The destination node has a egress to dest with parametrs in initial setup.
+5. Can we run a max flow on this.
+
+Some issues:
+1.
 
