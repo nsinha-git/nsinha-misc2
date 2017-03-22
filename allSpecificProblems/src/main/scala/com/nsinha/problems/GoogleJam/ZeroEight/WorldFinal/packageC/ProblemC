@@ -59,3 +59,18 @@ What about a max flow interpretation. Let's think a moment on that.
 Some issues:
 1.
 
+
+
+
+Bite size approach:
+
+1. Full search. keep on creating dp tables with stages. Stage k means any k slots are filled. We can do this incrementally.(exponential yuck)
+
+2. Fill and Non-filled status of a block and pruning.
+In this if the block has N neigbors and k fills then if k=N then fill everything.
+If k = N-1 then first turn off the block. We get a config with a block in turned off state. Try to fast fill this board. If fails, then again come
+back and for sure turn on the board. Move as if nothing happened.
+
+
+
+

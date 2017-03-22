@@ -1,11 +1,9 @@
-package com.nsinha.problems.GoogleJam.ZeroEight.WorldFinal
+package com.nsinha.problems.GoogleJam.ZeroEight.WorldFinal.packageE
 
 import com.nsinha.common.{Block, Coordinate, Edge, Grid}
-import com.sun.deploy.util.SyncFileAccess.RandomAccessFileLock
 import org.scalatest.FunSuite
 
 import scala.collection.mutable
-import scala.util.Random
 
 /** Created by nsinha on 3/10/17.
   */

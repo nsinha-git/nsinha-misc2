@@ -1,6 +1,7 @@
-package com.nsinha.problems.GoogleJam.ZeroEight.WorldFinal
+package com.nsinha.problems.GoogleJam.ZeroEight.WorldFinal.pacakgeD
 
 import com.nsinha.common.{Block, Coordinate, Grid}
+import com.nsinha.problems.GoogleJam.ZeroEight.WorldFinal.packageE.GridValue
 import org.scalatest.FunSuite
 
 import scala.collection.mutable
