@@ -155,12 +155,6 @@ case class ProblemA(n : Int, input : String) {
     }
     val a = aOpt.get
     val b = bOpt.get
-    if (a < minA) return
-    if (b < minB) return
-    if (a > maxA) return
-    if (b > maxB) return
-
-    if (a + b > 10000) return
 
     val cMax = 10000 - a - b
 
@@ -194,12 +188,12 @@ case class ProblemA(n : Int, input : String) {
     val mergedMap = mergeMaps(aMinusBminusC, aMinusCMinusBSingleList)
     changeMaxFilled(mergedMap)
     table = mergedMap
-    println(s"a,b = $a,$b  ops = $ops")
+    //println(s"a,b = $a,$b  ops = $ops")
   }
 
   def fillDpWhileTrackingMaxDriver(aOpt : Option[ASize], bOpt : Option[BSize]) : Unit = {
     bSortedArray foreach { b ⇒
-      println(b)
+      //println(b)
       aSortedArray foreach ({ a ⇒
         fillDpWhileTrackingMaxInRowCol(Option(a), Option(b))
       })
@@ -210,7 +204,7 @@ case class ProblemA(n : Int, input : String) {
     val cnt = mp.foldLeft(0) { (Z, el) ⇒ el._2.size + Z }
     if (maxFilled < cnt) {
       maxFilled = cnt
-      println(s"maxfilled = $maxFilled")
+      //println(s"maxfilled = $maxFilled")
     }
   }
 
