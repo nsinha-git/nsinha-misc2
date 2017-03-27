@@ -1,0 +1,87 @@
+1. We need to find the (A,B,C) with A+B+C < T(A given) suct that max number of nodes each having (a,b,c) with ∑ai < T.
+2.Brute force approach is create a DP table with (a,b) as index. For each index count members that belong there. C is implied by T-a-b.
+    1. The above is easily F = T*T*N
+3. Can we do better?
+   1. Can we stop counting N candidates for every (a,b) that can remove factor of N from F.
+   2. Are two (a,b) related. Yes (a+1,b) is (a,b) with more candidates that fit in a+1. Then they must subtract those C which are driven out
+   by a narrowing on C since a increased. Similar arguments hold out for (a,b+1)
+   3. If we dont just keep counts on every (a,b) but also store a map of candidates on key of C, then the elimination on C is removal of list on
+   attacked C.
+   4. Also to add a+1 or b+1 if we store candiates again on map of C then addidition to (a,b) is adding the lists of a+1(or b+1) to list of (a,b)
+   5. The addition can be simply a append by P1.
+   6. The substraction of C from a+1(or b+1) is similar as to 3.3
+4. The 3 can give us F3= T*T*K
+   Lets analyze K.
+   To calculate a+1,b:
+   L1:we can access the list for a+1 in o(1) is precomputed.
+   L2:we can access the list for (a,b) in o(1) is precomputed.
+   we have constraint of c as T-a-b
+   We can remove list for C from by removing it from L1 or L2. this is o(1) if  a HashMap is used
+   Now we merge L1 and L2. The L1 and L2 is ordered already are merged in their c axis. this can be o(N).
+   So  K is o(N).
+   Phew Not much improvement. Or really there is?
+
+   Let's do a more thorough analyis:
+   We can stop whenever we reach N and not evelauate any more dp keys. That means we can probabilistically get <T*T*O(N)
+
+   Given S = {(ai,bi}} set when can we say we dont need evaluate (aj,bk) not member of S.
+
+   If we are going in only forward paths where we evaluate (a+1,b) only after (a,b) then we can stop anytime if (a+1,b) < (a,b) and
+   a+1 is max of a.
+   if a+1 is not max of a then a+1 will be able to add more elements. The c=T-a-b will remove elements. Let's say (a+1,b) < (a,b).
+   What about (a+1,b+1) ?
+   So we can not justify as of yet that in general case we can do much better than T*T*N
+
+   What about K = o(N)
+
+   The L1 and L2 are grouped as per c-sizes
+   c1 l1c1  l2c1
+   c2 l1c2  l2c2
+
+   cremoved ,  .
+   c++
+   etc
+   where  ∑lici == N as every member can only belong to one of ci and one of the list.
+
+   a ci can be removed only once if we are doing row travel or col travel.
+
+
+   Check P2. for O(TN) complexity.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+P1. (a,b) tableEntry and a+1 entry dont intersect.
+
+every member of a+1 has it's a value larger than what (a,b) can sufficiently provide.
+QED
+
+
+P2. Total complexity is O(TN)
+Take a single row starting from left (a,b) ending at (A,b). This at max can span all the elements(if all the elements need b or less).
+Also if our list merge is simple o(1) change of pointers and lists dont intesect then a map merge is lot of lists  merge. Our c subtraction is
+o(1) delete of elements if we use multilevel hash maps.
+
+As span of elements in a row is limited by o(N) and the max a element can be touched is when it's in head of added set(max 1), and when it's
+in head of removed set(max 1). So o(2). This is o(2n).
+When we go sequentially to next row, We se (a,b+1) which fits in P1.
+
+This is true for each row and there are T rows so o(T*2n). To create a single col of left side it's another o(2n). So total is:
+o(Tn + n).
+
+Also there are less than T distinct A and b. so we are looking at much less than o(Tn) operations for average cases.
+
+

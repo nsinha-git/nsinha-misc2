@@ -68,7 +68,6 @@ case class ProblemCSolve(rows : Int, cols : Int, inputs : String) {
   //prob.zeroMaps
 
   val prob1 = ProblemCBruteForceFillNonFill(grid, initialgridValues)
-  prob1.zeroMaps
 }
 
 case class ProblemCBruteForceInt(grid : Grid, gridValues : Map[Block, Int]) {
