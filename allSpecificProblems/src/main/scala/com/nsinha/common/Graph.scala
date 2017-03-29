@@ -5,7 +5,6 @@ import scala.collection.mutable
 /** Created by nsinha on 3/7/17.
   *
   */
-
 case class Coordinate(x : Int, y : Int)
 
 trait Node[A] {

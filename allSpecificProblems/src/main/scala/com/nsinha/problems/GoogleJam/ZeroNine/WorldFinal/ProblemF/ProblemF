@@ -1,0 +1,28 @@
+Try 1:
+1.Divide 100 in M sgements each of length D=100/M. We have M*M grids.
+
+2. Each grid has a center Cg.
+
+3. There are at most 50 pillars.
+
+4. For each Cg and R and G : create a line from R and Cg. Check if line passes the 50 pillars. If yes , we dont have  R hitting the Cg.
+Repeat this fpr G. These cases may result:
+1. No body hits: Black
+2, Both hits : yellow
+3. One of them hits: red or green.
+
+5. The total complexity is M*M*50*2 =M^2*100.
+
+6. Assuming we can do, 2^20 ops M can be M= 2^7 leading to 2^21 ops
+
+P1. We can do more fine blockings on a block if we see it to be near a pillar.
+
+
+
+Try 2:
+Problem with above approach is number of compuattion steps can be much larger. We have no dependency between
+o/p and num points needed. A setup can easily work while the other may not!
+
+
+o/p driven suggests to treat only relevant events. We can do linear scan and do only whats needed.
+
