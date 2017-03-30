@@ -1,0 +1,77 @@
+1. We  call A , B  etc as linear span sets like (l,m) where l,m are on y axis and l < m. The sets are inclusive the endpoints.
+2. A and B can be connected if they intersect
+3. We can have a graph G of such sets and edges as per 2.
+
+P1. If span sets are categorized into independent sets then problem is resolved into subslolutions of ISets and assigining
+the value of solution as max(Isets)
+
+P2. Inside a ISet element, if there are 2 elements A and B, then:
+    case 1: B ⊆ A.
+        h(A) > h(B)
+    case 2: B⋂A ≠∅ ^ A ⊄ B  ^ B⊄A
+        No sol possible
+
+P3. Conisder another element C along with P2.
+    case 1> C ⊆ A, C ⊆ B
+        h(A) > h(B) > h(C)
+    case 2> C ⊆ A, C ⋂ B = ∅
+        h(A) > h(B) ⊥ h(C)
+        h(A) > h(C)
+        h(B) ⊥ h(C)
+
+P4. Let {A1,A2,...An} be in a ISet non-degenerate.
+    There must exist Ak that has an edge to each of the rest of Ai's for a viable sol
+    Proof: As ISet is not degenerate there is a connection from each node to another node.
+    Take any Ai,Aj. They can be partial intesection in which case no sol exist.
+    In case Ai ⊆ Aj We can forget-list about Ai and only consider Aj. Similar will be case for reverse containment.
+    Consider Aj with Ak after taking care of forget list.
+    We can either land up in sol case or each time get a higher containment and adding one more to orget list.
+    This process is exhaustibel in n -steps at the end of which we get Ak=Amax
+
+
+Algo:
+1. Given a1,...a2n with n colors and 2 nodes for each color.
+2. Create span nodes numbering n with 2 nodes from 1. Lets call the A1,A2,...An. o(n)
+3. Create a graph G with nodes from 2. An edge exists between node if they intersect.
+ o(n^2) is obvious but let's see if we can do better.
+ Lets each node has (l,r)
+ 1.Sort nodes on increasing l.o(nlogn)
+ 2.visit nodes from dec to inc.O(n)
+ 3.At any point of visit maintain a pQue based on r of nodes. Seeing l of curNode, remove all nodes that's r < l of curNode.
+ Remaining all are in the connection list of the curNode.
+
+ Step 3. A node can be added to pQue once and removed once. So the total complexity of step 3 is only o(2n)
+
+ Thus this is doeable in o(nlogn)
+ Set Gcur = G
+
+4. Find independent sets in GCur. O(n^2)
+
+5.Let they be C1,C2,...Ck
+
+6.Verify existence of for solution of C1,C2, ....( a mixed bfs step)
+
+7  k ≠ 1 For each Ci
+    1. Find and remove maximal AmaxCi as per P4.(o(n))
+    2. The residual graph is GCur = Gres. Goto 4.
+    3. Set the height of Ci as  height from 2 + 1
+
+8. The height of G is max height(C1,C2,..,Ck)
+
+
+Complexity =
+Fixed complexity of creating initial graph =o(nlogn)
+
+S(n) = o(n^2) + ∑S(Ci)
+We can show that:
+k-1
+∑S(Ci) <= S(n-1)
+0
+So S(n) < o(n^3).
+
+
+
+// a twist when more than two directions are available to create height
+
+1. In this case we can create maximal subset in more than one independent ways. We also can now include a numAxiswith availabel
+options.
