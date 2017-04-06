@@ -72,6 +72,104 @@ So S(n) < o(n^3).
 
 
 // a twist when more than two directions are available to create height
+Algo given without proof.proofs follow
 
-1. In this case we can create maximal subset in more than one independent ways. We also can now include a numAxiswith availabel
-options.
+We use 2 type of Graphs.
+GT1 is graph of indpendent sets of span nodes.
+GT2 is graph of (span nodes, with dirs)
+
+A Gt2 can be broken into Gt1: Sum(Gt1)
+
+A Gt1 can be be broken into Gt2: List(Node, Gt2)]
+
+Dirs from Gt2 get replcated on each of elemnets Gt1.
+
+Dirs is a axis number.
+when we break Gt1 and find overlapping sets, we remove overlaps by assiging one of dirs to a max-node if multiple max-nodes found. For one max-node
+case the dirs'=dirs.
+
+
+A node in Gt2 can be present in multiple evals so there can be multiple parent(atmost 2 see proof).
+
+When breaking a Gt1,
+
+The flow is like this:
+eval(max-node(null, dirs=2) , eval(Gt2(dirs))
+eval(Gt1(nodes, dirs))      eval(Gt1(nodes, dirs)  ... eval(Gt1)
+eval[(max-node(dirsEva), eval(Gt2'(dirsEva)]  etc
+
+
+
+
+
+The base cases:
+1. Eval(Gt2,dirs(0,1):
+size Gt2 =1  and return [(1,0), (0,1)]
+
+2. Eval(Gt2,dirs(0):
+size Gt2 =1  and return [(1,0)]
+
+3. Eval(Gt2,dirs(0,1):
+size Gt2 =1  and return [(0,1)]
+
+4. Eval(Gt2,dirs():
+return failure
+
+
+5.eval (max-node(dirs), eval(Gt2(dirs))
+   case 1: if dirs = (0) then if (a,b)= eval(Gt2(dirs)) return (a+1,b)
+   case 2: if dirs = (1) then if (a,b)= eval(Gt2(dirs)) return (a,b +1)
+   case 3: if dirs = (0, 1) then if (a,b)= eval(Gt2(dirs)) if(b<a) return (a,b +1) if(b>a) return (a+1,b) if(a==b) return [(a+1,b), (a,b+1)]
+6.eval [(max-node(dirs), eval(Gt2'(dirs))] We can get two lists which themselves have at most 2 evals.
+    lets say: l1 = (a11,b11), (a12,b12)
+    l2 = (a21,b21), (a22,b22)
+    case 1: dirs =(0,1). In this case l2 must be nil.
+            if (l1.size ==1) choose the one element
+            else if (l1.size == 0) set fail
+            else if (l1.size == 2) choose both the sols.
+    case 2: dirs = (0) for l1 and dirs = (1) for l2
+        let F((a,b)) = max(a,b)
+        L1Sol = min F on l1
+        L2Sol = min F on l2
+        choose (max(L1(a),L2(a)), max(L1(b),L2(b)
+        let (Asol, BSol)  be a solution
+
+7. DirsEva: maxnode1 can get 0
+    all entries in CC of maxnode1 can have (0,1) but those that intesect with maxnode2
+    all entries in CC of maxnode2 can have (0,1) but those that intesect with maxnode1
+
+
+------------------------------
+Even a more simpler solution:
+
+1. Create a Hyper Graph with 2 type of edges Intersect and Contained.
+
+2. In G1 two span nodes are connected if they have a intersection.
+
+3. In G2 two nodes have a directed connection if A contains B. A then contains B as a child
+
+4. First traverse G1 channels. Find CCs. For one node CC put a value of 0 for color. Visit other CC. Color the parent(choose any) 1 and its
+ bfs kids 2. Bfs of 2 colored kids are colored 1 if they are 0. If any kid is colored not zero in visit and the parent is same color, there is a failure.
+
+5. After 4 we have all nodes colored 0,1,2
+
+6. Now process the G2 channels. Do a dfs from arbitrary node.
+    1. if no child node and color =0 : assign (0,1) and (1,0) as value for the node
+    2. if no child node and color =1 : assign (1,0)
+    3. if no child node and color =2 : assign (0,1)
+    4. if childlren and color = 0: max(min on X) for all children. This X is going to be used for finding Y. Condition on this X and find children
+    that qualify. Find max(min on Y) . this gives =(X1,Y1)
+    do it other way too: this gives (X2,y2) if max(x1,y1) > maxof(x2,y2). drop the max one. else keep one with min other value.
+    Lets call the prefinal res: (x,y)
+    if x==y finalresult (x+1,x) and (x,x+1)
+    else increase the lower one by one.
+    This step the absolute minium for cur node given the chid nodes state
+    5. if children and col=1:
+    Do as in 4. but final result will be done like this:
+    if (x ==y) from children then (x+1,x) else
+    finalresult (x+1,y). Minimum step from this node given child
+    6. if childeen and col=2
+    do as in 5.
+proof: Given minimum step from node given it's child is absolute minimum that can achieved. The proof is by induction on children.
+So we achieve the minimum height
+
