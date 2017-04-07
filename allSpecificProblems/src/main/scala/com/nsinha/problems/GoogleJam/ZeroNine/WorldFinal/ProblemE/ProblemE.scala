@@ -280,129 +280,23 @@ class GraphBase(graphSet : GraphSet) {
   }
 
 }
-//GT1 is graph of indpendent sets of span nodes.
-//GT2 is graph of (span nodes, with dirs)
-
-//eval(max-node(null, dirs=2) , eval(Gt2(dirs))
-//eval(Gt1(nodes, dirs))      eval(Gt1(nodes, dirs)  ... eval(Gt1)
-//eval[(max-node(dirsEva), eval(Gt2'(dirsEva)]  etc
-
-class GT1(g : GraphSet) extends GraphBase(g) {
-
-  def eval = {
-    val (maxNode1, maxNode2) = findMaximalNodesOnConnectedGraph
-
-  }
-
-}
-class GT2(g : GraphSet) extends GraphBase(g) {
-  def eval = {
-    val independentSets : List[GraphSet] = findIndependentSets
-
-    independentSets foreach { independentSet ⇒
-      val gt1 = new GT1(independentSet)
-    }
-  }
-}
 
 case class HyperGraph(g : Map[SpanNode, NodeAdjacency], gColor : mutable.Map[SpanNode, Int]) {
-
-  case class ColoredNode(spanNode : SpanNode, var color : Int) {
-    override def hashCode() : Height = spanNode.hashCode()
-  }
-
-  var failureOfBiPartite = false
-  val heightDpMap = mutable.HashMap[SpanNode, Array[(Height, Height)]]()
-  val coloredNodeBaseGraph : Map[ColoredNode, List[ColoredNode]] = createColoredGraph
-
-  //should not do this
-  //processColors
-
-  processTheDfsOfHeight
-
-  def createColoredGraph : Map[ColoredNode, List[ColoredNode]] = {
-    val coloredGraph = mutable.HashMap[ColoredNode, List[ColoredNode]]()
-    val spanNodeToColoredNode = mutable.HashMap[SpanNode, ColoredNode]()
-
-    g.keys foreach { x ⇒
-      val colNode = ColoredNode(x, 0)
-      coloredGraph += colNode → List[ColoredNode]()
-      spanNodeToColoredNode += x → colNode
-    }
-    g foreach { x ⇒
-      val colNode : ColoredNode = spanNodeToColoredNode(x._1)
-
-      //  val coloredNodeNbrs = x._2 map { spanNodeToColoredNode(_) }
-
-      //coloredGraph += (colNode → coloredNodeNbrs)
-    }
-
-    coloredGraph.toMap
-  }
-
-  def processColors = { doBfsForColorSetting }
-
-  def doBfsForColorSetting = {
-    val allNodes = coloredNodeBaseGraph.keys.foldLeft(mutable.MutableList[ColoredNode]()) { (Z, el) ⇒ Z += el } toSet
-    val allNonZeroNodes = { allNodes filter { x ⇒ coloredNodeBaseGraph(x).size > 0 } }.foldLeft(mutable.Set[ColoredNode]()) { (Z, el) ⇒ Z += el }
-
-    val visited = mutable.Set[ColoredNode]()
-
-    while (allNonZeroNodes.nonEmpty) {
-      val curRoot = allNonZeroNodes.head
-      allNonZeroNodes.remove(curRoot)
-      curRoot.color = 1
-      val bfsQue = mutable.Queue[ColoredNode](curRoot)
-      doBfsForColorSettingOnQue(bfsQue, visited)
-      allNonZeroNodes.intersect(visited) foreach { x ⇒ allNonZeroNodes -= (x) }
-    }
-  }
-
-  def doBfsForColorSettingOnQue(bfsQue : mutable.Queue[ColoredNode], visited : mutable.Set[ColoredNode]) : Unit = {
-    //bfs Que nodes have colored already set
-    val curVisiting = bfsQue.dequeue()
-    val curColor = curVisiting.color
-    val oppColor = if (curColor == 1) 2 else 1
-
-    val allNbrs = coloredNodeBaseGraph(curVisiting)
-
-    val isFailure = allNbrs.foldLeft (false) { (Z, el) ⇒
-      if (Z == true) {
-        Z
-      }
-      else {
-        val res = if (el.color == 0) {
-          el.color = oppColor
-          false
-        }
-        else {
-          if (el.color != oppColor) { true } else { false }
-        }
-        if (res == true) true else Z
-      }
-    }
-
-    if (isFailure) failureOfBiPartite = true
-    visited += curVisiting
-    allNbrs foreach { x ⇒ if (!visited.contains(x)) { bfsQue += x } }
-
-    if (bfsQue.isEmpty) return else doBfsForColorSettingOnQue(bfsQue, visited)
-  }
-
   type Height = Int
-
   var maxHeight : Height = 0
   var failure = false
+  var failureOfBiPartite = false
+  val heightDpMap = mutable.HashMap[SpanNode, Array[(Height, Height)]]()
+  processTheDfsOfHeight
+
+  private def findFarthestParentNode(node : SpanNode) : SpanNode = { if (g(node).parents.isEmpty) node else findFarthestParentNode(g(node).parents.head) }
 
   def processTheDfsOfHeight : Height = {
     // the nodes in coloredNodeBaseGraph can form a forest. so we need to be able to subtract after we visit each of trees.
     // we can create a mutable set of all nodes to start with. We will subtract a node from this set as we finish off with that node.
     //we will keep prcoessing ad updating Height till all of set is exhausted.
 
-    val nodesQueUnvisited = g.foldLeft(mutable.Set[SpanNode]()) { (Z, el) ⇒
-      Z += el._1
-    }
-
+    val nodesQueUnvisited = g.foldLeft(mutable.Set[SpanNode]()) { (Z, el) ⇒ Z += el._1 }
     while (nodesQueUnvisited.nonEmpty) {
       val curNode = findFarthestParentNode(nodesQueUnvisited.head) //prove that a unvisited node farthest parent would be always unvisited in dfs
       nodesQueUnvisited.remove(curNode)
@@ -413,13 +307,20 @@ case class HyperGraph(g : Map[SpanNode, NodeAdjacency], gColor : mutable.Map[Spa
     maxHeight
   }
 
-  def findFarthestParentNode(node : SpanNode) : SpanNode = { if (g(node).parents.isEmpty) node else findFarthestParentNode(g(node).parents.head) }
-
   def doDfsHeightTop(curNode : SpanNode, unVisited : mutable.Set[SpanNode]) : Unit = {
     if (heightDpMap.contains(curNode)) return
     val parentNode = findFarthestParentNode(curNode)
-    unVisited.remove(parentNode)
-    doDfsHeight(parentNode, unVisited)
+    if (unVisited.contains(parentNode)) {
+      unVisited.remove(parentNode)
+      doDfsHeight(parentNode, unVisited)
+    }
+    else {
+      //just do this node
+      //prove that if a node has hierarchical parents they will follow a highest to next lower to lowest descent
+      assert(unVisited.contains(curNode))
+      unVisited.remove(curNode)
+      doDfsHeight(curNode, unVisited)
+    }
   }
 
   def doDfsHeight(curNode : SpanNode, unVisited : mutable.Set[SpanNode]) : Array[(Height, Height)] = {
@@ -443,6 +344,8 @@ case class HyperGraph(g : Map[SpanNode, NodeAdjacency], gColor : mutable.Map[Spa
     val color = gColor(curNode)
     val curNodeChildren = g(curNode).fullyContained
     val curNodeChildrenUnvisited = curNodeChildren filter { x ⇒ unVisited.contains(x) }
+    //prove we come to child only through their parents and preBiases is going to be good.
+    val preBiases = findPreBiasesForThisNodeBasedOnParents(curNode)
 
     val heightArrayFromFullyContainedChildren : Array[(Height, Height)] = if (curNodeChildren.isEmpty) {
       color match {
@@ -456,13 +359,13 @@ case class HyperGraph(g : Map[SpanNode, NodeAdjacency], gColor : mutable.Map[Spa
       //all children have been visited
       //get all children and find their height pairs
       val childHeightsTop = curNodeChildren map { el ⇒ heightDpMap(el) }
-      findBestHeightsFromChildren(childHeightsTop, color)
+      findBestHeightsFromChildren(childHeightsTop, color, preBiases)
     }
     else {
       //there must be children who remain unvisited. unconditionally visit everyone from here
       curNodeChildrenUnvisited foreach (doDfsHeightTop(_, unVisited))
       val childHeightsTop = curNodeChildren map { el ⇒ heightDpMap(el) }
-      findBestHeightsFromChildren(childHeightsTop, color)
+      findBestHeightsFromChildren(childHeightsTop, color, preBiases)
     }
 
     //at this point we have a height from all immediate children which were unconsrtrained from  parent. So this is the best childHeight we will ever get
@@ -506,20 +409,15 @@ case class HyperGraph(g : Map[SpanNode, NodeAdjacency], gColor : mutable.Map[Spa
           //we just expect the array of each to contain a single entry
           assert(heightArrayFromIntesectingGrandParent.size == 1)
           assert(heightArrayFromFullyContainedChildren.size == 1)
-          //for this node choose the highest axis from two elements taken one at a time from each array
-          val maxX = Math.max(heightArrayFromIntesectingGrandParent.head._1, heightArrayFromFullyContainedChildren.head._1)
-          val maxY = Math.max(heightArrayFromIntesectingGrandParent.head._2, heightArrayFromFullyContainedChildren.head._2)
-          val newHeightTuple = Array((maxX, maxY))
-          heightDpMap += curNode → newHeightTuple
-          newHeightTuple foreach { el ⇒
+          heightDpMap += curNode → heightArrayFromFullyContainedChildren
+          heightArrayFromFullyContainedChildren foreach { el ⇒
             if (el._1 > maxHeight) maxHeight = el._1
             if (el._2 > maxHeight) maxHeight = el._2
           }
-
-          newHeightTuple
+          heightArrayFromFullyContainedChildren
         }
       }
-      heightArrayFromIntersects
+      heightArrayFromFullyContainedChildren
     }
     else {
       heightDpMap += curNode → heightArrayFromFullyContainedChildren
@@ -531,12 +429,20 @@ case class HyperGraph(g : Map[SpanNode, NodeAdjacency], gColor : mutable.Map[Spa
     }
   }
 
-  def findBestHeightsFromChildren(childrenHeights : mutable.Set[Array[(Height, Height)]], color : Int) : Array[(Height, Height)] = {
-    val minXLowerBound = findMaxOfMinOnListOfTuples(childrenHeights, 0)
-    val minYLowerBound = findMaxOfMinOnListOfTuples(childrenHeights, 1)
+  def findPreBiasesForThisNodeBasedOnParents(curNode : SpanNode) : (Height, Height) = {
+    val allParents = g(curNode).parents
+    val allOnes = { allParents filter (gColor(_) == 1) }.size
+    val allTwos = { allParents filter (gColor(_) == 2) }.size
+    (allOnes, allTwos)
+  }
 
-    val childHeightsTopConditionedOnX = filterArrayBasedOnAxis(childrenHeights, 0, minXLowerBound)
-    val childHeightsTopConditionedOnY = filterArrayBasedOnAxis(childrenHeights, 1, minYLowerBound)
+  def findBestHeightsFromChildren(childrenHeightsIn : mutable.Set[Array[(Height, Height)]], color : Int, preBiases : (Height, Height)) : Array[(Height, Height)] = {
+    val childrenHeightsAfterBiasing = childrenHeightsIn map { x ⇒ x map { y ⇒ (y._1 + preBiases._1, y._2 + preBiases._2) } }
+    val minXLowerBound = findMaxOfMinOnListOfTuples(childrenHeightsAfterBiasing, 0)
+    val minYLowerBound = findMaxOfMinOnListOfTuples(childrenHeightsAfterBiasing, 1)
+
+    val childHeightsTopConditionedOnX = filterArrayBasedOnAxis(childrenHeightsAfterBiasing, 0, minXLowerBound)
+    val childHeightsTopConditionedOnY = filterArrayBasedOnAxis(childrenHeightsAfterBiasing, 1, minYLowerBound)
 
     val maxYForMinXBound = {
       childHeightsTopConditionedOnX.map(_._2)
@@ -547,7 +453,7 @@ case class HyperGraph(g : Map[SpanNode, NodeAdjacency], gColor : mutable.Map[Spa
 
     //(minX, maxYCOn) and (maxXCond, minY) are two options
     val xGroupTuple = (minXLowerBound, maxYForMinXBound)
-    val yGroupTuple = (minYLowerBound, maxXForMinYBound)
+    val yGroupTuple = (maxXForMinYBound, minYLowerBound)
     val maxXgroup = Math.max(minXLowerBound, maxYForMinXBound)
     val minXgroup = Math.min(minXLowerBound, maxYForMinXBound)
     val maxYgroup = Math.max(minYLowerBound, maxXForMinYBound)
@@ -563,7 +469,7 @@ case class HyperGraph(g : Map[SpanNode, NodeAdjacency], gColor : mutable.Map[Spa
       Array[(Height, Height)](xGroupTuple)
     }
 
-    val resArrayUnfiltered = color match {
+    val resArrayUnfiltered : Array[(Height, Height)] = color match {
       case 0 ⇒
         val res = preResTupleArray flatMap { preResTuple ⇒
           if (preResTuple._1 == preResTuple._2) {
@@ -576,14 +482,17 @@ case class HyperGraph(g : Map[SpanNode, NodeAdjacency], gColor : mutable.Map[Spa
             Array((preResTuple._1 + 1, preResTuple._2))
           }
         }
+        res
       case 1 ⇒ preResTupleArray flatMap { preResTuple ⇒ Array((preResTuple._1 + 1, preResTuple._2)) }
       case 2 ⇒ preResTupleArray flatMap { preResTuple ⇒ Array((preResTuple._1, preResTuple._2 + 1)) }
       case _ ⇒ throw new RuntimeException()
     }
 
-    val minHeight = { preResTupleArray map (x ⇒ Math.max(x._1, x._2)) }.min
+    val minHeight = { resArrayUnfiltered map (x ⇒ Math.max(x._1, x._2)) }.min
 
-    preResTupleArray filter { x ⇒ Math.max(x._1, x._2) < minHeight }
+    val returnArray = { resArrayUnfiltered filter { x ⇒ Math.max(x._1, x._2) <= minHeight } }.toSet[(Height, Height)].toArray[(Height, Height)]
+    //remove preBiasing
+    returnArray map { x ⇒ (x._1 - preBiases._1, x._2 - preBiases._2) }
   }
 
   private def filterArrayBasedOnAxis(ll : mutable.Set[Array[(Height, Height)]], axis : Int, bound : Height) : List[(Height, Height)] = {
@@ -654,6 +563,10 @@ case class HyperGraph(g : Map[SpanNode, NodeAdjacency], gColor : mutable.Map[Spa
 class Testing extends FunSuite {
   test("a") {
     ProblemE("red red blue yellow blue yellow ")
+  }
+
+  test("b") {
+    ProblemE("a b c d d c e b f a g g f e")
   }
 }
 
