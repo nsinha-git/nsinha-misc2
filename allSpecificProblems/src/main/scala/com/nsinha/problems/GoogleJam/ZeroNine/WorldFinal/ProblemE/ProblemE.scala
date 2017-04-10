@@ -345,8 +345,7 @@ case class HyperGraph(g : Map[SpanNode, NodeAdjacency], gColor : mutable.Map[Spa
     val nodesQueUnvisited = g.foldLeft(mutable.Set[SpanNode]()) { (Z, el) ⇒ Z += el._1 }
     while (nodesQueUnvisited.nonEmpty) {
       val curNode = findFarthestParentNode(nodesQueUnvisited.head) //prove that a unvisited node farthest parent would be always unvisited in dfs
-      nodesQueUnvisited.remove(curNode)
-      doDfsHeight(curNode, nodesQueUnvisited)
+      doDfsHeightTop(curNode, nodesQueUnvisited)
     }
 
     println(maxHeight)
@@ -355,18 +354,9 @@ case class HyperGraph(g : Map[SpanNode, NodeAdjacency], gColor : mutable.Map[Spa
 
   def doDfsHeightTop(curNode : SpanNode, unVisited : mutable.Set[SpanNode]) : Unit = {
     if (heightDpMap.contains(curNode)) return
-    val parentNode = findFarthestParentNode(curNode)
-    if (unVisited.contains(parentNode)) {
-      unVisited.remove(parentNode)
-      doDfsHeight(parentNode, unVisited)
-    }
-    else {
-      //just do this node
-      //prove that if a node has hierarchical parents they will follow a highest to next lower to lowest descent
-      assert(unVisited.contains(curNode))
-      unVisited.remove(curNode)
-      doDfsHeight(curNode, unVisited)
-    }
+    assert(unVisited.contains(curNode))
+    unVisited.remove(curNode)
+    doDfsHeight(curNode, unVisited)
   }
 
   def doDfsHeight(curNode : SpanNode, unVisited : mutable.Set[SpanNode]) : Array[(Height, Height)] = {
@@ -538,8 +528,11 @@ case class HyperGraph(g : Map[SpanNode, NodeAdjacency], gColor : mutable.Map[Spa
     val minHeight = { resArrayUnfiltered map (x ⇒ Math.max(x._1, x._2)) }.min
 
     val returnArray = { resArrayUnfiltered filter { x ⇒ Math.max(x._1, x._2) <= minHeight } }.toSet[(Height, Height)].toArray[(Height, Height)]
+    val minSum = { returnArray map { x ⇒ x._1 + x._2 } }.min
+
     //remove preBiasing
-    returnArray map { x ⇒ (x._1 - preBiases._1, x._2 - preBiases._2) }
+    { returnArray filter { x ⇒ (x._1 + x._2) == minSum } } map { x ⇒ (x._1 - preBiases._1, x._2 - preBiases._2) }
+
   }
 
   private def filterArrayBasedOnAxis(ll : Set[Array[(Height, Height)]], axis : Int, bound : Height) : List[(Height, Height)] = {
