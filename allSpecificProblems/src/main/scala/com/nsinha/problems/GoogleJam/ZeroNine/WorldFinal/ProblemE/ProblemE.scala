@@ -1,5 +1,6 @@
 package com.nsinha.problems.GoogleJam.ZeroNine.WorldFinal.ProblemE
 
+import com.nsinha.common.MapUtils
 import org.scalatest.FunSuite
 
 import scala.collection.mutable
@@ -9,63 +10,108 @@ import scala.collection.mutable
 
 case class SpanNode(left : Int, right : Int)
 
-case class NodeAdjacency(fullyContained : mutable.Set[SpanNode] = mutable.HashSet(), partialIntersection : mutable.Set[SpanNode] = mutable.HashSet(), parents : mutable.Set[SpanNode] = mutable.HashSet())
+case class NodeAdjacency(fullyContained : mutable.Queue[SpanNode] = mutable.Queue(), partialIntersection : mutable.Queue[SpanNode] = mutable.Queue(), parents : mutable.Queue[SpanNode] = mutable.Queue())
 case class ProblemE(input : String) {
   type Pos = Int
-
-  val allSpanNode : List[SpanNode] = getSpanNodes
-
+  type Boundary = Int
+  val leftBoundaryAscMap = mutable.HashMap[String, Pos]()
+  val leftBoundaryAscQueue = mutable.Queue[String]()
+  val rightBoundaryAscMap = mutable.HashMap[String, Pos]()
+  val rightBoundaryAscQueue = mutable.Queue[String]()
+  val leftRightBoundaryAscQueue = mutable.Queue[(String, Pos, Boundary)]()
+  val allSpanNode : Map[String, SpanNode] = getSpanNodes
+  val allSpanNodeInvert : Map[SpanNode, String] = MapUtils.invertMap[String, SpanNode](allSpanNode)
   val spanNodeGraph : mutable.Map[SpanNode, NodeAdjacency] = createEdges
+
   val spanNodeColor : mutable.Map[SpanNode, Int] = allSpanNode.foldLeft(mutable.HashMap[SpanNode, Int]()) { (Z, el) ⇒
-    Z += el → 0
+    Z += el._2 → 0
   }
-  val dirsAvailable = Set("up", "down")
 
   //println({ HeightForGraph(spanNodeGraph, allSpanNode) }.solve)
 
   HyperGraph(spanNodeGraph.toMap, spanNodeColor)
 
-  def getSpanNodes : List[SpanNode] = {
-    val colors = input.split(" ")
-    val colMap = mutable.Map[String, mutable.MutableList[Pos]] ()
+  def getSpanNodes : Map[String, SpanNode] = {
+    val nodeBoundaries = input.split(" ")
+    val nodeBoundariesMap = mutable.HashMap[String, mutable.Queue[Pos]] ()
 
-    colors zip Range(0, colors.size) foreach { col ⇒
-      if (!colMap.contains(col._1)) colMap += col._1 → mutable.MutableList[Pos]()
-      colMap(col._1) += col._2
+    nodeBoundaries zip Range(0, nodeBoundaries.size) foreach { col ⇒
+      if (!nodeBoundariesMap.contains(col._1)) nodeBoundariesMap += col._1 → mutable.Queue[Pos]()
+      nodeBoundariesMap(col._1) += col._2
+      if (nodeBoundariesMap(col._1).size == 1) {
+        leftBoundaryAscMap += col._1 → col._2
+        leftBoundaryAscQueue += col._1
+        leftRightBoundaryAscQueue += ((col._1, col._2, 0))
+      }
+      else {
+        rightBoundaryAscMap += col._1 → col._2
+        rightBoundaryAscQueue += col._1
+        leftRightBoundaryAscQueue += ((col._1, col._2, 1))
+      }
     }
 
-    colMap map { x ⇒
-      val a = x._2(0)
-      val b = x._2(1)
-      val left = if (a > b) b else a
-      val right = if (a > b) a else b
-      SpanNode(left, right)
-    } toList
+    nodeBoundariesMap map { x ⇒
+      val q = x._2
+      x._1 → SpanNode(q.dequeue(), q.dequeue())
+    } toMap
   }
 
   def createEdges : mutable.Map[SpanNode, NodeAdjacency] = {
     val mapOfNodes = mutable.HashMap[SpanNode, NodeAdjacency]()
-    //do o(n^2)
-    allSpanNode foreach {
-      node ⇒
-        mapOfNodes += node → NodeAdjacency()
-    }
 
-    for (curNode ← allSpanNode) {
-      for (potNeighborNode ← allSpanNode if (potNeighborNode != curNode)) {
-        if (isFullyContainedInLeftNode(curNode, potNeighborNode)) {
-          mapOfNodes(curNode).fullyContained += potNeighborNode
-        }
-        else if (isPartialIntersection(curNode, potNeighborNode)) {
-          mapOfNodes(curNode).partialIntersection += potNeighborNode
-        }
-        else if (isFullyContainedInLeftNode(potNeighborNode, curNode)) {
-          mapOfNodes(curNode).parents += potNeighborNode
-        }
-        else {}
+    allSpanNode foreach { case (_, node) ⇒ mapOfNodes += node → NodeAdjacency() }
+
+    val queueForLeftOrder = mutable.Buffer[String]()
+    /* these ops must be supported by this Data struct.
+    1. insert the left pos for any node.(A que like interface)
+    2. when seeing the right pos remove the left pos optimally.(a hashmap that contain to_remove_pos and a tree for logn removal at pos or que backed by
+     array and a bsearch and  with tombstones to save upon shifts). But looking at 3, we spent n already. So we may as well look at a list containing
+       que. and travresing to left in o(n) and removing that.
+    3.give a report of all nodes that fall between left and right pos. (intersects). Based on 2. when removing start a que and add  elements till the end.
+    o(n)
+    based on 4 we can do that but we will need to travel to left get its q , call it q1.
+    we can get last entry q call it q2
+    now intesects are q2 -q1 in stable order.(this could be o(n)). can we improve it. i conjecture not. as list intersection is involved.
+
+
+    4.give a report of all nodes that are before left.(parents & kids) any node should contain a left ordered que of all its parents. when processing
+    a left pos node just take the last entry que it's parental que and add last entry to it and calling it this node que.
+    based on 2 we can start que from beginning and stop when we delete 2. o(n)
+
+    based on thsi we can choose que as only list impl and traverse it in o(N)
+
+     */
+
+    for (curNode ← leftRightBoundaryAscQueue) {
+      curNode._3 match {
+        case 0 ⇒
+          //we need to add this node to the running que
+          queueForLeftOrder += curNode._1
+        case 1 ⇒
+          //we see right. lets traverse the list from beginning to left of this node and find all the parents and then traverse to end and find all the intersects/
+          // also remove the left . o(2n) but this could have been improved to o(n) if we had c++ iterator which could have been manipulated locally
+          val lookups = queueForLeftOrder.foldLeft(List[SpanNode](), List[SpanNode](), false) { (Z, el) ⇒
+            val leftSeen = Z._3 || el == curNode._1
+            val parents = if (!leftSeen) Z._1.:+(allSpanNode(el)) else Z._1
+            val intersects = if (leftSeen & el != curNode._1) Z._2.:+(allSpanNode(el)) else Z._2
+            (parents, intersects, leftSeen)
+          }
+          val entry = mapOfNodes(allSpanNode(curNode._1))
+          lookups._1.foldLeft(entry.parents) { (Z, el) ⇒ Z += el }
+          lookups._2.foldLeft(entry.partialIntersection) { (Z, el) ⇒ Z += el }
+          entry.parents foreach { parent ⇒ mapOfNodes(parent).fullyContained += allSpanNode(curNode._1) }
+          //partial intersection is not guaranteed to be sorted following this step but we dont use this condition
+          //in our implementation
+          entry.partialIntersection foreach { pInter ⇒
+            if (pInter.right > allSpanNode(curNode._1).right) {
+              mapOfNodes(pInter).partialIntersection += allSpanNode(curNode._1)
+            }
+          }
+          queueForLeftOrder -= (curNode._1)
       }
+
     }
-    mapOfNodes map { x ⇒ x._1 → x._2 }
+    mapOfNodes map { x ⇒ x._1 → x._2.copy(fullyContained = x._2.fullyContained.reverse) }
   }
 
   def isFullyContainedInLeftNode(nodeLeft : SpanNode, node2 : SpanNode) : Boolean = {
@@ -335,7 +381,7 @@ case class HyperGraph(g : Map[SpanNode, NodeAdjacency], gColor : mutable.Map[Spa
         curNodeIntersection foreach (x ⇒ if (gColor(x) == 0) gColor(x) = 2 else if (gColor(x) == 2) assert(true) else assert(false))
       }
       else if (curColor == 1) {
-        assert(false) //we should never be here curColor is for aggregating grandestParentNode and this cant be reacges
+        curNodeIntersection foreach (x ⇒ if (gColor(x) == 0) gColor(x) = 2 else if (gColor(x) == 1) assert(false) else assert(true))
       }
       else { //color is 2
         curNodeIntersection foreach (x ⇒ if (gColor(x) == 0) gColor(x) = 1 else if (gColor(x) == 1) assert(true) else assert(false))
@@ -359,13 +405,13 @@ case class HyperGraph(g : Map[SpanNode, NodeAdjacency], gColor : mutable.Map[Spa
       //all children have been visited
       //get all children and find their height pairs
       val childHeightsTop = curNodeChildren map { el ⇒ heightDpMap(el) }
-      findBestHeightsFromChildren(childHeightsTop, color, preBiases)
+      findBestHeightsFromChildren(childHeightsTop.toSet, color, preBiases)
     }
     else {
       //there must be children who remain unvisited. unconditionally visit everyone from here
       curNodeChildrenUnvisited foreach (doDfsHeightTop(_, unVisited))
       val childHeightsTop = curNodeChildren map { el ⇒ heightDpMap(el) }
-      findBestHeightsFromChildren(childHeightsTop, color, preBiases)
+      findBestHeightsFromChildren(childHeightsTop.toSet, color, preBiases)
     }
 
     //at this point we have a height from all immediate children which were unconsrtrained from  parent. So this is the best childHeight we will ever get
@@ -403,12 +449,11 @@ case class HyperGraph(g : Map[SpanNode, NodeAdjacency], gColor : mutable.Map[Spa
         else {
           //the grandest parent was calculated with 2 color as with any other intersect. We now need to choose the value from grandestIntersectParent and this node own's
           //fullyContainedChildren that will fit the bill.
-          val heightArrayFromIntesectingGrandParent = heightDpMap(grandestParentOfIntersectionSet.head)
           // we have two arrays of height options for this node. one for its direct kids and other for its intersection.
           //the heights are already constarined in two separate direcctions
           //we just expect the array of each to contain a single entry
-          assert(heightArrayFromIntesectingGrandParent.size == 1)
           assert(heightArrayFromFullyContainedChildren.size == 1)
+          println(s"heightDpMap populated at key $curNode")
           heightDpMap += curNode → heightArrayFromFullyContainedChildren
           heightArrayFromFullyContainedChildren foreach { el ⇒
             if (el._1 > maxHeight) maxHeight = el._1
@@ -420,6 +465,7 @@ case class HyperGraph(g : Map[SpanNode, NodeAdjacency], gColor : mutable.Map[Spa
       heightArrayFromFullyContainedChildren
     }
     else {
+      println(s"heightDpMap populated at key $curNode")
       heightDpMap += curNode → heightArrayFromFullyContainedChildren
       heightArrayFromFullyContainedChildren foreach { el ⇒
         if (el._1 > maxHeight) maxHeight = el._1
@@ -430,13 +476,14 @@ case class HyperGraph(g : Map[SpanNode, NodeAdjacency], gColor : mutable.Map[Spa
   }
 
   def findPreBiasesForThisNodeBasedOnParents(curNode : SpanNode) : (Height, Height) = {
+    //this code assumes we decide on color of parents before we proceed to kids
     val allParents = g(curNode).parents
     val allOnes = { allParents filter (gColor(_) == 1) }.size
     val allTwos = { allParents filter (gColor(_) == 2) }.size
     (allOnes, allTwos)
   }
 
-  def findBestHeightsFromChildren(childrenHeightsIn : mutable.Set[Array[(Height, Height)]], color : Int, preBiases : (Height, Height)) : Array[(Height, Height)] = {
+  def findBestHeightsFromChildren(childrenHeightsIn : Set[Array[(Height, Height)]], color : Int, preBiases : (Height, Height)) : Array[(Height, Height)] = {
     val childrenHeightsAfterBiasing = childrenHeightsIn map { x ⇒ x map { y ⇒ (y._1 + preBiases._1, y._2 + preBiases._2) } }
     val minXLowerBound = findMaxOfMinOnListOfTuples(childrenHeightsAfterBiasing, 0)
     val minYLowerBound = findMaxOfMinOnListOfTuples(childrenHeightsAfterBiasing, 1)
@@ -495,7 +542,7 @@ case class HyperGraph(g : Map[SpanNode, NodeAdjacency], gColor : mutable.Map[Spa
     returnArray map { x ⇒ (x._1 - preBiases._1, x._2 - preBiases._2) }
   }
 
-  private def filterArrayBasedOnAxis(ll : mutable.Set[Array[(Height, Height)]], axis : Int, bound : Height) : List[(Height, Height)] = {
+  private def filterArrayBasedOnAxis(ll : Set[Array[(Height, Height)]], axis : Int, bound : Height) : List[(Height, Height)] = {
     val otherAxis = if (axis == 0) 1 else 0
 
     //only keep those elems that can survive the bound i.e their axis has a value lower or equal to
@@ -531,7 +578,7 @@ case class HyperGraph(g : Map[SpanNode, NodeAdjacency], gColor : mutable.Map[Spa
     intermediateLL.toList
   }
 
-  private def findMaxOfMinOnListOfTuples(ll : mutable.Set[Array[(Height, Height)]], axis : Int) : Height = {
+  private def findMaxOfMinOnListOfTuples(ll : Set[Array[(Height, Height)]], axis : Int) : Height = {
     val otherAxis = if (axis == 0) 1 else 0
     val res = {
       ll.map { arrEl ⇒
@@ -567,6 +614,10 @@ class Testing extends FunSuite {
 
   test("b") {
     ProblemE("a b c d d c e b f a g g f e")
+  }
+
+  test("c") {
+    ProblemE("lf qj uk qn qn rm qj bj bj hr hr x wn wn di rm uk di x zg nb zd fd cl fd cl tr id iq tr ac cn ec jb es vq pq mk mk pq es vq sn in kb kb tn tq tn in hc hc tq hm si hm sn si zo zo cn xo od kf tg ct js kf js ct tg xo qd qd od ih de de ih gd jf jf jb xj ec ac xj gd bh hl rh fs wo wo rh oj fs yg bc bc oj yg dc jj dc ol w ol jj w iq id hl bh nb lf ge ge re xk yk xk yk fc zd fc zg sp sp re dd wr bp we gb nn mp ub nn et is el is el s et gb we s bp ee fj ee fj ub ld lg hk hk ld lg mp bn mi dl vh zm zm vh to yp sm yp kc fm fm kc to qm sm qm bn dl lo ng gn gn db ng uc db lo lb lb uc ke ke mi uj uj vk oe oe xp ud wf xn uo xp kj kj y am am uo mc xn fq fq wf mc ik ud ik y t pj vk dd pj ji t ji ij ij wr yj en yj pr vd jc sk eb zs ki qq ze eg uf wc uf eg ze ft ff io xq bi ko ft wc sl pl sl eb om om tj wg jk ep mo yc as ks zf as wg tj jc zf an vd en ve an ps ks yc mo ep hq wb jk pl gs me bm ab cq ce qc fg cq ab me fg qr qc ce li cm li le cm z le qr gs gj gc bs gc gp vo gp z cs bm cs op vo op bs hs hf gj gi hf gi hs ko ml wb ml rs ah vj bi zj xq al jh al zj ao jh be io ff qq xs so xs lp zp ki ef zs ef cb er xg zp lp so vp ys cj tp cj cg ys vp kr cg em kr dn em tp dn ek xh xh m fp qk be ao vj ei tc kg eq vc ag eq kg ag vc nm wh ei wh nm tc qk fp ah he m ek ap xg er ap ts qs hn zn gf zn of qs kp ts kp of gf mf hn mf cb he rs sk hq pr ps ve tl xe tl yo k sf wk ll ll j j wk do bf xi xi k bf do sf sg yo zi sg zi aq aq md rj ln fe ed ro ed bt bt v bo v bo fe ro lj u gr gr dg lj dg ln u uq uq vn rp vn je je rp at ph nc b b kn tf kn tf ok mn mn nc ok sh yn yn yb zr dh zr dh o sc sc wq o wq sd yb sd ph ls ls sh ho lc mj mj lc e e nj d ye ye d hg dj nj mr mr ho bb bb vr mm vr mm pg pg at dj cc cc jg jg eo qh ql ql qh tm eo jd ti tm ti jd hg l jl pc pc ss ss km jl fk kq fk kq km nr vm vm vb gq vb gq l pp or or pp rj nr xd xf kh se vf se vf xf xd md kh xe zk fl bl pm pm ri ym tk tk hb gl yd ue br br ue il yd gl il dq dq hi hi jm zk jm af bg bg hb ym xr ri qe nq qe nq bl ii ii xr fl af zq xm ad ad yl xc pf gm gm xc pf zq oh oo oo yh lq yh lq ul dp dp xl dr g g dr yr yr zl zl sq rl sq rl ul xl wd ds ds oh wd rq yl tb tb vs vs fh q q wj fi fi lr lr fh i ej ej i wj jn jn xm dm dm rq rd ns rd n zh zh n rr dk dk og qf qf vl ob wi wi ob vl lh lh zc zc og rr hj hd hd c c up up ns ip gt gt p p ip hj ne ug ug mg nd ne cr qp cr hh hh qp nf r gg r nd mg bd nk nk gg nf bd xb te kd lm xb nh lm bq kd bq te nh ci sr wp oi th oi th no no ck sr ib oq oq ig np ir ni ni mb mb ir np pd lk pd lk ib yi yi ig ck us us wp qb fo qb ci fo ch if yq df vg cf ur ur im sj cf sj ui ui im ch vg qi zb wm eh wm zb eh df yq fn fn if qi vi ms ms go go vi yf mq mq po jq jq po yf ae jp fb jp pe jo jo pe dt hp ai ai h uh uh h ak pb pb ak pk pk dt un un pi gh gh pi hp ar ar pn nl ws ws cd rc rc cd nl pn fb cp cp rn rn ae mh rb rb oc mh oc os os wl jr jr wl on sb um um sb rf rf on td kk aj aj kl kl rk co co kk rk qo ic ic qo fr fr td bk gk ie ie bk gk qg rg rg qg f f")
   }
 }
 
