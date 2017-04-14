@@ -2,45 +2,131 @@
 ↛
 ↜
 ↚
-←
-↑
-→
-↓
-↔
+← left
+↑ up
+→ right
+↓ down
+↔ arrow both
 ↮
-↕
-↖
-↗
-↘
-↙
-∈
-∉
-⊆
-⊂
-⋃
-⋂
-⊄
-∃
-∀
-∑
-π
-Θ
-Ω
-α
-β
-γ
-ε
-θ
-λ
-ξ
-ρ
-ω
-∅
-≈
-≠
-≥
-≤
-✓
-∞
-⊥
-
+↕ up down
+↖ nw
+↗ ne
+↘ se
+↙ sw
+∈ member
+∉ not member
+⊆ subset
+⊂ subset
+⋃ union
+⋂ intersect
+⊄ not subset
+∃ exists
+∀ forall
+∑ sigma
+π pi
+α alpha
+β beta
+γ gamma
+Γ gamma
+Δ delta
+δ delta
+ε epsilon
+θ theta
+Θ theta
+λ lambda
+Λ lambda
+ζ zeta
+η eta
+ι iota
+κ kappa
+Μ mu
+μ mu
+ξ xi
+Ξ xi
+Ν nu
+ν nu
+ρ rho
+Ρ rho
+ω omega
+Ω omega
+∅ phi
+Χ chi
+χ chi
+Ψ psi
+ψ psi
+Υ upsilon
+υ upsilon
+Τ 	tau
+τ 	tau
+≈ similar
+≠ equal
+≥ greater
+≤ lesser
+✓ check
+∞ infinity
+⊥ bottom
+† dagger
+‡ double dagger
+• dot
+… ellipsis
+‽
+⁂ implied
+⌫ left delete
+␣ space
+□ square
+★ star
+☆ star
+⛤
+☐
+☑
+☒
+☛ finger
+☞ finger
+⚜ 	 fleur-de-lys
+✓ 	 check mark
+✗ 	 cross mark
+⸺
+⸻
+〃 ditto
+∞ infinity
+∂ partial differential
+∫ integral
+∬ double integral
+∭ triple integral
+∮ contour integral
+∯ surface integral
+∰ volume integral
+∱ clockwise integral
+∲ clockwise contour integral
+∳ anticlockwise contour integral
+∇ del
+¬ not sign
+∧ Logical AND
+∨ Logical OR
+∎  END OF PROOF
+∴  THEREFORE , there4, therefore, Therefore
+∵  BECAUSE , becaus, because, Because
+∀  FOR ALL , forall, ForAll
+∃  THERE EXISTS , exist, Exists
+∄
+△ equilateral triangle
+⊿ right triangle
+⬜ square
+♢ rhombus, diamond
+▭ rectangle
+⬠ pentagon
+⬡ hexagon
+○ circle
+⬭
+♔ white chess king
+♕ white chess queen
+♖ white chess rook
+♗ white chess bishop
+♘ white chess knight
+♙ white chess pawn
+♚ black chess king
+♛ black chess queen
+♜ black chess rook
+♝ black chess bishop
+♞ black chess knight
+♟ black chess pawn

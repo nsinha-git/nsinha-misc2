@@ -1,0 +1,57 @@
+1.
+The problem has T tournaments t1, t2 ... tT.
+A1.T
+A2. N days
+Each tornament has rounds which are sepatated by period in units of days
+So ti = (ri1,ri2, riik) where ik < R
+A2.R
+between ria and ria+1 there is a period spanning days we can call them di0 (0,1) di2(1,2) .. dik-1(ik-1,ik)
+A3. R-1 delays
+
+We need to place the games with equal prob, starting on any of days.
+A sample is one placement of tounaments(i,e assigning a start date to every one ,total T^N saples))
+A sample value is = ∑(day value of tournaments rounds)^2
+
+We want to find expectation of Exp ( ∑(day Value)^2) across all the possible samples.
+A4. Q=Exp ( ∑(day Value)^2) = Exp (∑(day_value_i))
+A5. TotalSamples = T^N
+
+2. To Calculate Q we can individually figure for all days their expectation.
+A6. Qday_i = Exp(day_value_i^2)
+and sum them later to get A4.Q.
+
+3. Qday_i = Exp(day_value_i^2)
+A7. day_value_i
+
+4. For a sample day_value_i is number of tournamments whose round are falling in the day.
+A8. day_value_i for a sample = V(t1,i) + V(t2,i) + ... + V(tT)
+ where V(t1) is 1 if sample has t1 occuring on that day i.
+A9. So Q_day_i = Exp(A8^2)
+A10. Q_day_i =Exp(∑v(tp,i)^v(tq,i)) = ∑Exp(v(tp,i)^v(tq,i))
+
+
+
+5 .what is   Exp(v(tp,i)^v(tq,i))
+It's a relationship between a day and tournamment or a day and two tournaments.
+Exp(v(tp,i)) = For  a tounament to be happening on day i one of its rounds can happen on that day.
+It's one to one mapping betwwen a start date of tournammant and which round gets played in day i. Let's say every
+tournament has  a empty round that;s played whenever no round is there to be played at di.
+So for any smaple Ω which has a unique tj_start_date there is a :
+A11. fn Fn(tj_start_date, date i) = 0 or {rj|all rounds of rj}
+Function at A11 is one to one. The inverse function is Gn(rjs, date = i) = tj_start_date
+What are all the possible start dates for tj for i: only those which map a round of tj onto i. We can easily count
+those rounds that will be in those start date. So we can do this:
+A12. F(tj, i) = rounds that will be in i for start dates. A tournamment can have N start dates so we have just
+A12 dates that actullay cause a place in day i.
+Hence Exp(v(tp,i)) = A12/N (this is possible as A5 is filled equally into N dates. Each sample in A12 bins will contribute to i. As there are A5/N in each bin and there are A12 such bins so (T^N/N)*A12/(T^N)= A12/N
+A13. Exp(v(tp,i)^v(tq,i)) = F(tp,i)*F(tq,i) = A12(p) * A12(q)
+
+6.A10 Q_day_i = is easily calculatable once for every tp and tq pair.
+
+7. There exists a Dmax such that if a day> Dmax for every tournamnet the Exp(v(tp,day))= total rounds in tp/n.
+and thus Q_day_d= Q_day_dmax for d>=dmax.
+
+
+
+8.
+

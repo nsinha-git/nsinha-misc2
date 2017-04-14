@@ -1,0 +1,41 @@
+1.Find the min perimeter (can be genarlizable to area) formed by n points. Also can max perimter could have been conquered.
+
+2. Think of  c-axis sorted points.
+If we divide along median x and calculate the min on two sides, then three scenes may come up:
+    1. One  of already calculated triangles is solution.
+    2. A triangle maay come up from merge.
+3. Do we need to do full product of two divisons here which will undermine the divsion step itself.
+4. If P is min peri of divisions then we dont need to look at distance of greater than P  from axis to any side,
+ as when we join it with anypoint from other side the perimter would be greater than P. We are assuming the number of points
+ that qaulify here is much less and does not depend on n P1.
+5. For helping step 4 we can sort along yaxis too.
+
+P1. Given  a value of P and axis, the points that qualify for selection for merge is independent of n.
+We check every n points for distance of P. we spend o(n) in testing.
+A point is independently found to be in set or not.So
+s_set ={q| q is in Points and q is within distance measure d(q,axis)<p}
+
+We need to show that s_set is independent of N.
+
+P2. We need to show that work in merging will be miniscule. In fact we will have only 16 points inside the box.This will
+prove P1.
+
+Let's say the perim is 2∇. That is a side has at most length ∇ (by triable equality a<b+c)
+We can now find all the points that are not more than ∇ from split axis.
+
+We can group these points on y axis goint with sorted y's . In each group the least y and large y wont differ by
+more than ∇. This can be done in ordered of y axis and we can resuse data from last box in calculation from next box.
+When going from last y to next y quantas we at most can only add 5 new points(P3). These 5 nodes could only interact with
+20 prior nodes(P3). Thus we can exhaust whole y axis(o(n)) in n steps. Thus total cost is o(n*fixed 20elemnts cost)= o(n)
+
+The min of this is dynamically updated. So we have o(n) step merge.
+
+
+P3. when ging from ylast to next y we will at max add 5 points.
+In the y next axis there could be a point on x axis it self. There can be a point at farthest x axis offset of ∇ for both
+sides (+2). There can be only one point between axis and this farthest point on two sides (+2) making it 5.
+Other cases will always result in something less than this.
+
+A single containing box can only have 5*5 points based on similar arguments.
+∎
+
