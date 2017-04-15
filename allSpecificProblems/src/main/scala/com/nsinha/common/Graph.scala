@@ -5,7 +5,19 @@ import scala.collection.mutable
 /** Created by nsinha on 3/7/17.
   *
   */
-case class Coordinate(x : Int, y : Int)
+case class Coordinate(x : Int, y : Int) extends Ordering[Coordinate] {
+  override def hashCode() : Int = x.hashCode() + y.hashCode()
+
+  override def compare(a : Coordinate, b : Coordinate) : Int = {
+    import StandardBooleanCoercions._
+    val r1 = implicitly[Ordering[Int]].compare(a.x, b.x)
+    val r2 = implicitly[Ordering[Int]].compare(a.y, b.y)
+    if (r1) {
+      r1
+    }
+    else r2
+  }
+}
 
 trait Node[A] {
   val name : String

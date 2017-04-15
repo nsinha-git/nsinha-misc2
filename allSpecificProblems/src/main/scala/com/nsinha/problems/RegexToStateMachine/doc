@@ -1,0 +1,6 @@
+1. A simple string match in a large document.
+2. the algorithm is to create a precomputed states with state transitions for src string. let the target string pass
+this state machine and report the offsets when final states were touched.
+3.The above algorithm may not be as efficient as Knuth Pratt but we want to study the insights of this solution
+all by itself.
+4. We may improve this to a regex match with simple add ons like * $ ^

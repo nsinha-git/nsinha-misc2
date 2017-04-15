@@ -1,10 +1,7 @@
 package com.nsinha.problems.GoogleJam.ZeroNine.WorldFinal.ProblemA
 
 import java.lang.Integer.parseInt
-
 import com.nsinha.common.Ratio
-import com.nsinha.problems.GoogleJam.ZeroNine.WorldFinal.ProblemD.SpanNode
-
 import scala.collection.mutable
 
 /** Created by nsinha on 4/11/17.

@@ -2,6 +2,7 @@ package com.nsinha.common
 
 import org.scalatest.FunSuite
 
+import scala.collection.immutable.TreeSet
 import scala.collection.mutable
 
 /** Created by nsinha on 4/12/17.
@@ -72,18 +73,27 @@ object PermutationCombination {
 
   private def createANumber(mp : Map[Int, Int]) : List[Int] = { mp.toList.sortBy(_._2) map (_._1) reverse }
 
-  def getAllCombinations(part : Int, total : List[Int]) : List[(Int, List[Int])] = {
+  def getAllCombinations(part : Int, total : Set[Int]) : Set[Set[Int]] = {
     val res = mutable.MutableList[Int]()
 
-    if (part == 1) return { total map { x ⇒ (x, List(x)) } }
-
-    if (part == 0) return List()
-
-    Range(0, total.length) foreach { i ⇒
-      val oneLessPart = getAllCombinations(part - 1, total)
+    if (part == 1) return {
+      total map { x ⇒ TreeSet(x) }
     }
-    Nil
 
+    if (part == 0) return Set()
+
+    val oneLessPart = getAllCombinations(part - 1, total)
+
+    total flatMap { el ⇒
+      oneLessPart map { x ⇒
+        if (x.min < el) {
+          x + el
+        }
+        else {
+          Set[Int]()
+        }
+      }
+    } filter (el ⇒ el.nonEmpty && el.size == part)
   }
 
 }
@@ -99,5 +109,9 @@ class PermutationCombinationTesting extends FunSuite {
       initialList = PermutationCombination.getNextPerm(initialList)
       println(initialList)
     }
+  }
+  test("c") {
+    var initialList = Set(1, 2, 3, 4)
+    println(PermutationCombination.getAllCombinations(3, initialList))
   }
 }
