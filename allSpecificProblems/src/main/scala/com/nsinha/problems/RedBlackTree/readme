@@ -1,0 +1,15 @@
+A1. A redblack tree can have any multipler in positive Z as long as offset is 1.
+
+A2. A redbalck tree is tree where parent is always balanced.
+
+A3. The balancing step always starts from the grandparent. We balance a grandparent.Then move to parent. This is inductive step.
+We are able to balance the root of tree from one of its grandchildren. The ascent is thus is upper bounded in <= logN - 2.
+i.e a insertion is always at worst logN-2. The factor of 2 come from the balancing on grandparent step.
+
+
+A4. At any static state of RB tree the lower height of a parent is atleast as big as the lower height of any of it's children.
+
+A5. A rotation does not necasarily decrease the tree size.
+A6. A5 is the reason that a height increase in leaf node can lead to ascent till we reach root.
+A7. Interesting phenomenon is that we can stop the balancing at any level like at h=2 and the asymptotic tree is still RBB.
+

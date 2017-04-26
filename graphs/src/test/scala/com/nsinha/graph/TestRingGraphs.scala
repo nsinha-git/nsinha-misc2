@@ -12,7 +12,6 @@ import scala.collection.mutable.MutableList
 /** Created by nsinha on 2/17/17.
   */
 class TestRingGraphs extends FunSuite {
-  val x : mu
 
   test("just an associative non distributive graph") {
     val _g = AssociativeNonDistributiveGraphFactory.createRandomGraph(5, 1)

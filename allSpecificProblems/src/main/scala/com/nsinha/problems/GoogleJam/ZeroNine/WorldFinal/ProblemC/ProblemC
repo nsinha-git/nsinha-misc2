@@ -1,0 +1,44 @@
+1. Given an unfilled grid of size n*n.
+    A ordered alphabet set {a1,a2,...ap} of cardinality p
+2.1 Let's define S and TS
+    S(k,a,b) means we put kth aplphabet on a,b and want to know all configurations where any cell that has either
+    row or col or both less than (a,b) is filled from {0,...k-1} alphabets.
+
+    TS(k,a,b) means we put k alpha in each cell that is less or equal in row and col from (a,b) and sum their total.
+    See that constituents are orthogonal.
+
+    The final answer is TS(p,n-1,n-1)
+
+2.  We assume we already have a Dp for as S and TS{a1,...ak}
+And we need a sloution space for Dp{a1,..ak+1}
+S(k+1) based on S(k..1) and TS.
+A2. TS(k, (0..a)*(0..b) = ∑S(k,(a,b)) because of orthogonality of S.
+
+3. A3.For S(k+1) we can set any point(a,b) which divides the whole square 4 rectangles:
+    R00 is left top
+    R11 is right bottom
+    R01 is top right
+    R10 is bottom left
+
+4. A4 R11 for s(k+1) is defined in one and only one way.
+
+5. A5 R00 + R01 for s(k+1) is all the ways R00 +R01  could have been filled in k step.
+We thus have TS(k,{0,r-1}*{0,n}) for arbitrary rows to represent that.
+For R10 we need TS(k,{r,..n}*{0,c-1} ). We thus need for each k extra n+ n^2
+
+A6.i.e TS(k, (0,a)*(0,b)).i.e p*n^2 states.
+
+Check that A6 can easily give A5:
+{r..n}*{0,c} = (0,n)*(0,c) - (0,r-1)*(0,c)
+
+Thus we have total 2*p*n^2 states in DP one for S and one for TS.
+6. For calculating S(k+1, (a,b)) = TS(k,a-1,n)- TS(k,n,b-1) + TS(k,a-1,b-1)
+i.e. every S requires 3 ops. there are (n^2*P*3) such ops.
+
+
+7 Every TS(k,a,b) = (TS(k, a-1, b) + TS(k,a,b-1) - TS(k,a-1,b-1) + s(k,a,b))* Sol(k,totalRows-a,b-1) * Sol(k, a-1, totalCols-b)
+num of ops = (n^2*P*3).
+So we have o(n^2*P) operations.
+
+
+8. Fucjing cool problem looks like i will have to keep working on the recursive formula.

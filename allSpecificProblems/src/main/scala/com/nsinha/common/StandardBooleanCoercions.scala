@@ -16,4 +16,9 @@ object StandardBooleanCoercions {
     if (x.size == 0) false else true
   }
 
+  implicit def nullToFalse[A](x : A) : Boolean = {
+    if (x == null) return false
+    true
+  }
+
 }
