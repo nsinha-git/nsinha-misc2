@@ -1,0 +1,10 @@
+A1.A 2t-1 range and 2tkey tree.
+A2.A root node that can be filled to wahatever extent
+A3. A height h is common for all leaves.
+
+
+
+
+B1. B Tree at beginning has a single root and which is a leaftype too.
+B2. A root type can have any number of keys <=2t-1
+B3. A leaftype always has leaves from minimum t upto 2t-1

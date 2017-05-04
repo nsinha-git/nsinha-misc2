@@ -43,6 +43,8 @@ object RedBlackTreeSet {
 
 class RedBlackImpl(initRoot : Int, multiplier : Int = 2, offset : Int = 1) extends RedBlackTreeSet {
 
+  var cost = 0
+
   override var root = new Node { value = initRoot }
 
   override def isPresent(x : Int) : Boolean = isPresent(x, root)
@@ -98,6 +100,7 @@ class RedBlackImpl(initRoot : Int, multiplier : Int = 2, offset : Int = 1) exten
   }
 
   private def switchKid(gGParentOpt : Option[Node], curKid : Node, toSwitchKid : Node) : Unit = {
+    cost = cost + 1
     Option(gGParentOpt) map { x ⇒
       x match {
         case Some(gGParent) ⇒
@@ -341,7 +344,7 @@ class RedBlackImpl(initRoot : Int, multiplier : Int = 2, offset : Int = 1) exten
   }
 
   def printBfsTree = {
-    println("-------")
+    println(s"-------$cost")
     bfsVisitLevelWiseAndPrint(mutable.Queue(root))
     println("-------")
   }

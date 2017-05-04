@@ -1,5 +1,8 @@
 package com.nsinha.problems.Ladder
 
+import com.nsinha.common.PermutationCombination
+
+import scala.annotation.tailrec
 import scala.collection.mutable
 
 /** Created by nsinha on 4/17/17.
@@ -61,3 +64,101 @@ case class FindCycle(g : Map[Node, List[Node]]) {
   }
 }
 
+object Binomial {
+  @tailrec
+  def factorial(n : Int, acc : BigDecimal = 1) : BigDecimal = {
+    if (n <= 1) return acc
+    factorial(n - 1, acc * n)
+  }
+
+  def generatenck(n : Int, k : Int) : BigDecimal = {
+    val num = factorial(n)
+    val denum = factorial(k) * factorial(n - k)
+    val z = num / denum
+    z
+  }
+
+  def arbitDist(n : Int) = {
+    var Z = BigDecimal(0)
+    for (i ← Range(0, n + 1)) {
+      Z = Z + generatenck(n, i) * 2 * math.min(i, n - i)
+    }
+  }
+
+  def findLISLen(l : List[Int]) : Int = { 0 }
+
+  def main(args : Array[String]) : Unit = {
+
+    for (nn ← Range(1, 8)) {
+      val n = math.pow(10, nn).toInt
+      val fact = factorial(n)
+      val nbye = BigDecimal(n / math.E).pow(n)
+      print(n+":")
+      println(fact / (nbye * math.sqrt(n)))
+    }
+  }
+
+  def main3(args : Array[String]) : Unit = {
+
+    val p = 102400
+    var z = BigDecimal(0.0)
+    for (i ← Range(1, p)) {
+      z = z + BigDecimal(1) / (BigDecimal(i) * BigDecimal(i + 1))
+    }
+
+    println(z * BigDecimal(p))
+
+  }
+
+  def main2(args : Array[String]) : Unit = {
+    val N = 100
+    for (n ← Range(0, N)) {
+      println(n+":"+generatenck(n, n / 2) / BigDecimal(2).pow(n))
+    }
+
+  }
+
+  def main1(args : Array[String]) : Unit = {
+    val N = 100
+    for (n ← Range(0, N)) {
+      var z = BigDecimal(0)
+      for (i ← Range(0, n + 1)) {
+        val x = generatenck(n, i)
+        z = z + (x * math.abs(n - 2 * i))
+      }
+      print(n+" :")
+      println(z / BigDecimal(2).pow(n))
+    }
+
+    for (n ← Range(0, N)) {
+      var z = BigDecimal(0)
+      for (i ← Range(0, n + 1)) {
+        val x = generatenck(n, i)
+        z = z + x * 2 * i
+      }
+      print(n+" :")
+      println(z / BigDecimal(2).pow(n))
+    }
+
+    for (n ← Range(0, N)) {
+      var z = BigDecimal(0)
+      for (i ← Range(0, n + 1)) {
+        val x = generatenck(n, i)
+        z = z + x * n
+      }
+      print(n+" :")
+      println(z / BigDecimal(2).pow(n))
+    }
+
+    for (n ← Range(0, N)) {
+      var z = BigDecimal(0)
+      for (i ← Range(math.max(n / 3, 0), n / 2)) {
+        val x = generatenck(n, i)
+        z = z + x * ((n - 2 * i))
+      }
+      print(n+" :")
+      println(z / BigDecimal(2).pow(n))
+    }
+  }
+
+}
