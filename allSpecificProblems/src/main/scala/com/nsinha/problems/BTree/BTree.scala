@@ -17,7 +17,7 @@ case class SpecialInt(value : Option[Int] = None) extends Ordering[SpecialInt] {
 
 trait NodeTrait {
   val t : Int
-  def searchRange(k : Int) : (Option[KeyNodeTrait], Option[KeyNodeTrait])
+  //def searchRange(k : Int) : (Option[KeyNodeTrait], Option[KeyNodeTrait])
   def createBottom(v : String) : BottomNode
 }
 
@@ -44,7 +44,7 @@ trait KeyNodeTrait extends NodeTrait {
     binarySearchRange(middle._1, end, k)
   }
 
-  override def searchRange(k : Int) : (Option[(Int, KeyNodeTrait)], Option[(Int, KeyNodeTrait)]) = {
+  def searchRange(k : Int) : (Option[(Int, KeyNodeTrait)], Option[(Int, KeyNodeTrait)]) = {
     if (keyArray.length == 0) (None, None)
     binarySearchRange(0, keyArray.length - 1, k)
   }
@@ -101,7 +101,7 @@ case class IntermediateTypeNode(t : Int) extends KeyNodeTrait {
     //higher logic has decided this is correct node but does not know if
     //in the intermediate node one should try inserting in lower or higher key depending on balance.
     // in case
-    null
+    false
   }
 
 }

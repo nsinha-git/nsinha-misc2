@@ -4,3 +4,27 @@ this state machine and report the offsets when final states were touched.
 3.The above algorithm may not be as efficient as Knuth Pratt but we want to study the insights of this solution
 all by itself.
 4. We may improve this to a regex match with simple add ons like * $ ^
+
+
+----
+1. we will implememt KMP algo
+2. Given a test string generate the shifts if a mismatch occur at a given index of string
+
+A1. given test string of T and a point t  of test and o string of lenhth n
+ If a mismatch occurs at r < n
+ then: there may exist a less than r shift of t to right (call it s) st (s..r) of T  matches the prefix of O
+ the prefix match is r-s+1. Clearly if we move all the way to r+1 then the prefix match is 0.
+
+A2. If we can create a table for mismatch at every location and corresponding shift we are done.
+
+
+
+A3. For a mismtach at say x where x<=l-1, we can shift o by s in  {0,..upto x} and check if prefix  (s,s+1, ,,x) matches.
+If it does we output x. else we continue the check till we exhaust. If we exhaust we output x.
+
+A4.This is constant order work and we dont need to optimize this
+
+
+----------
+C1. generalize to  a regex glob. "*"
+
