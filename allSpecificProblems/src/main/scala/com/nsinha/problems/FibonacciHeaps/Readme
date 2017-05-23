@@ -1,0 +1,46 @@
+A1. A BH has following prperties
+    insertion: lgN
+    top-deletion:lgN
+    get-top : o(1)
+    key-update: lgN
+A2. A FH should try to lower the key-update to o(1) or lg(lgN))
+
+A3. A 'unbaked idea' is to keep binary heaps into say k heaps.In this case the get-top op is o(k) but key-update may improve by
+good bit=> lg(N/K). As K is still a constant we still have issues in asymptotic consideration.
+
+A4. To build up on 3: K should increase with N. but that would make get_top dependent on N.
+Can we make k grow very slowly on n like lgN? In this case, get-top will become o(lgN) and key-update will be lg(N/lg(N))
+Some improvement!
+
+5.Let's observe a concrete way of deomposing this: let's follow fib series: 1 1 2 3 5 8 13
+for any N write it as sum of fib terms: eg. 4 = 2 + 2
+7=5 + 2
+9= 8+1
+10= 8+2 etc.
+So fib decomp is always posible by induction.
+
+for any N = M(lower-fib-heap(N)) + rmaining terms.
+we can anticipate M to be o(N/GR) wheer Gr= golden ratio
+Not too helpful.
+If we can somehow group keyupdates together and pay cost of maintaining a group that would be best.
+
+Let us have a notion of key-updates for a group happening together as in
+
+
+6. Working of Dijstra:
+    1. create a heap of all edges from the src.
+    2. Let vsisted set is empty at the beginning.
+    3. find the least edge from src to destCur. set the dest1 to this min value. By trainle inequality we can not have any lesser weight
+    from any other node.
+    4. Add the destCur to the visited set.
+    5. Remove all edges connecting destCur from visited set.
+    6. goto 3
+
+if assuming bin heap these complexities may be imagined:
+    3. o(1) if heap property was maintained.
+    4. o(lgN) if map for visited Set
+    5. N lgN
+    total N^2lgN
+
+
+

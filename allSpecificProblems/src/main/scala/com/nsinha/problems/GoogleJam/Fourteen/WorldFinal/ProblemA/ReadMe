@@ -1,0 +1,8 @@
+1. We can look at the problem as rows ops that include row swaps and cols ops which are col swaps.
+2. The sequenctila col ops create a col permutation, as do the rows ops.
+3. If we imagine row ops just shifting the rows in correct order, then we can imagine the cols ops as the ones actutally
+doing the ordering for one of the rows.
+4. based on 3 we can ignore the rows ops for now.
+5. Talking about the col ops, if we assume the row 1 needing certain ops to align it to checker pattern, then same ops
+should align other rows too to either row1 or its exact complememnt. There should be equal of each of these.
+6.Once we done 5 we can simply permute rows to pattern.

@@ -1,0 +1,190 @@
+P1. E = E|E
+P2. E = E*
+P3  E = ExE
+P4  E = T
+P5. 0,1,2,etc
+
+
+C1. Given an E, if it is not Terminal  then we should have a binary break using | or * or x. Use it to break into two exp.
+E = E breakChar E.
+We can reach to T by recursively applying C1 on E.
+
+
+e.g .E = 1(56|(((7|8))*9)*) = E1 E2
+E1 =1
+E2 = (56|(((7|8))*9)*)
+E2 = E3|E4
+E3 = 56
+E4 = (((7|8))*9)*)
+E4 = E5*
+E5= (7|8))*9)
+E5 = E6*E7
+E6 = E8 *
+E7 = 9
+E8 = (7|8)
+
+E = get E1 get E2 = 156 ,19 , 199, etc.
+get E1 = 1
+
+get E2 = get E3 or get E4= 56, 9 , 99,...
+
+get E3 = 56
+
+get E4 = get E5 * = 9 99 999 9999 , 797979,...
+
+get E5 = get E6 *  get E7 = 9, 79, 89, 779, 789, 879, 889, 7779, 7789, 7879 7889, 8779 8789, 77779, 77789, 77879, 77889
+
+get E6 = get E8 * = phi, (7 get E8 *) , (8 get E8 *): all configs of consisiting of 7/8
+get E8 = 7 or 8
+
+
+-----------
+A1.What happens if we have Regex E1|E2 where E1 = E2.
+Is there any way we can eliminate two. Map the or cases.
+A2. What if (0|1|2...)*
+this generates every number How to recognisize that w/o explicit enumeration.
+
+min = 0
+max= 999999..9 upto d digits.
+a*a*a or a-1*a*a in case Zero is involved.In case of
+10^5 x*10^5.
+
+We can range till 10^5. FOr remaining x*10^5.
+e,g(0|1|2)= all ombs of 0,1,2 in Range (1...R)
+
+Let R = abcde
+a = 3
+b = 3
+c = 3
+d = 3
+e = 3
+3^5-1
+------------------
+T1. Assume the E which is made of leaves only. I.e or ,*, and in digits.
+  Let S be shifts that this exp. will have depending on the context.
+  Let Len be total lengtn we are looking. Then We can generate all the numbers of upto Len-S using the current exp.
+  For each of this generation we can count the actual digits and proceed right wards.
+  So its like SxxxxxxY
+  Let L and R be the range from which this E can draw.
+  Multiply the
+
+
+E.g 1) (0)*1(0)*
+Len = 1
+Non-Zero Digit already Seen= False
+S =0 for E1
+Phi coming from E1. Shift=0
+1 from E2. Phi from E3. = {1}
+
+Len=2
+S=0 for E1.
+Non-Zero Digit already Seen= False
+0 from E1. S=0 as nonZ false for E2.
+1 after E2. S = 1 and nonZ=1
+E3 emits 0. as Len-S =1
+10 = 10
+
+Len = 3
+100
+Len = 4
+1000 etc.
+Complexity in this example: for all leaf exps Z1,..ZK
+(Z1)^c1 (Z2)^c2 ..
+st. c1 + c2 + .. = 18
+
+(z1 + z2 + ..)^18 = sum of all coefiicients. Take 1 for z1 ,... then clearly its n^18.
+
+
+2)2 50
+ 1 digit to 3 digits.
+(01|23|45|67|23)*
+Len =1
+na
+Len =2:
+curtailing the range
+ 01,23 ,45
+
+Len =4 In applicable.
+
+
+3) 1 1000000000000000000
+   ((0|1|2|3|4|5|6|7|8|9))*
+
+Len 1 to 10
+
+Len 1:
+1 2 3 .. 9 = 9
+
+
+Len2:
+ least 10
+  highest 99
+  10 * 9 = 90 total
+  all  shall be valid.
+
+Len 3:
+ least = 100
+ highrst = 999
+ 10*10*9 = 900
+
+ all valid.
+
+Len K
+ least = 10000
+ highest = 9999999
+ 10*10*10.*9 = 9000000
+ invalids = 999999 - 77777 just as an example.
+
+
+ 4) 1 1000000000000000000
+       ((0|1|2|3|4|5|6))*
+
+Len 1: 1 2 3 4 5 6 = 6
+Len2: least 10
+   highest = 66
+   57
+Len3: 100
+       666 etc
+LenK: 10000
+      66666
+      if 6666 is higher than the rightmost then subtsract 66666 - rtmost from result. Same for left side.
+
+
+5)       1 1000000000000000000
+                12 ((0|1|2|3|4|5|6))*
+len2:12=1
+len3: 120 122 .. =7
+len4: 1200 .. 1266
+len5: 12000 12666 etc.
+
+
+6)        1 1000000000000000000
+                   12 ((0|1|2|3|4|5|6))*12
+   len4=1212=1
+   len5: 12012 12112  .12612. =7
+   len6: 120012 .. 120066 etc
+   len7: 12000 12666 etc.
+
+
+
+
+The 30 characters in E
+
+
+ideas: 1)Lengthwise break
+2) for or range break into highest and lowest.,
+3)Leftmost non-zero seen.
+
+-------------------------
+I1.Break into atomic regexes from left to right.
+I2a. | needs to be treated specially at any level and range based counting should be done.
+I2. Break atomic regexes into leaves
+I3. Len wise break the problem range.Initially just assume the range is from 1 to 10^18
+I4. Carry a dynamic state lftmst zero seen while doing (z1 + z2 + ..)^18
+
+The total answer can be as high as 30-2/3 = 9^18
+For length l:   every single of 9 can be broken into its highest value. We can then afford a similar consideration as we did or ex6/
+
+
+
+

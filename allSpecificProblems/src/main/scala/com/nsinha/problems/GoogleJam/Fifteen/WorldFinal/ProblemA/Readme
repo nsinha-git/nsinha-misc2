@@ -1,0 +1,17 @@
+Non-uniform binary search:
+1. Let a0 ,... an-1 be the pos in array and we need to find a insertion point based on some input x and comparison. The cost
+of comparsion  is non-uniform with pos.
+2. A general idea is to collect all the pos with equal wt together.
+ Let k such  levelcontours can exist. Note k can be as large as n
+
+ for lowest level let l1 l2 l3 l4 be the indices. Then in general we have lx ly as potential point to work with.
+  for next level take this lx ly from last step and map it to nearest right of lx and left of ly.
+  How to find nearest right of lx in level2.
+  We need to support leastgreaterinLevel(pos) operation in level structure.
+
+
+
+
+A1. Supporting leastGreater(pos). If we arrange the pos in style of range trees, we can support this ops. As no more features will be required
+an array based Range tree with bsearch should suffice
+

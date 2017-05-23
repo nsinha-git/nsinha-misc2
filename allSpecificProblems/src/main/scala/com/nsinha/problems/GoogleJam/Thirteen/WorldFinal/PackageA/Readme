@@ -1,0 +1,27 @@
+1. The multitude of rows are cars. The event points for each care are the (starting time ST, intersection S), end time, intersection E)
+and (midTime, Intersection). There can be two midtimes depending on interval being even or odd.
+2. We need to create starting times at endTime of each car with one off intersection. We need to extend it to left and right till we
+collide with some other car or reach end of time.
+3.We need to also consider endtimes of a car finishing at one-off car start pos at same car tart time. Similar logic for mid points of car.
+4. We claim that any maximal path will always fall in one of these event spaces.
+
+
+--------------
+1. Given a point (n,t) finding the left and right boundaries and thus length:
+
+for each Ci. let ts be start time , m be start intersection and ∇  be time of sojourn.
+
+case 1: ts < t: i.e car started earlier than n,t. then we have a possible left boundary by ci.The intersection time ti is
+ti = (t+ ts)/2 - (m-n)/2.
+if(0<=ti-ts<= ∇ ) its a valid left boundary. Find the len as (t-  ti+1 ).
+case 2 :ts >t : car started after n,t.Find ti as (t+ts)/2 - (n-m)/2.
+if(0<=ti-ts<=∇ )its a  right boundary. Find the len  as (ti-1-   t).
+
+Thus we can find a min of left and right boudnary length for any point (n,t). This is complex as o(C)
+
+2. We have C start points and 2*C endpoints. =  3C potential points.
+We can find a len of each of these 3C points in o(3c^2).
+
+
+
+
