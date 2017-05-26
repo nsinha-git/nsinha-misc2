@@ -1,0 +1,16 @@
+1. Let events be called e1...e100=E
+2. events are sorted by time.
+3 two events can have same time
+4. A worthy solution would be something like e1 e4 e9 e14 e19 e34 e61 e98 e99. i.e a pick from set of E.
+
+5 SHould we ever visit a earlier time from later time? yeah is e5 visits e2 where e5 happens later than e2 then that means e2 was surviving.
+It means we should have two events per event a kill event should be added.
+So now E = {e1a,e2a,e1d,e2d,...e89a,e90a,e87d,...}
+
+6. Then e2a can still visit e1d even though e1a precedes e2a.
+
+7.So worthy solution should looklike e1a,e3a,e2d, e5a,e4d, ...
+
+8.So at any point we have to target one of the accessible states from current pos.
+
+9.Lets say we are at state

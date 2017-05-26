@@ -1,0 +1,97 @@
+1. Runs: S = bookkeeper
+b=1
+o =1
+k =1
+e =1
+p=1
+e=1
+r =1
+Total = 6
+2.Find all perms of S that have same runs as S
+S length <450000
+runs < not more than 100
+------------------------------
+S1. How to do this? CAnt do all perms of S and evaluate runs and count if they match
+S2. create a freq distru:
+    b o k e p r
+    1 2 2 3 1 1 = 10 chars.
+
+S3. If S = a single char then there is jsut one perm
+    if S = 2chars with say a f1 and b f2.
+    Let a string can be made as
+    aaabbbaaaaabbbb  etc
+    Lets talk about S a little bit:
+    1. Disperse a firts in one way with f1 chars written next to each other. This creates a r=1
+        e.g e e e/1
+    2. Then disperse the k in all ways
+        k k e e e /2
+        k e k e e /4
+        k e e k e /4
+        k e e e k/3
+        e kk e e/3
+        e k e k e/5
+        e k e e k/4
+        e ekke/3
+        e e k e k/4
+        e e e k k/2
+     3. Disperse o for each option:
+        Let's take on example just before r placemnet: o k k e e b o e p /7
+S4. bookkeeper
+    eee/1
+    oo eee/2
+    ookkeee/3
+    bookkeee/4
+    bookkeeep/5
+    bookkeeepr/6 na
+    bookkeerep
+
+--------------------------
+A1. The min run occurs when we congegrate all chars together next to each other
+    so the run > = Num of diff chars in S e.g 6
+A2. The maximum run is sum of freaquencies when we disperse all the letters with no continuous. May not be always doable.
+A3. Any new placement always increases the cnt.
+A4. If a new placement comes in boundaries of run of different chars the it inreases run by 1
+    if it comes in a middle of run it inreases it by 2
+    if it comes at site of a run and is same as run it does not increase the size
+    if it comes at boundary of runs and matches to left or right, it does not increase the run.
+A5. So we can have every placement causing 0,1 or 2 adds to previous cnts.
+A6. We can create runs bigger than current run.
+    e.g bokepre or bokeper etc have 7 runs in prefix. we have 3 more letters but they ar useless to consider.
+A7. Lets a have partial placement with T having a run of say 4 and some characters still in running
+    Then we
+A7. If we break S into s1 and s2 and find runs on s1 and runs on s2.
+     and add runs of s1 and s2
+
+
+_-------------------------
+A Dp approach:
+
+1.Create a Dp table with keys as formation Set, pivot character, and run based on pivot. Lets call the key as  (Set, option(prefixChar), cond_run)
+2. We start evaluating (Total Given Set, None,run##)
+3. In any evaluation we choose each character one at time not counting their repetitions:
+    thus generating more keys. We sum all of them to get the required value. Notice all the keys are orthogonal and exhaustive.
+4. The counting logic also depends on what char is in prefix char. If the subproblem uses the same prefix char then the runs does
+not decrement from higher problem, else it goes down by 1.
+5. We can have a dp tree going 10^6 = 2^20 in depth. the set can take 2^10^6. but not all will be required depending on what is expected run
+. We can say that only 10^6*26 = 10^8 sets will be enough in worst case. The option char can be 26 , and cond_run can be 0 to max_run.
+So we are still in polynomial domain.Dp will be able to use lots of states for sure. Let's analyze after running few experiments.
+--------
+
+
+1686
+217
+249
+Map((a,3)(b,1)Some(b)4 -> 0, (a,2)Some(a)2 -> 0, (a,1)(b,1)(c,2)(d,2)Some(a)6 -> 72, (a,1)(b,1)(c,1)(d,2)Some(c)5 -> 30, (a,3)(b,1)(c,1)Some(b)5 -> 2, (a,3)(b,1)(d,1)Some(d)5 -> 2, (a,2)(b,1)(c,1)Some(a)4 -> 2, (a,3)(b,2)(c,1)(d,1)Some(c)7 -> 86, (a,2)(b,2)(d,1)Some(a)5 -> 7, (a,2)(c,1)(d,2)None5 -> 12, (b,2)(c,1)Some(c)3 -> 1, (a,2)(c,1)(d,2)Some(a)5 -> 7, (a,1)(b,1)(d,1)None3 -> 6, (c,1)None1 -> 1, (a,2)(b,2)(c,1)(d,2)Some(a)7 -> 174, (a,1)(b,2)(d,2)Some(a)5 -> 10, (a,2)(b,1)(c,1)None4 -> 6, (a,3)(c,1)(d,1)Some(d)5 -> 2, (b,2)(d,2)None4 -> 2, (a,3)(b,1)(c,1)(d,2)Some(c)7 -> 86, (a,1)(d,2)None3 -> 1, (a,2)(b,2)None4 -> 2, (a,1)(b,1)(c,2)Some(a)4 -> 5, (a,2)(b,2)(d,1)None5 -> 12, (a,2)(b,1)(c,1)(d,1)Some(d)5 -> 30, (a,2)(d,1)Some(d)3 -> 1, (a,2)None2 -> 0, (b,2)(c,1)None3 -> 1, (a,1)(b,2)Some(a)3 -> 1, (a,2)(b,1)(c,2)(d,2)Some(a)7 -> 174, (a,2)(b,1)(c,2)(d,1)Some(b)6 -> 72, (a,1)(b,2)(c,1)(d,2)Some(a)6 -> 72, (d,1)Some(d)1 -> 0, (a,2)(b,1)(c,1)(d,2)Some(c)6 -> 72, (a,3)(b,2)(c,1)None6 -> 10, (a,2)(c,2)Some(a)4 -> 1, (a,1)(c,1)(d,1)Some(d)3 -> 4, (a,1)(c,2)(d,2)Some(a)5 -> 10, (b,1)(d,2)Some(b)3 -> 1, (a,1)(c,1)(d,2)Some(c)4 -> 5, (a,3)(b,1)(c,2)None6 -> 10, (b,2)(d,1)Some(d)3 -> 1, (a,1)(b,2)(c,2)None5 -> 12, (a,2)(b,1)(d,1)Some(b)4 -> 5, (a,2)(b,1)(d,2)Some(a)5 -> 7, (a,1)(b,1)(c,2)(d,1)Some(b)5 -> 30, (a,3)(c,1)Some(c)4 -> 0, (a,1)(b,1)(c,1)(d,1)Some(d)4 -> 18, (a,2)(c,2)(d,2)None6 -> 30, (a,1)(b,1)(d,1)Some(a)3 -> 4, (b,1)(c,2)None3 -> 1, (a,3)(d,1)None4 -> 0, (a,2)(b,1)(d,2)None5 -> 12, (c,1)(d,1)Some(c)2 -> 1, (d,2)None2 -> 0, (a,1)(c,2)(d,1)None4 -> 6, (a,2)(d,1)Some(a)3 -> 0, (a,2)(d,2)None4 -> 2, (a,1)(b,1)None2 -> 2, (c,2)(d,1)Some(d)3 -> 1, (a,3)(b,1)(c,2)(d,1)Some(b)7 -> 86, (a,1)(b,1)(d,1)Some(d)3 -> 4, (a,1)(c,1)(d,1)Some(a)3 -> 4, (a,3)(b,1)(c,1)(d,1)Some(d)6 -> 22, (a,3)(c,1)(d,1)None5 -> 2, (a,2)(b,1)(c,2)Some(b)5 -> 10, (a,1)(b,1)(c,1)Some(b)3 -> 4, (c,1)(d,1)None2 -> 2, (a,2)(b,1)(c,1)Some(c)4 -> 5, (a,2)(b,1)(c,1)(d,1)Some(a)5 -> 18, (a,1)(c,1)Some(a)2 -> 1, (b,1)(c,1)(d,1)Some(b)3 -> 4, (a,3)(b,2)None5 -> 1, (a,1)(b,1)Some(b)2 -> 1, (a,1)(b,2)(c,1)Some(c)4 -> 5, (a,1)(b,1)(c,1)(d,1)Some(a)4 -> 18, (a,1)(c,1)(d,2)None4 -> 6, (a,2)(b,1)(c,1)(d,2)Some(b)6 -> 72, (a,2)(c,1)None3 -> 1, (a,1)(b,1)(c,1)(d,2)Some(b)5 -> 30, (a,1)Some(a)1 -> 0, (b,2)(c,1)(d,1)None4 -> 6, (b,1)(c,2)Some(b)3 -> 1, (a,2)(b,2)(d,2)None6 -> 30, (a,1)(c,2)None3 -> 1, (b,2)(c,2)None4 -> 2, (a,3)(c,2)(d,1)None6 -> 10, (a,3)(b,1)(c,1)(d,2)Some(b)7 -> 86, (a,3)(d,2)None5 -> 1, (a,3)(b,2)(c,1)(d,2)Some(c)8 -> 346, (c,2)(d,1)None3 -> 1, (a,2)(b,2)(c,1)Some(a)5 -> 7, (a,3)(b,1)(d,1)None5 -> 2, (a,2)(b,1)(c,2)Some(a)5 -> 7, (a,2)(b,2)(c,1)None5 -> 12, (a,1)(b,1)(d,2)Some(b)4 -> 5, (b,1)(d,1)None2 -> 2, (a,3)(c,1)(d,1)Some(c)5 -> 2, (a,1)(d,2)Some(a)3 -> 1, (a,1)(b,2)(d,1)None4 -> 6, (a,1)(c,1)(d,1)Some(c)3 -> 4, (a,2)(b,2)(c,2)(d,2)Some(a)8 -> 648, (a,1)(b,2)(c,2)Some(a)5 -> 10, (a,2)(b,2)(c,1)(d,2)Some(c)7 -> 216, (c,1)(d,2)None3 -> 1, (a,1)(c,2)(d,2)None5 -> 12, (a,1)(c,2)(d,1)Some(a)4 -> 5, (a,1)(c,1)Some(c)2 -> 1, (b,1)(c,1)(d,1)Some(d)3 -> 4, (a,3)(b,1)(c,2)(d,1)Some(d)7 -> 86, (a,2)(b,1)(c,2)None5 -> 12, (a,2)(b,1)(c,2)(d,1)Some(a)6 -> 54, (b,1)(d,1)Some(b)2 -> 1, (a,1)(b,1)(d,2)None4 -> 6, (a,3)(c,1)None4 -> 0, (a,2)(b,1)(c,1)(d,1)Some(c)5 -> 30, (a,2)(c,1)Some(a)3 -> 0, (c,2)None2 -> 0, (a,1)(b,2)(d,1)Some(d)4 -> 5, (a,2)(c,1)(d,2)Some(c)5 -> 10, (a,2)(c,1)(d,1)None4 -> 6, (b,1)(c,1)Some(c)2 -> 1, (a,3)None3 -> 0, (a,2)(c,2)None4 -> 2, (a,1)(c,2)(d,1)Some(d)4 -> 5, (a,2)(b,1)(c,2)(d,1)Some(d)6 -> 72, (b,1)None1 -> 1, (a,1)(b,1)(c,1)None3 -> 6, (a,2)(b,1)Some(b)3 -> 1, (a,2)(b,1)(d,1)Some(a)4 -> 2, (a,1)(b,1)(c,2)(d,1)Some(a)5 -> 30, (a,3)(d,1)Some(d)4 -> 0, (a,1)(b,1)(c,1)(d,1)Some(c)4 -> 18, (a,1)(b,2)(c,1)(d,1)Some(d)5 -> 30, (a,2)(b,2)Some(a)4 -> 1, (a,1)(b,1)(c,2)(d,1)Some(d)5 -> 30, (a,1)(b,1)(d,2)Some(a)4 -> 5, (a,3)(b,2)(c,1)(d,1)Some(d)7 -> 86, (a,2)(c,1)(d,1)Some(a)4 -> 2, (a,2)(b,1)(c,1)Some(b)4 -> 5, (c,1)(d,2)Some(c)3 -> 1, (a,2)(b,2)(c,1)(d,1)Some(a)6 -> 54, (a,1)(d,1)None2 -> 2, (a,1)(b,2)(d,1)Some(a)4 -> 5, (b,2)(d,1)None3 -> 1, (a,3)(b,1)(c,1)(d,1)Some(c)6 -> 22, (a,2)(b,1)(d,1)Some(d)4 -> 5, (a,1)(b,1)(c,1)Some(a)3 -> 4, (a,2)(b,1)None3 -> 1, (a,1)(b,2)(c,1)(d,1)Some(a)5 -> 30, (a,1)(c,2)Some(a)3 -> 1, (a,1)(b,1)Some(a)2 -> 1, (a,1)(b,2)None3 -> 1, (a,2)(d,2)Some(a)4 -> 1, (b,1)(d,2)None3 -> 1, (a,2)(b,2)(c,1)Some(c)5 -> 10, (a,3)(b,1)(c,2)(d,2)Some(b)8 -> 346, (b,1)(c,1)(d,1)None3 -> 6, (a,1)(c,1)(d,2)Some(a)4 -> 5, (a,2)(b,1)(c,1)(d,2)Some(a)6 -> 54, (a,3)(c,1)(d,2)None6 -> 10, (a,1)(b,2)(d,2)None5 -> 12, (a,2)(c,1)(d,1)Some(d)4 -> 5, (a,2)(b,2)(c,1)(d,1)Some(d)6 -> 72, (a,1)(b,1)(c,2)Some(b)4 -> 5, (a,2)(b,1)(c,2)(d,2)Some(b)7 -> 216, (a,1)(b,1)(c,1)(d,2)Some(a)5 -> 30, (b,1)(c,1)None2 -> 2, (a,2)(b,1)(d,1)None4 -> 6, (d,1)None1 -> 1, (b,1)Some(b)1 -> 0, (a,1)(b,2)(c,1)None4 -> 6, (a,3)(b,1)(d,1)Some(b)5 -> 2, (a,3)(b,1)(c,1)None5 -> 2, (c,1)(d,1)Some(d)2 -> 1, (b,2)None2 -> 0, (a,3)(b,1)(c,1)Some(c)5 -> 2, (a,2)(d,1)None3 -> 1, (a,1)(b,1)(d,1)Some(b)3 -> 4, (a,2)(b,1)(d,2)Some(b)5 -> 10, (a,3)(b,2)(c,2)(d,2)None9 -> 1686, (a,1)(b,1)(c,2)None4 -> 6, (a,3)(b,1)None4 -> 0, (a,1)(d,1)Some(a)2 -> 1, (a,3)(b,2)(d,1)None6 -> 10, (a,3)(b,1)(c,1)(d,1)Some(b)6 -> 22, (a,2)(b,2)(c,2)None6 -> 30, (a,1)(d,1)Some(d)2 -> 1, (a,3)(b,2)(c,2)(d,1)Some(d)8 -> 346, (a,2)(b,2)(c,2)(d,1)Some(a)7 -> 174, (b,1)(c,1)(d,1)Some(c)3 -> 4, (a,2)(c,1)(d,1)Some(c)4 -> 5, (a,2)(b,2)(c,1)(d,1)Some(c)6 -> 72, (b,1)(c,2)(d,1)None4 -> 6, (a,2)(b,1)(c,1)(d,1)Some(b)5 -> 30, (a,1)(b,1)(c,1)Some(c)3 -> 4, (a,1)(c,1)(d,1)None3 -> 6, (a,3)(b,1)(d,2)None6 -> 10, (a,1)None1 -> 1, (a,2)(c,2)(d,1)Some(a)5 -> 7, (a,2)(b,2)(d,1)Some(d)5 -> 10, (a,1)(b,2)(c,1)Some(a)4 -> 5, (c,2)(d,2)None4 -> 2, (a,1)(b,2)(c,1)(d,1)Some(c)5 -> 30, (a,2)(c,2)(d,1)None5 -> 12, (b,1)(d,1)Some(d)2 -> 1, (a,3)(c,2)None5 -> 1, (b,1)(c,1)(d,2)None4 -> 6, (a,1)(b,1)(c,1)(d,1)Some(b)4 -> 18, (a,2)(c,1)Some(c)3 -> 1, (a,2)(c,2)(d,1)Some(d)5 -> 10, (a,2)(b,1)Some(a)3 -> 0, (c,1)Some(c)1 -> 0, (b,1)(c,1)Some(b)2 -> 1, (a,1)(c,1)None2 -> 2, (a,2)(b,2)(c,2)(d,1)Some(d)7 -> 216, (a,1)(b,2)(c,2)(d,1)Some(a)6 -> 72)
+
+
+1938
+55
+71
+Map(_1_1_2_3Some(d)7 -> 128, _1_1_2Some(a)4 -> 5, _1_1_1_1Some(c)4 -> 18, _1_1None2 -> 2, _1_2_2_2Some(b)7 -> 216, _2None2 -> 0, _1_1_2_2Some(c)6 -> 72, _1_1_2None4 -> 6, _1_1Some(d)2 -> 1, _1_1_2Some(d)4 -> 5, _2_3None5 -> 1, _1_1_1Some(c)3 -> 4, _2_2_2None6 -> 30, _1_2_2Some(c)5 -> 10, _2Some(a)2 -> 0, _1None1 -> 1, _1_2_2_2Some(d)7 -> 216, _2_2None4 -> 2, _1_1_1_3Some(d)6 -> 40, _2_2Some(a)4 -> 1, _1_1_1None3 -> 6, _1_2_3None6 -> 16, _1_2_2_3Some(b)8 -> 430, _1_1_1_2Some(c)5 -> 30, _1_2Some(d)3 -> 1, _1_1_3Some(d)5 -> 5, _1_2_2_2Some(a)7 -> 174, _1_1_2_3Some(c)7 -> 128, _1_1Some(c)2 -> 1, _1_1_2_2Some(b)6 -> 72, _1_1_2Some(c)4 -> 5, _1_2Some(a)3 -> 0, _1_2_2None5 -> 12, _1_2_2_3Some(d)8 -> 430, _1_1_1_1Some(d)4 -> 18, _2_2_2_2Some(a)8 -> 648, _1_1_1_3Some(c)6 -> 40, _1_2_2_2Some(c)7 -> 216, _1_1_2_2Some(d)6 -> 72, _2_2_2_3None9 -> 1938, _1_3Some(d)4 -> 0, _1_2Some(c)3 -> 1, _1_1_2_3Some(b)7 -> 128, _1Some(d)1 -> 0, _1_1_1Some(d)3 -> 4, _1_2_2Some(d)5 -> 10, _1_1_2_2Some(a)6 -> 72, _1_2None3 -> 1, _3None3 -> 0, _1_3None4 -> 0, _1_1_1_2Some(a)5 -> 30, _1_1_3None5 -> 5, _1_1_1_2Some(d)5 -> 30, _1_2_2_3Some(c)8 -> 430, _1_2_2Some(a)5 -> 10)
+
+
+
+
+
+
+

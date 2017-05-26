@@ -183,11 +183,8 @@ case class Expression(e : String, star : Boolean = false) {
                 return (alreadySeenLen + expectedLen, lowest)
               }
             }
-
         }
-
       }
-
     }
     (0, 0)
   }
@@ -322,7 +319,6 @@ case class ProblemA(r : NumberRange, expressionString : String) {
 }
 
 class ProblemATesting extends FunSuite {
-
   test("a") {
     val problemA = ProblemA(NumberRange(1, math.pow(10, 18).toLong), "(0)*1(0)*")
     println(problemA)
@@ -339,5 +335,4 @@ class ProblemATesting extends FunSuite {
     val problemF = ProblemA(NumberRange(1, math.pow(10, 18).toLong), "1(56|(((7|8))*9)*)")
     println(problemF)
   }
-
 }
