@@ -1,0 +1,31 @@
+1. Power of 2 numbers
+2.New SOrting for (1,2,..2^N) in any permutation
+3.Range of nos to be swapped.
+3a. If range contains 2^k and start pos is multiple of 2^k
+     i,e the range must be m*2^k to (m+1)*2^k
+3b. Two ranges must be same size to be swapped.
+
+4.At most one swap of each size for k in[0,N)
+
+----------
+
+A1. Let's have a a longer followed by a shorter move. We prove there exists a shorter followed by a larger move of exact respective sizes.
+
+If the moves are not intersecting they commute.
+
+Let's assume they inetrsect. In tjsi case the shorter followed by larger can have one of these cases. Note that Larger is atleast twice greater than
+smaller one:
+
+case 1. The  smaller one  may swap ranges that fall in two parts which later is part of swap by larger. We can first do
+the larger swap and do the same smaller range swap.
+
+case 2. The smaller swaps ranges in a part that fully gets relocated by larger swap. In this case we first do large swap followed by smaller swap
+with intervals moved by range of larger swap. So we get the same effect.
+
+
+
+
+
+
+A2. In A1 swap will always take a sorted subrange to another sorted range if we follow A1. Less this , the scheme A1 can never work.
+

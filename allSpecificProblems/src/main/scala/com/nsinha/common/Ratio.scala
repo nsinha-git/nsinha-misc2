@@ -15,6 +15,8 @@ class Ratio(numIn : Int, denumIn : Int) {
   }
 
   def *(that : Int) : Ratio = new Ratio(num * that, denum)
+  def *(that : Ratio) : Ratio = new Ratio(num * that.num, denum * that.denum)
+  def /(that : Ratio) : Ratio = new Ratio(num * that.denum, denum * that.num)
 
   def normalize = {
     val gcd = findGcd(numIn, denumIn)
@@ -22,6 +24,7 @@ class Ratio(numIn : Int, denumIn : Int) {
   }
 
   def findGcd(x : Int, y : Int) : Int = {
+    if (x == 0 || y == 0) return 1
     var res = 1
     val (less, greater) = if (x > y) (y, x) else (x, y)
     val quot = greater / less

@@ -1,0 +1,18 @@
+1. Two equivalent ways will be provided
+
+A.
+A1. If a piece is never required further down the line then the optimal move is to remove the piece.
+proof: The piece has to be removed at some stage after current moment. So removing it now does not affect that part.
+As piece is never used again, removing it now also does not affect any other path that may use it(as no path exits that uses it)
+The accidental benefit will be that if the later piece is useful we get the print w/o adding a further piece. Saving us a add and remove.
+
+A2. We need to precompute the last index for occurence of A,B,C in order n.
+
+
+B. The posted solution that tracks ABC triples in stack, is very dependent in scale of chars; in this case 3. It is equivalent to A
+in the sense that, it removes a piece when not useful depending on if the earlier one will be correct thus atmost incurring cost of i pop.
+In A we will push in that case with same cost of 1 push. But in B the automatic result will be that at end we will never need to add the
+removed one thus acting similar to A, only in this case no precompuation was used.
+
+B suffers from scale issue: what if we use more characters ABCD,...
+

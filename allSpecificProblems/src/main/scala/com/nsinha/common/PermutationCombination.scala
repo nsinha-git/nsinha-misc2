@@ -39,6 +39,19 @@ object PermutationCombination {
     x * factorial(x - 1)
   }
 
+  def factorial(x : Int, y : Int, z : Int) : Long = {
+    if (x <= 1) return 1
+
+    if (x <= y || x <= z) return 1
+
+    x * factorial(x - 1, y, z)
+  }
+
+  def nchoosek(n : Int, k : Int) : Long = {
+    if (k <= 0 || n <= 0) return 1
+    factorial(n, k, n - k) / factorial(math.min(k, n - k))
+  }
+
   def getNextPerm(elems : List[Int]) : List[Int] = {
     val ordered = elems.sortBy(x ⇒ -x)
     val indexOfThisPerm = ordered.foldLeft(0L, elems) { (Z, el) ⇒

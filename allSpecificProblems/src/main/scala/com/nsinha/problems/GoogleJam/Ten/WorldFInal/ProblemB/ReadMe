@@ -1,0 +1,43 @@
+         \      /    /
+      P1   \P2 / P2C/
+           N--------
+           /\
+          /  \
+1. Consider node N with many entry paths.
+
+2. Lets start doing a dfs from arbitrary point if graph
+
+A1. Any point dfs will always visit N. Easy to prove by all connected properties of first three nodes and induction.
+
+3. We can visit the N first time as in P1, or later times P2 P2C
+
+4. N can be in three states: Unvisted, visited and StillVisiting,
+
+5. A P1 N was unvisited and turned to a visit. A P1 prefix exists when visiting N
+
+6. We do a further dfs on N and append N to P1 prefix
+
+7. Let N dfs has  cycle to N w/o a node in P1. Then we call it P2c. When P2c reaches N we have N StillVisiting.
+
+8. Any the length of this cycle is fully determined by later portion of N and does not depend on P1. So we can subtarct P1 from P2C
+and that's the length of this cycle. We can record if this is largest and clip the dfs.
+
+9. Let N be visitable again but that includes a point in P1. Then that earlier point will clip the dfs and we can have no such path
+formation onto N.
+
+10. Let's consider a P2 visit to N when N was done to visited. Let P2-P1 is nonEmpty and M be a point in that set. If there exists a cycle to
+such M through N then M must have been visited by N dfs in stillvisiting state and P2 would be part of P2S. As this is not the case, we can
+say we cant have a cycle to M
+11.So vsiiting N one more time does not help as no further cycles could be found as by 10. We can clip this dfs span here.
+
+12.We reach the start node of dfs and finish the dfs.
+
+A2. A node will turn to visited from still vsisiting
+proof: Any path from node can at most include all the nodes. There are n! such formamrtions so we will end up the vsisitinmg
+
+A3. The dfs will terminate.
+Apply A2 to root node.
+
+A4. Complexity:
+Any path in a graph is a perm(partial) of atmost n nodes. we can have n! such paths so we are talking about exponential complexity but with DP
+ we can sure reduce it by a bit.
