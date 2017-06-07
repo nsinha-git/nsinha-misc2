@@ -1,0 +1,21 @@
+1.
+We can think of links like:
+a a a
+s s s  etc
+
+As we start with awake state the first one is one with highest a.
+
+We can assume we have kept B Awake and hence can keep on using highest a.
+
+This is simply ordering of prob as per highest probability.
+
+After that we make the reverse optimization.
+2.The last step does not need to be optimized for next level so we can choose the lease a for last.
+
+3. After 2, we can optmiz the n-1 th . We have filled till n-2th and n th is filled. We require n-1 from bottom st
+(n-2)s * (cur-n-1-a - cand-a)  - (cur-n-1-s -cand-s) n(a) . If we get a positive value for this we will replace it.
+
+If we cant we stop.
+
+4. reduce cnt and keep on doing 2 till we reach 2nd link or stop early under break condition at 3.
+∎

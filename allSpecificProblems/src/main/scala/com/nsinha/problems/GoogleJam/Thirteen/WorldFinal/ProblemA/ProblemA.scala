@@ -1,4 +1,4 @@
-package com.nsinha.problems.GoogleJam.Thirteen.WorldFinal.PackageA
+package com.nsinha.problems.GoogleJam.Thirteen.WorldFinal.ProblemA
 
 /** Created by nsinha on 5/17/17.
   */

@@ -1,0 +1,13 @@
+A1. Try a value n and find the distribution of diffs.
+
+A2. FInd the max distance and sign and max distance in opposite side of sign
+Let  they occur at m and n
+A3. Let's choose a gradient g in same sign as max D. Then max distance will come down by gm. The opposite sign will go up by ng.
+
+A4. Find the max index  m' and n' that had same and ooposite signs in A2. they will go down by m'g and up by n'g
+A4 We have four values now: L = +mg. M = +m'g  , N = -ng, G = -n'g
+A5. le's select g =gL0 st L =0. if other distances are lower than max of A2 we could stick with that.
+Else g = gL0/2. in this case we will see that each distance will be non -zero. if the worst distance is still better than A2 we choose this else we
+halve g again and continue.
+
+A6. If anytime during A5 we reach a value of g st the it's ;less than 10^-7 we let go the process.

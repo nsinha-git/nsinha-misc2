@@ -1,0 +1,44 @@
+1. We can go through each cell in order of first row last row.
+    2 , n-1 row ..
+2. At each row cell we should look at all its neighbors and decide the max possible height for the cell. It may be fullly decidable if the neighbor
+height is fully decidable and lower.
+3. If all neighbors are fully decidable and higher then height is least of all such neighbors and fully decidable.
+4. If one neighbor is not fully decided we can only assume max height and call the cell as half -decided.
+5. At the end  of 1-2-3-4 we can again, just get all half -decided cells and determine the one(s) withleast height of them. We can fully decide these.
+We can also check the neighbors and possibly reduce their indecision and reclassify as half decided with lower indecison or fully decided.
+6. We can keep doing 5 as long as any half decided still exists.
+
+
+A1. The process will finish in finite steps.
+
+Every time in 6 we have a minimum of size atleast one. This makes the cell size go down by atleast 1 in 6. So we will have at worst (w*H)
+repeats of 6 each time oing o(w*h) work. so o(w^2*h^2) = o(160k)
+
+A2. o(w*h) work every time to decide drain direction and reduction.
+
+A3.Each reduction would atleast be reduce periphey cells by M. total height can at max be w*h*Max wt.
+Every day will atleast reduce M*4*max(w,h). so max days is w*maxwt/M = 10^15*20
+
+A4. A3 *A1  is completely
+example
+3 8 10 11 10 8
+7 5 2 12 8 8
+6 9 11 9 8 4
+
+
+3 8 10 11 10 8
+7 -7 -10 12 8 8
+6 9 11 9 8 4
+
+3 8 10 11 10 8
+7 7 7 12 8 8
+6 9 11 9 8 4
+
+0 5 7 8 7 5
+4 5 2 9 8 5
+3 6 8 6 5 1
+
+-----------------
+0 5 7 8 7 5
+4 5 5 9 8 5
+3 6 8 6 5 1
