@@ -42,3 +42,18 @@ example
 0 5 7 8 7 5
 4 5 5 9 8 5
 3 6 8 6 5 1
+
+
+----------------------
+Dijstra approach
+
+D1. If two cells are differnibg less by M and one cell attaches to Sea and then visits the other cell, then
+ the prelude captures all the irregularity of decrements.
+
+ Let h1 , h2 and h1<h2 and h2 -h1 = p <M
+
+ let h2 has prelude (h2,h21,h22) .M k steps and psotlude h2p
+ so h2 = Mk+h2p + (h22-h2)
+
+ just looking at end of prelude i,e h22 and counting the length of prelude i.e we check
+

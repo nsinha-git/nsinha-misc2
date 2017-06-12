@@ -1,8 +1,6 @@
 package com.nsinha.problems.GoogleJam.Eleven.WorldFinal.ProblemB
 
 import org.scalatest.FunSuite
-
-import scala.collection.immutable
 import scala.collection.mutable
 
 /** Created by nsinha on 6/5/17.
@@ -47,8 +45,10 @@ case class ProblemB(rows : Int, cols : Int, M : Int, input : String) {
     var mp = initialMapToWaterLevelMap
     var cond = true
     var days = 0
+    printMapRowWise(mp)
     while (cond) {
       mp = processWaterLevelCurDay(mp)
+      printMapRowWise(mp)
       if (checkAllZeroLandHeight(mp)) cond = false else days = days + 1
     }
 
@@ -258,6 +258,15 @@ case class ProblemB(rows : Int, cols : Int, M : Int, input : String) {
     val doesAUndecidedNbrExist = undecidedNbrs.nonEmpty
 
     (minHeightFullyDecided, doesAUndecidedNbrExist)
+  }
+
+  def printMapRowWise(mp : mutable.Map[(Int, Int), (Int, Int, DecisionState)]) = {
+    println()
+    for (row ← Range(0, rows)) {
+      val mpRow = mp filter (c ⇒ c._1._1 == row)
+      mpRow foreach (cell ⇒ print(cell._2._2))
+      println()
+    }
   }
 
 }
