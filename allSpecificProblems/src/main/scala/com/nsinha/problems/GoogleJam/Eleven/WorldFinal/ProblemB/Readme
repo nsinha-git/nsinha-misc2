@@ -55,5 +55,6 @@ D1. If two cells are differnibg less by M and one cell attaches to Sea and then 
  let h2 has prelude (h2,h21,h22) .M k steps and psotlude h2p
  so h2 = Mk+h2p + (h22-h2)
 
- just looking at end of prelude i,e h22 and counting the length of prelude i.e we check
+ just looking at end of prelude i,e h22 and counting the length of prelude i.e we check:q
+
 

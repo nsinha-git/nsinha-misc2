@@ -66,6 +66,7 @@ class ProblemBDijstra(rows : Int, cols : Int, M : Int, input : String) {
 
   def createInitialQueue : mutable.PriorityQueue[Edge] = {
     //account for first and last row and first and last col.
+    implicit val edgeOrdering = EdgeOrdering
     val que = mutable.PriorityQueue[Edge]()
     insertIntoQueRowOrCol(0, que, true)
     insertIntoQueRowOrCol(rows - 1, que, true)
@@ -121,7 +122,7 @@ class ProblemBDijstra(rows : Int, cols : Int, M : Int, input : String) {
 
     }
 
-    null
+    1
 
   }
 
