@@ -5,24 +5,20 @@ import org.scalatest.FunSuite
 
 import scala.collection.mutable
 
-/**
-  * Created by nsinha on 6/12/17.
+/** Created by nsinha on 6/12/17.
   */
 
-class ProblemCBrute(n: Int, r: Int) {
+class ProblemCBrute(n : Int, r : Int) {
 
   val mp = createCenters
 
-
-  def createCenters: Map[Int, List[Coordinate]] = {
+  def createCenters : Map[Int, List[Coordinate]] = {
     val mp = mutable.Map
     null
   }
 
 }
 
-
-class ProblemCBruteTesting extends FunSuite{
-
+class ProblemCBruteTesting extends FunSuite {
 
 }
