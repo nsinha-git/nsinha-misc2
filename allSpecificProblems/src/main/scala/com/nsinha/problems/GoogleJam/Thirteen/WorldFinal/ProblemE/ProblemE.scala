@@ -13,13 +13,25 @@ case class ProblemETop(inStr: String) {
   println(ProblemE(input).solveBrute())
 }
 
+
+case class ProblemE1Top(inStr: String) {
+  val input = inStr.split(" ") map {_.toInt}
+  val allMaximalLengths = ProblemE(input).findLongestSubSeqLengths
+
+  val hashMap = mutable.HashMap[Int, Long]()
+
+  allMaximalLengths foreach { maximalLen =>
+    println(maximalLen)
+  }
+}
+
 class CommonE(input:Array[Int]) {
 
-  var problemIndices  = mutable.HashMap[Int, Set[Int]]()
+  var problemIndices  = mutable.SortedMap[Int, Set[Int]]()
 
   var problemExist = false
 
-  def generateProblemIndices(): Unit = {
+  def generateProblemIndices(): mutable.Map[Int, Set[Int]] = {
     for (i <- Range(0, input.size)) {
       val curI = input(i)
 
@@ -33,15 +45,47 @@ class CommonE(input:Array[Int]) {
       }
       problemIndices += i -> ll.toSet
     }
+    problemIndices
   }
 }
 
 
-case class ProblemE(input: Array[Int] ) {
+case class ProblemE(input: Array[Int]) {
   import ProblemE._
 
   val commonE = new CommonE(input)
 
+  def findLongestSubSeqLengths: List[List[Int]] =  {
+    import commonE._
+    generateProblemIndices()
+    val problemIndicesFiltered = problemIndices filter(_._2.nonEmpty)
+    if (problemIndicesFiltered.isEmpty) {
+      List(input.toList)
+    } else {
+      //pick the first problemIndices
+      //remove both key and value set from input. call it in'
+      //findLongestSub on in' call it S'. Append key and whole of value to S' and  getting A and B
+      val kvhead = problemIndicesFiltered.head
+      val setB = kvhead._2
+      val setA = Set(kvhead._1)
+      val setAB = kvhead._2.union(Set( kvhead._1))
+      val newInputArray = getSubtractedArray(input, setAB).sorted
+      val subproblemList = if (newInputArray.nonEmpty) ProblemE(newInputArray).findLongestSubSeqLengths else List[List[Int]]()
+      if (subproblemList.nonEmpty) {
+        val problem1List = subproblemList map { x =>
+          val t = {setA.toList.sorted}  map (input(_))
+          x ++ t
+        }
+        val problem2List = subproblemList map { x =>
+          val t = {setB.toList.sorted}  map (input(_))
+          x ++ t
+        }
+        problem1List ++ problem2List
+      } else {
+        List(setA.toList.sorted map (input(_)), setB.toList.sorted map (input(_)))
+      }
+    }
+  }
 
 
 
@@ -91,6 +135,120 @@ object ProblemE {
     return  factorialInt(i-1, i1*i)
   }
 
+  def factorialUpto(i: Int, j: Int, res: Long = 1): Long = {
+    if( i <= j) {
+      return  res
+    } else {
+      factorialUpto(i-1, j, res * i)
+    }
+  }
+
+  def nCombinem(i: Int, j: Int): Long = {
+    factorialUpto(i,j)/factorial(j)
+  }
+
+
+  def getSubtractedArray(inp: Array[Int], setToDiff: Set[Int]): Array[Int] = {
+    var inpMut = inp.clone()
+    //remove set positions from inp
+    for (indx <- setToDiff) {
+      inpMut(indx) = -1
+    }
+
+    inpMut filter(x => x != -1)
+  }
+
+}
+
+
+
+case class ProblemEETop(inStr: String) {
+  val input = inStr.split(" ") map {_.toInt}
+
+  ProblemEE(input)  solve()
+
+
+}
+
+
+case class ProblemEE(input: Array[Int]) {
+  val hashMapForDp = mutable.HashMap[(Int, Int), Long]()
+  val hashMapForDpOnSizeOnly = mutable.HashMap[Int, Long]()
+  val hashMapForDpOnSizeOnlyEff = mutable.HashMap[Int, Long]()
+
+  def createTheNonDecMap() = {
+    for {
+      size <- Range(1, input.size + 1)
+      endIndex <- Range(0, input.size)
+    } {
+      hashMapForDp += ((endIndex, size)) -> 0
+    }
+
+    for {
+      endIndex <- Range(0, input.size)
+      size <- Range(1, input.size + 1)
+    } {
+      //add all elements that are prior to this and at same size
+
+      if (size == 1) {
+        hashMapForDp += ((endIndex, size)) -> 1
+      } else { //size is not 1
+        //in that case go through all size-1 that are also less than or equal to  current indexed number and add them together
+        var sum = 0l
+        //print("endIndex:" + endIndex)
+        //println(" size:" + size)
+
+        val lSize = size - 1
+        for (lIndex <- Range(0, endIndex) if (input(lIndex) >= input(endIndex) )) {
+          //print(s"considering index = $lIndex size = $lSize \t")
+          sum = sum + hashMapForDp((lIndex, lSize))
+        }
+
+        //println()
+        hashMapForDp += (endIndex, size) -> sum
+      }
+    }
+  }
+
+
+  def solve(): Long = {
+    createTheNonDecMap()
+    for {
+      endIndex <- Range(0, input.size)
+      size <- Range(1, input.size + 1)
+    } {
+      //println(endIndex, input(endIndex), size, hashMapForDp((endIndex,size)))
+      if (hashMapForDpOnSizeOnly.contains(size)) {
+        hashMapForDpOnSizeOnly += size -> (hashMapForDpOnSizeOnly(size) + hashMapForDp((endIndex,size)))
+      } else {
+        hashMapForDpOnSizeOnly += size -> hashMapForDp((endIndex,size))
+      }
+    }
+    hashMapForDpOnSizeOnly += (input.size + 1) -> 0
+
+
+    for (size <- Range(1, input.size +1)) {
+      hashMapForDpOnSizeOnlyEff += size ->  {
+        (hashMapForDpOnSizeOnly(size)* ProblemE.factorial(input.size - size) - hashMapForDpOnSizeOnly(size + 1)*(size + 1)* ProblemE.factorial(input.size - size - 1))
+      }
+    }
+
+    var sum = 0L
+
+    for (size <- Range(1, input.size +1)) {
+      sum = sum + hashMapForDpOnSizeOnlyEff(size)
+    }
+
+    println(sum)
+    sum
+
+
+
+  }
+
+
+
+
 }
 
 /*
@@ -108,11 +266,19 @@ solve(466):[{(4),(6,6)}] --- last el will be from (4)  6a,4/6b,4/6a,6b,4/6b,6a,4
 
 */
 
+/*
+1. given a sequence for each node find the bad nodes and good nodes. o(n^2).eg 7466 : 7-> (),()(466) | 4 ->(6,6), (7)()|6->(),(
+2.nFor a correct non dec sequence, one must have
+
+
+
+ */
+
 
 class ProblemETesting extends FunSuite {
 
  test("a") {
-    ProblemETop("4 6 6")
+    ProblemEETop("4 3 1 2 1 1 2 2 3 4 2 2 5 4 3 1 3")
  }
 
 }
